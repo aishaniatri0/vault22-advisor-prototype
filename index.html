@@ -370,6 +370,15 @@ body:not(.onboarding) #onbRoot{display:none}
 .progress .seg.done{background:linear-gradient(90deg,var(--v4-teal-400),var(--v4-teal-500))}
 .progress .label{font-size:11.5px;color:var(--muted);font-weight:600;
   white-space:nowrap;margin-left:var(--v4-space-2)}
+/* Breadcrumbs — name the current step; completed ones are clickable back-nav. */
+.crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:var(--v4-space-2)}
+.crumb-i{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.crumb{font-size:11.5px;font-weight:600;color:var(--v4-navy-200);
+  border:0;background:none;padding:0;white-space:nowrap}
+.crumb.done{color:var(--v4-teal-700);cursor:pointer}
+.crumb.done:hover{color:var(--v4-teal-800);text-decoration:underline}
+.crumb.on{color:var(--text)}
+.crumb-sep{font-size:11px;color:var(--v4-navy-200)}
 
 .onb-title{font-size:26px;font-weight:700;letter-spacing:-.6px;margin-top:var(--v4-space-5)}
 .onb-sub{color:var(--muted);font-size:14px;line-height:1.6;margin-top:6px}
@@ -816,7 +825,22 @@ function renderNav(){
     ? 'Scenario A — just onboarded, no leads yet. Switch scenario to re-run onboarding.'
     : 'Scenario B — an established advisor with 8 leads and 5 customers.';
 }
-function go(id,arg){ state.route=id; state.arg=arg||null; state.tab='notes'; window.scrollTo(0,0); render(); }
+/* Back navigation for the signed-in app: every go() remembers where you came
+   from, so drill-downs (Preview my Client Platform, a customer profile) can
+   return to the screen that launched them rather than guessing. */
+const navHist = [];
+function go(id,arg){
+  if(state.route && state.route !== id) navHist.push({r:state.route, a:state.arg});
+  state.route=id; state.arg=arg||null; state.tab='notes'; window.scrollTo(0,0); render();
+}
+function goBack(){
+  const p = navHist.pop();
+  state.route = p ? p.r : 'dashboard';
+  state.arg   = p ? p.a : null;
+  state.tab='notes'; window.scrollTo(0,0); render();
+}
+const backBtn = label => `<button class="btn btn-sm" data-back="1"
+  style="margin-bottom:var(--v4-space-4)">‹ ${label}</button>`;
 
 /* =====================================================================
    Shared bits
@@ -840,9 +864,11 @@ const dash = '<span style="color:var(--v4-navy-200)">—</span>';
    dashboard rendering a different view: while state.onboarded is false the
    app shell is hidden entirely and only #onbRoot renders.
    ===================================================================== */
-const ONB_ORDER = ['entry','register','region','verify','name','link','share'];
+/* 'link' is the merged link + QR + share screen — one place for everything the
+   advisor walks away with: QR, link, copy, share targets and referral code. */
+const ONB_ORDER = ['entry','register','region','verify','name','link'];
 const ONB_LABEL = {register:'Your details', region:'Your region', verify:'Verification',
-  name:'Your advisor name', link:'Your link & QR', share:'Share'};
+  name:'Your advisor name', link:'Your link & QR'};
 
 /* Region is an account attribute, so it comes after register — where the advisor
    commits. Presented as cards, mirroring the investor onboarding prototype. */
@@ -880,10 +906,23 @@ function protobar(note){
 function onbShell({body, segs, back, urlbar, wide}){
   const done = segs ? ONB_ORDER.indexOf(segs) : -1;
   const steps = ONB_ORDER.slice(1);
+  /* Segmented progress + breadcrumbs: the segments show how far along, the
+     crumbs name where you are. Completed crumbs are buttons — they double as
+     back navigation to any earlier step. */
   const progress = segs ? `<div class="progress">
       ${steps.map(s => `<div class="seg ${ONB_ORDER.indexOf(s) <= done ? 'done':''}"></div>`).join('')}
-      <span class="label">${ONB_LABEL[segs]}</span>
-    </div>` : '';
+      <span class="label">Step ${done} of ${steps.length}</span>
+    </div>
+    <nav class="crumbs" aria-label="Progress">
+      ${steps.map((s,i) => {
+        const at = ONB_ORDER.indexOf(s), sep = i ? '<span class="crumb-sep">›</span>' : '';
+        const item = at < done  ? `<button class="crumb done" data-onb="${s}">${ONB_LABEL[s]}</button>`
+                   : at === done ? `<span class="crumb on" aria-current="step">${ONB_LABEL[s]}</span>`
+                   : `<span class="crumb">${ONB_LABEL[s]}</span>`;
+        /* sep travels with its label so a "›" never dangles at a line break */
+        return `<span class="crumb-i">${sep}${item}</span>`;
+      }).join('')}
+    </nav>` : '';
   return `<div class="onb">
     <div class="onb__form">
       <div class="onb__top">
@@ -930,8 +969,8 @@ ONB.entry = () => onbShell({
     </div>
     <div class="actions">
       <button class="obtn obtn-pri" data-onb="register">Become an advisor</button>
-      <button class="obtn obtn-ghost" data-onb="signin">Sign in</button>
     </div>
+    <div class="center-link">Already have an account? <a class="link-a" data-onb="signin">Sign in</a></div>
     <div class="legalnote">Once you're set up, your dashboard lives at <b>${DASH_URL}</b>.</div>`
 });
 
@@ -970,15 +1009,15 @@ ONB.register = () => {
       <div class="field"><label>Password</label>
         <input class="inp" type="password" placeholder="••••••••"></div>
       <details style="margin-bottom:var(--v4-space-3)">
-        <summary style="font-size:13px;color:var(--muted);cursor:pointer;font-weight:600">Optional details</summary>
+        <summary style="font-size:13px;color:var(--muted);cursor:pointer;font-weight:600">More details</summary>
         <div style="margin-top:var(--v4-space-4)">
-          <div class="field"><label>Mobile number <span class="opt">(optional)</span></label>
+          <div class="field"><label>Mobile Number (Optional)</label>
             <input class="inp" placeholder="+27 82 000 0000"></div>
-          <div class="field"><label>Company <span class="opt">(optional)</span></label>
+          <div class="field"><label>Company (Optional)</label>
             <input class="inp" placeholder="Smith Wealth"></div>
-          <div class="field"><label>Licence number <span class="opt">(optional, region dependent)</span></label>
+          <div class="field"><label>Licence Number (Optional)</label>
             <input class="inp" placeholder="FSP …"></div>
-          <div class="field" style="margin-bottom:0"><label>Referral code <span class="opt">(optional)</span></label>
+          <div class="field" style="margin-bottom:0"><label>Referral Code (Optional)</label>
             <input class="inp"></div>
         </div>
       </details>
@@ -1062,53 +1101,38 @@ ONB.name = () => {
 };
 ONB_AFTER.name = () => { const i = document.getElementById('slugIn'); if(i) i.focus(); };
 
-/* 5 — Link & QR. Real scannable code for the chosen URL. */
+/* 5 — Link, QR and share: one screen. Everything the advisor walks away with —
+   the code, the link, copy, share targets and the referral code. */
 ONB.link = () => {
   const a = state.advisor;
   return onbShell({
     segs:'link', back:'name',
     body: `
       <h1 class="onb-title">Your link and QR code</h1>
-      <p class="onb-sub">Both are live now. Every signup through them is tagged to you.</p>
-      <div class="field" style="margin-top:var(--v4-space-5)"><label>Your link</label>
-        <div class="row"><input class="inp" value="${esc(advisorUrl(a))}" readonly>
-          <button class="btn" data-copy="https://${esc(advisorUrl(a))}">Copy</button></div></div>
-      <div class="field"><label>Referral code</label>
-        <input class="inp" value="${esc(a.code)}" readonly></div>
-      <div class="row" style="align-items:flex-start;gap:var(--v4-space-4);margin-top:var(--v4-space-2)">
-        <div class="qr" style="width:132px;flex:none"><canvas id="obQr" width="132" height="132"></canvas></div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.6">
-          A real, scannable code — point a phone at it. Print it, put it on a card,
-          or drop it into a deck.</div>
-      </div>
-      <div class="actions"><button class="obtn obtn-pri" data-onb="share">Continue</button></div>`
-  });
-};
-ONB_AFTER.link = () => drawQR(document.getElementById('obQr'), 'https://' + advisorUrl(state.advisor));
-
-/* 6 — Share, then hand off into the dashboard at vault22.com/advisor. */
-ONB.share = () => {
-  const a = state.advisor;
-  return onbShell({
-    segs:'share', back:'link',
-    body: `
-      <h1 class="onb-title">Share your page</h1>
-      <p class="onb-sub">Send it to prospects — every signup through it is tagged to you.</p>
-      <div class="field" style="margin-top:var(--v4-space-5)">
-        <label>Your link</label>
+      <p class="onb-sub">Both are live now. Share them — every signup through them is tagged to you.</p>
+      <div class="qr-center"><div class="qr" style="width:150px">
+        <canvas id="obQr" width="150" height="150"></canvas></div></div>
+      <div class="field">
+        <label>Your shareable link</label>
         <div class="row"><input class="inp" value="${esc(advisorUrl(a))}" readonly>
           <button class="btn" data-copy="https://${esc(advisorUrl(a))}">Copy link</button></div>
       </div>
-      <div class="qr-center"><div class="qr" style="width:150px">
-        <canvas id="obQr2" width="150" height="150"></canvas></div></div>
-      <div class="share-row">${shareBtns(a, false)}</div>
+      <div class="field">
+        <label>Your referral code</label>
+        <input class="inp" value="${esc(a.code)}" readonly>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Share</label>
+        <div class="share-row">${shareBtns(a, false)}</div>
+      </div>
       <div class="actions">
         <button class="obtn obtn-pri" data-onb="__done">Go to my dashboard</button>
       </div>
-      <div class="legalnote">Your dashboard lives at <b>${DASH_URL}</b>.</div>`
+      <div class="legalnote">The QR is a real, scannable code — point a phone at it.
+        Your dashboard lives at <b>${DASH_URL}</b>.</div>`
   });
 };
-ONB_AFTER.share = () => drawQR(document.getElementById('obQr2'), 'https://' + advisorUrl(state.advisor));
+ONB_AFTER.link = () => drawQR(document.getElementById('obQr'), 'https://' + advisorUrl(state.advisor));
 
 function goOnb(id){
   /* Sign in — mock: any credentials return the established advisor. */
@@ -1474,7 +1498,7 @@ function vCustomer(){
   ].map(([t,d])=>`<div class="tl-i"><div class="tl-t">${t}</div><div class="tl-d">${d}</div></div>`).join('');
 
   return `
-    <button class="btn btn-sm" data-go="customers" style="margin-bottom:var(--v4-space-4)">‹ Customers</button>
+    ${backBtn('Back')}
     <div class="page-head between">
       <div><h1>${esc(c.name)}</h1>
         <p class="lede">${esc(c.email)} · ${c.phone} · ${c.country}</p></div>
@@ -1724,6 +1748,7 @@ function vLanding(){
      so by the time this view is reachable the slug always exists. */
   const a = state.advisor, url = advisorUrl(a);
   return `
+    ${backBtn('Back')}
     <div class="page-head"><h1>Landing Page</h1>
       <p class="lede">Your personalised page at <b>${esc(url)}</b>. Every signup through it is tagged to you.</p></div>
     <div class="grid2">
@@ -1995,7 +2020,7 @@ function toast(msg){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-onb],[data-region],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-close],[data-scen],[data-onb],[data-region],[data-back],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
     '[data-notif],[data-readall],[data-audit],[data-dl]');
   const panel = document.getElementById('panel');
   if(!t){
@@ -2004,6 +2029,7 @@ document.addEventListener('click', e => {
     return;
   }
   if(t.dataset.audit) audit(t.dataset.audit, state.arg || advisorUrl(state.advisor));
+  if(t.dataset.back) return goBack();
   if(t.dataset.go)   return go(t.dataset.go);
   if(t.dataset.cust){ audit('Viewed customer profile', t.dataset.cust); return go('customer', t.dataset.cust); }
   if(t.dataset.lead){ state.arg=t.dataset.lead; state.tab='notes';
@@ -2021,7 +2047,16 @@ document.addEventListener('click', e => {
   if(t.dataset.copy){ navigator.clipboard?.writeText(t.dataset.copy);
     audit('Copied landing page link', advisorUrl(state.advisor)); return toast('Link copied'); }
   if(t.dataset.scen){ loadScenario(t.dataset.scen); return render(); }
-  if(t.dataset.region){ state.advisor.country = t.dataset.region; return render(); }
+  /* Selecting a region updates in place — no re-render, so the screen doesn't
+     flash and the advisor just carries on. */
+  if(t.dataset.region){
+    state.advisor.country = t.dataset.region;
+    document.querySelectorAll('[data-region]').forEach(el =>
+      el.classList.toggle('sel', el.dataset.region === t.dataset.region));
+    const next = document.querySelector('[data-onb="verify"]');
+    if(next) next.disabled = false;
+    return;
+  }
   if(t.dataset.onb) return goOnb(t.dataset.onb);
   if(t.dataset.filter){
     if(t.dataset.filter==='__clear'){ state.filters.clear(); state.q=''; }
