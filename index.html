@@ -393,6 +393,13 @@ body:not(.onboarding) #onbRoot{display:none}
 .actions{margin-top:var(--v4-space-5);display:flex;flex-direction:column;gap:var(--v4-space-3)}
 .legalnote{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:var(--v4-space-3)}
 .center-link{text-align:center;font-size:13px;color:var(--muted);margin-top:var(--v4-space-4)}
+/* Back sits inline, immediately left of the heading. */
+.h1-back{display:flex;align-items:center;gap:var(--v4-space-3)}
+.back-i{width:32px;height:32px;flex:none;border-radius:var(--v4-radius-full);
+  border:1px solid var(--line);background:var(--surface);color:var(--muted);
+  display:grid;place-items:center;font-size:19px;line-height:1;padding:0 2px 3px 0;
+  transition:all var(--v4-duration-fast) var(--v4-easing-standard)}
+.back-i:hover{background:var(--v4-navy-50);color:var(--text);border-color:var(--v4-navy-200)}
 .back-btn{width:34px;height:34px;border-radius:var(--v4-radius-full);border:1px solid var(--line);
   background:var(--surface);display:grid;place-items:center;font-size:15px;color:var(--muted)}
 .back-btn:hover{background:var(--v4-navy-50)}
@@ -459,9 +466,6 @@ body:not(.onboarding) #onbRoot{display:none}
 .protobar button.on{background:var(--v4-teal-400);color:var(--v4-teal-950)}
 .protobar .pb-note{color:var(--v4-navy-300)}
 
-.screen-anim > *{animation:screenIn .34s cubic-bezier(.2,.7,.2,1) both}
-@keyframes screenIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){.screen-anim > *{animation:none}}
 @media(max-width:900px){.onb__brand{display:none}.onb__form{flex:1 1 100%}}
 </style>
 </head>
@@ -486,7 +490,7 @@ body:not(.onboarding) #onbRoot{display:none}
     <span class="tag">Advisor</span>
   </div>
   <div class="tb-right">
-    <div class="seg" id="seg"><b>Demo</b>
+    <div class="seg" id="seg">
       <button data-scen="new">New advisor</button>
       <button data-scen="est">Established</button>
     </div>
@@ -736,7 +740,7 @@ const AUDIT_EST = [
 const state = {
   scen:'est', route:'dashboard', arg:null,
   onb:null, onboarded:true,      // onboarded=false -> the app shell does not exist yet
-  regErr:null,
+  regErr:null, backTo:null,
   q:'', filters:new Set(), sort:{k:'signup',d:-1}, tab:'notes',
   advisor:null, leads:[], customers:[], notifs:[], audit:[], crm:{}
 };
@@ -797,8 +801,7 @@ const ICONS = {
   analytics:'M3 14.5 7.5 9l3.5 3.5L17 5.5M17 5.5h-3.5M17 5.5V9',
   landing:'M3 6.5h14M3 6.5v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9M3 6.5 4.5 4h11L17 6.5M8 10h4',
   profile:'M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.5 6.5c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5',
-  audit:'M5 3.5h7l3 3v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1ZM11.5 3.5V7H15M7 10h6M7 13h4',
-  roadmap:'M5 17V4M5 4h9l-2 3 2 3H5'
+  audit:'M5 3.5h7l3 3v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1ZM11.5 3.5V7H15M7 10h6M7 13h4'
 };
 const navIcon = k => `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"
   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICONS[k]}"/></svg>`;
@@ -813,8 +816,7 @@ const NAV = [
   {id:'landing',label:'Landing Page',ic:'landing'},
   {id:'profile',label:'My Profile',ic:'profile'},
   {sep:'Compliance'},
-  {id:'audit',label:'Audit Log',ic:'audit'},
-  {id:'roadmap',label:'Roadmap',ic:'roadmap'}
+  {id:'audit',label:'Audit Log',ic:'audit'}
 ];
 function renderNav(){
   document.getElementById('nav').innerHTML = NAV.map(n => n.sep
@@ -825,22 +827,25 @@ function renderNav(){
     ? 'Scenario A — just onboarded, no leads yet. Switch scenario to re-run onboarding.'
     : 'Scenario B — an established advisor with 8 leads and 5 customers.';
 }
-/* Back navigation for the signed-in app: every go() remembers where you came
-   from, so drill-downs (Preview my Client Platform, a customer profile) can
-   return to the screen that launched them rather than guessing. */
-const navHist = [];
-function go(id,arg){
-  if(state.route && state.route !== id) navHist.push({r:state.route, a:state.arg});
+/* Back is a function of HOW you got here, not which page you're on.
+   state.backTo is set only by controls that drill in (Preview my Client
+   Platform, opening a customer) and cleared by any sidebar nav click, so
+   top-level destinations never show a Back they don't need. */
+const ROUTE_LABEL = {dashboard:'Dashboard', leads:'Leads', customers:'Customers',
+  risk:'Risk Profiles', portfolios:'Portfolios', analytics:'Analytics',
+  landing:'Landing Page', profile:'My Profile', audit:'Audit Log'};
+function go(id, arg, backTo){
+  state.backTo = backTo || null;
   state.route=id; state.arg=arg||null; state.tab='notes'; window.scrollTo(0,0); render();
 }
 function goBack(){
-  const p = navHist.pop();
-  state.route = p ? p.r : 'dashboard';
-  state.arg   = p ? p.a : null;
-  state.tab='notes'; window.scrollTo(0,0); render();
+  const to = state.backTo || 'dashboard';
+  go(to, null, null);
 }
-const backBtn = label => `<button class="btn btn-sm" data-back="1"
-  style="margin-bottom:var(--v4-space-4)">‹ ${label}</button>`;
+/* Rendered inline, immediately left of the <h1>. */
+const backArrow = () => state.backTo
+  ? `<button class="back-i" data-back="1" aria-label="Back to ${ROUTE_LABEL[state.backTo]||'previous'}"
+      title="Back to ${ROUTE_LABEL[state.backTo]||'previous'}">‹</button>` : '';
 
 /* =====================================================================
    Shared bits
@@ -896,7 +901,7 @@ function slugCheck(v){
    scenario switcher lives here rather than in an app topbar the advisor
    should not be able to see yet. */
 function protobar(note){
-  return `<div class="protobar"><b>Prototype</b>
+  return `<div class="protobar">
     <button data-scen="new" class="${state.scen==='new'?'on':''}">New advisor</button>
     <button data-scen="est" class="${state.scen==='est'?'on':''}">Established</button>
     <span class="pb-note">${note||''}</span></div>`;
@@ -955,10 +960,9 @@ ONB.entry = () => onbShell({
       <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-teal"/></svg>
       <span>Vault22 <b>Advisor</b></span>
     </div>
-    <h1 class="entry-title">Grow your practice on Vault22</h1>
-    <p class="onb-sub" style="font-size:15px;max-width:52ch">Get your own branded page and QR code.
-      Share them, and everyone who signs up through your link becomes your lead — tracked all the
-      way from registration to first investment.</p>
+    <h1 class="entry-title">Grow your advisory business on Vault22</h1>
+    <p class="onb-sub" style="font-size:15px;max-width:52ch">Acquire new clients, manage
+      relationships, and earn recurring revenue—all from one platform.</p>
     <div class="entry-list">
       ${[['Your own page','On {name}.advisor.vault22.com, branded to you'],
          ['A link and a QR code','Every signup through them is tagged to you'],
@@ -985,7 +989,7 @@ ONB.signin = () => onbShell({
       <input class="inp" type="email" placeholder="demo@gmail.com"></div>
     <div class="field" style="margin-bottom:var(--v4-space-2)"><label>Password</label>
       <input class="inp" type="password" placeholder="••••••••"></div>
-    <div style="text-align:right"><a class="link-a" data-toast="Password reset is stubbed — no backend in the prototype.">Forgot password?</a></div>
+    <div style="text-align:right"><a class="link-a" data-stub="Reset your password|In the real build this emails a one-time reset link to your registered address and returns you here to sign in.|Prototype: no backend, so no email is sent.">Forgot password?</a></div>
     <div class="actions"><button class="obtn obtn-pri" data-onb="__signin">Sign in</button></div>
     <div class="center-link">New here? <a class="link-a" data-onb="register">Create an advisor account</a></div>
     <div class="legalnote">Prototype: any credentials sign you in as Aishani Atri, the established advisor.</div>`
@@ -1002,10 +1006,10 @@ ONB.register = () => {
       <p class="onb-sub">Three details to get started. You can add the rest later.</p>
       <div class="field" style="margin-top:var(--v4-space-5)"><label>Full name</label>
         <input class="inp" id="r_name" value="${esc(a.name)}" placeholder="Jane Smith" autocomplete="off">
-        ${state.regErr==='name' ? `<div class="onb-check bad">Enter your full name</div>` : ''}</div>
+        <div class="onb-check bad" id="err_name"></div></div>
       <div class="field"><label>Email address</label>
         <input class="inp" id="r_email" type="email" value="${esc(a.email)}" placeholder="demo@gmail.com" autocomplete="off">
-        ${state.regErr==='email' ? `<div class="onb-check bad">${a.email ? 'That doesn’t look like an email address' : 'Enter your email address'}</div>` : ''}</div>
+        <div class="onb-check bad" id="err_email"></div></div>
       <div class="field"><label>Password</label>
         <input class="inp" type="password" placeholder="••••••••"></div>
       <details style="margin-bottom:var(--v4-space-3)">
@@ -1145,15 +1149,28 @@ function goOnb(id){
     if(n && em){
       const nv = n.value.trim(), ev = em.value.trim();
       state.advisor.name = nv; state.advisor.email = ev;   // keep what they typed
-      if(!nv){ state.regErr = 'name'; return render(); }
-      if(!EMAIL_RE.test(ev)){ state.regErr = 'email'; return render(); }
+      /* Inline validation updates only the error node — re-rendering the whole
+         screen here flashed and dropped the user's focus mid-form. */
+      const setErr = (which, msg) => {
+        const el = document.getElementById('err_' + which);
+        if(el) el.textContent = msg || '';
+      };
+      setErr('name',''); setErr('email','');
+      if(!nv){ state.regErr='name'; setErr('name','Enter your full name'); n.focus(); return; }
+      if(!EMAIL_RE.test(ev)){
+        state.regErr='email';
+        setErr('email', ev ? 'That doesn’t look like an email address' : 'Enter your email address');
+        em.focus(); return;
+      }
       state.regErr = null;
       state.advisor.initials = initialsOf(nv);
       state.advisor.code     = refCodeOf(nv);
       audit('Created advisor account', ev);
     }
   }
-  if(id === 'verify' && !state.advisor.country) return;   // region is required
+  if(id === 'verify' && !state.advisor.country){
+    return toast('Choose a region to continue');     // never a silent no-op
+  }
 
   if(id === '__done'){
     state.onboarded = true;
@@ -1209,7 +1226,7 @@ function vDashboard(){
     <div class="card card-p between">
       <div><h2>${esc(advisorUrl(a))}</h2>
         <p class="lede">Every signup through this link is tagged to you.</p></div>
-      <div class="row"><button class="btn" data-go="landing">Preview my Client Platform</button>
+      <div class="row"><button class="btn" data-go="landing" data-backto="1">Preview my Client Platform</button>
         <button class="btn btn-pri" data-share="1">Share my Client Platform</button></div>
     </div>
     <div class="card mt6">
@@ -1235,7 +1252,7 @@ function vDashboard(){
       <div><h2>${esc(advisorUrl(a))}</h2>
         <p class="lede">Your landing page is live — every signup through it is tagged to you.</p></div>
       <div class="row">
-        <button class="btn" data-go="landing">Preview my Client Platform</button>
+        <button class="btn" data-go="landing" data-backto="1">Preview my Client Platform</button>
         <button class="btn btn-pri" data-share="1">Share my Client Platform</button>
       </div>
     </div>
@@ -1255,8 +1272,7 @@ function vDashboard(){
     <div class="kpis mt">
       ${kpi('Pending KYC', pkyc, 'Leads before KYC Approved')}
       ${kpi('Pending Risk Assessments', prisk, 'Awaiting completion')}
-    </div>
-    ${consent()}`;
+    </div>`;
 }
 
 /* =====================================================================
@@ -1323,7 +1339,7 @@ function vLeads(){
         <span style="color:var(--muted)">Minimum net worth: <b class="num">${money(QUAL.nw)}</b>
           &nbsp;OR&nbsp; Minimum monthly savings: <b class="num">${money(QUAL.sav)}</b></span>
       </div>
-      <button class="btn btn-sm" data-toast="Threshold editing is out of scope for the prototype — the rule is shown so the split is legible.">Edit settings</button>
+      <button class="btn btn-sm" data-stub="Qualified lead filtering|In the real build you set the thresholds that split qualified from unqualified leads — minimum net worth, minimum monthly savings — and the Leads list and dashboard counts update against your rule.|Prototype: the rule is shown so the split is legible, but the thresholds are fixed.">Edit settings</button>
     </div>
 
     <div class="card mt">
@@ -1498,9 +1514,8 @@ function vCustomer(){
   ].map(([t,d])=>`<div class="tl-i"><div class="tl-t">${t}</div><div class="tl-d">${d}</div></div>`).join('');
 
   return `
-    ${backBtn('Back')}
     <div class="page-head between">
-      <div><h1>${esc(c.name)}</h1>
+      <div><h1 class="h1-back">${backArrow()}${esc(c.name)}</h1>
         <p class="lede">${esc(c.email)} · ${c.phone} · ${c.country}</p></div>
       <div class="row">
         <a class="btn btn-sm" href="tel:${c.phone}" data-audit="Called customer">Call</a>
@@ -1571,9 +1586,9 @@ function vCustomer(){
           <div class="list-row"><span>Identity number<div class="sub num">${maskId(c.idNum)}</div></span>
             <span class="pill p-gray">Masked</span></div>
           <div class="list-row"><span>KYC pack</span>
-            <button class="btn btn-sm" data-toast="View-only. Advisors cannot modify KYC information (§15).">View</button></div>
+            <button class="btn btn-sm" data-stub="KYC pack|In the real build this opens the client's KYC documents read-only, and the view itself is written to the audit log.|§15: advisors cannot modify KYC information, and identity numbers stay masked.">View</button></div>
           <div class="list-row"><span>Signed agreements</span>
-            <button class="btn btn-sm" data-toast="View-only. Advisors cannot modify KYC information (§15).">View</button></div>
+            <button class="btn btn-sm" data-stub="KYC pack|In the real build this opens the client's KYC documents read-only, and the view itself is written to the audit log.|§15: advisors cannot modify KYC information, and identity numbers stay masked.">View</button></div>
         </div>
       </div>
     </div>
@@ -1640,7 +1655,7 @@ function vPortfolios(){
           return `<tr><td class="nm">${p.t}</td><td>${p.n}</td>
             <td class="num">${p.r}%</td><td class="num">${p.v}%</td>
             <td class="num">${n||dash}</td>
-            <td><button class="btn btn-sm" data-toast="Portfolio configuration is Astute-side; the doc does not spec it. Shown for parity.">Edit</button></td></tr>`;
+            <td><button class="btn btn-sm" data-stub="Edit portfolio|In the real build this opens the model portfolio: name, target allocation, expected return and volatility, and which risk profile it maps to.|Not specified in the advisor doc — shown for parity with the Astute POC, so it is deliberately not built.">Edit</button></td></tr>`;
         }).join('')}</tbody></table></div>
     </div>
     <div class="card card-p mt6">
@@ -1748,8 +1763,7 @@ function vLanding(){
      so by the time this view is reachable the slug always exists. */
   const a = state.advisor, url = advisorUrl(a);
   return `
-    ${backBtn('Back')}
-    <div class="page-head"><h1>Landing Page</h1>
+    <div class="page-head"><h1 class="h1-back">${backArrow()}Landing Page</h1>
       <p class="lede">Your personalised page at <b>${esc(url)}</b>. Every signup through it is tagged to you.</p></div>
     <div class="grid2">
       <div class="card card-p">
@@ -1766,7 +1780,7 @@ function vLanding(){
             <div class="svc" style="margin-bottom:var(--v4-space-5)">
               ${a.services.map(s=>`<span class="pill p-teal">${esc(s)}</span>`).join('')}</div>
             <div class="between">
-              <button class="btn btn-teal" data-toast="This is the prospect's entry point — it starts the standard Vault22 onboarding, unchanged.">Start Investing</button>
+              <button class="btn btn-teal" data-stub="Start Investing|This is the prospect's entry point. It starts the standard Vault22 onboarding — the same journey as today, with the advisor's link attached so the signup is tagged to them.|Per the 17 Jul stand-up the investor journey is unchanged, so it is deliberately not rebuilt here.">Start Investing</button>
               <div class="sub">${esc(a.email)} · ${esc(a.phoneFmt)}</div>
             </div>
           </div>
@@ -1801,7 +1815,7 @@ function vLanding(){
             <div class="row"><input type="color" value="#01c38d" style="width:44px;height:40px;border:1px solid var(--line);border-radius:var(--v4-radius-md);background:#fff">
               <input class="inp" value="#01c38d"></div></div>
           <div class="field" style="margin-bottom:0"><label>Banner image</label>
-            <button class="btn" style="width:100%" data-toast="Upload is stubbed — the prototype has no backend.">Upload banner</button></div>
+            <button class="btn" style="width:100%" data-stub="Upload an image|In the real build this opens a file picker, validates the image (JPEG or PNG, min 300×300), stores it and updates your landing page preview straight away.|Prototype: no backend, so there is nowhere to upload to.">Upload banner</button></div>
         </div>
       </div>
     </div>`;
@@ -1820,13 +1834,13 @@ function vProfile(){
         <div class="sec-t">Profile</div>
         <div class="row" style="margin-bottom:var(--v4-space-5)">
           <span class="ava" style="width:64px;height:64px;font-size:20px">${a.initials}</span>
-          <div><button class="btn btn-sm" data-toast="Upload is stubbed — the prototype has no backend.">Upload photo</button>
+          <div><button class="btn btn-sm" data-stub="Upload an image|In the real build this opens a file picker, validates the image (JPEG or PNG, min 300×300), stores it and updates your landing page preview straight away.|Prototype: no backend, so there is nowhere to upload to.">Upload photo</button>
             <div class="sub" style="margin-top:6px">JPEG or PNG, min 300×300</div></div>
         </div>
         <div class="field"><label>Full name</label><input class="inp" value="${esc(a.name)}"></div>
         <div class="field"><label>Biography</label><textarea class="inp" rows="4">${esc(a.bio)}</textarea></div>
         <div class="field" style="margin-bottom:0"><label>Company logo</label>
-          <button class="btn" style="width:100%" data-toast="Upload is stubbed — the prototype has no backend.">Upload logo</button></div>
+          <button class="btn" style="width:100%" data-stub="Upload an image|In the real build this opens a file picker, validates the image (JPEG or PNG, min 300×300), stores it and updates your landing page preview straight away.|Prototype: no backend, so there is nowhere to upload to.">Upload logo</button></div>
       </div>
       <div>
         <div class="card card-p">
@@ -1850,13 +1864,13 @@ function vProfile(){
           <div class="list-row"><span>Identity number</span><span class="sub num">${maskId(a.idNum)}</span></div>
           <div class="list-row"><span>Licence</span><span class="sub">${esc(a.licence)||dash}</span></div>
         </div>
-        <button class="btn btn-pri mt" style="width:100%" data-toast="Saved — nothing persists in the prototype.">Save profile</button>
+        <button class="btn btn-pri mt" style="width:100%" data-stub="Save profile|In the real build this saves your profile and republishes your landing page immediately.|Prototype: mock data only, so nothing persists across a reload.">Save profile</button>
       </div>
     </div>`;
 }
 
 /* =====================================================================
-   Audit log (§15) + roadmap
+   Audit log (§15)
    ===================================================================== */
 function vAudit(){
   return `
@@ -1882,31 +1896,21 @@ function vAudit(){
       </table></div>
     </div>`;
 }
-function vRoadmap(){
-  const R = [['Lead Management','Lead assignment and re-assignment','Handles advisor changes'],
-    ['Communication','Built-in email, WhatsApp, SMS logging','Keeps history in one place'],
-    ['Calendar','Appointment scheduling','Easier client meetings'],
-    ['Portfolio Reviews','Automatic review reminders','Supports ongoing advice'],
-    ['Referrals','Track referrals by advisor and campaign','Measures acquisition'],
-    ['Gamification','Advisor leaderboard and achievements','Encourages engagement'],
-    ['Commission','Commission and fee dashboard','Transparency into earnings'],
-    ['Team Support','Multi-advisor organisations with managers','Enterprise distribution'],
-    ['Marketing','Custom landing pages, campaign tracking, UTM','Measures marketing ROI'],
-    ['Consent','Client consent management for data sharing','Privacy regulations']];
-  return `
-    <div class="page-head"><h1>Roadmap</h1>
-      <p class="lede">From the doc's "Future plans" table — read-only, deliberately not built.
-        Consent management is the one to watch: it is what the 17 Jul stand-up parked.</p></div>
-    <div class="card"><div class="tbl-scroll"><table>
-      <thead><tr><th>Area</th><th>Feature</th><th>Benefit</th><th></th></tr></thead>
-      <tbody>${R.map(([a,f,b])=>`<tr><td class="nm">${a}</td><td>${f}</td>
-        <td class="sub">${b}</td><td><span class="pill p-gray">Future</span></td></tr>`).join('')}</tbody>
-    </table></div></div>`;
-}
 
 /* =====================================================================
    Modals
    ===================================================================== */
+/* An honest terminal state: says plainly what the real build would do, rather
+   than a toast that fires and leaves the user where they were. */
+function stubModal(title, body, note){
+  openModal(`
+    <div class="between" style="margin-bottom:var(--v4-space-2)">
+      <h2>${title}</h2><button class="x" data-close="1">×</button></div>
+    <p class="lede">${body}</p>
+    ${note ? `<div class="consent" style="margin-top:var(--v4-space-4)">${note}</div>` : ''}
+    <div class="actions" style="margin-top:var(--v4-space-5)">
+      <button class="obtn obtn-pri" data-close="1">Got it</button></div>`);
+}
 function shareModal(){
   const a = state.advisor, url = advisorUrl(a);
   return `
@@ -1941,7 +1945,7 @@ function leadModal(){
       <a class="btn btn-sm" href="tel:${l.phone}" data-audit="Called lead">Call</a>
       <a class="btn btn-sm" href="mailto:${l.email}" data-audit="Emailed lead">Email</a>
       <a class="btn btn-sm" target="_blank" rel="noopener" href="${wa}" data-audit="WhatsApped lead">WhatsApp</a>
-      <button class="btn btn-sm" data-toast="Would open ${esc(state.advisor.calendar||'your calendar link')} — scheduling is roadmap (§Future).">Schedule Meeting</button>
+      <button class="btn btn-sm" data-stub="Schedule a meeting|In the real build this opens your calendar booking link (${esc(state.advisor.calendar||'set one in My Profile')}) with the client's details prefilled, and logs the meeting against them.|Appointment scheduling is Future plans in the doc, so it is not built here.">Schedule Meeting</button>
     </div>
     <div class="sec-t" style="margin-top:var(--v4-space-6)">Lead stage</div>
     ${STAGES.map((s,i)=>`<div class="list-row" style="padding:7px 0">
@@ -1989,7 +1993,7 @@ function togglePanel(){
    ===================================================================== */
 const VIEWS = {dashboard:vDashboard, leads:vLeads, customers:vCustomers, customer:vCustomer,
   risk:vRisk, portfolios:vPortfolios, analytics:vAnalytics, landing:vLanding,
-  profile:vProfile, audit:vAudit, roadmap:vRoadmap};
+  profile:vProfile, audit:vAudit};
 
 function render(){
   /* Onboarding runs before the dashboard exists: no topbar, sidebar or nav. */
@@ -1997,7 +2001,6 @@ function render(){
     document.body.classList.add('onboarding');
     const r = document.getElementById('onbRoot');
     r.innerHTML = (ONB[state.onb] || ONB.entry)();
-    r.classList.remove('screen-anim'); void r.offsetWidth; r.classList.add('screen-anim');
     if(ONB_AFTER[state.onb]) ONB_AFTER[state.onb]();
     return;
   }
@@ -2020,7 +2023,7 @@ function toast(msg){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-onb],[data-region],[data-back],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-close],[data-scen],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
     '[data-notif],[data-readall],[data-audit],[data-dl]');
   const panel = document.getElementById('panel');
   if(!t){
@@ -2030,8 +2033,8 @@ document.addEventListener('click', e => {
   }
   if(t.dataset.audit) audit(t.dataset.audit, state.arg || advisorUrl(state.advisor));
   if(t.dataset.back) return goBack();
-  if(t.dataset.go)   return go(t.dataset.go);
-  if(t.dataset.cust){ audit('Viewed customer profile', t.dataset.cust); return go('customer', t.dataset.cust); }
+  if(t.dataset.go)   return go(t.dataset.go, null, t.dataset.backto ? state.route : null);
+  if(t.dataset.cust){ audit('Viewed customer profile', t.dataset.cust); return go('customer', t.dataset.cust, state.route); }
   if(t.dataset.lead){ state.arg=t.dataset.lead; state.tab='notes';
     audit('Viewed lead', t.dataset.lead); return openModal(leadModal(), true); }
   if(t.dataset.share) return openModal(shareModal());
@@ -2094,11 +2097,15 @@ document.addEventListener('click', e => {
     const n = state.notifs.find(x=>x.id===t.dataset.notif);
     n.unread=false; panel.classList.remove('open');
     const [kind,id]=n.go;
-    if(kind==='customer'){ go('customer', id); }
+    if(kind==='customer'){ go('customer', id, state.route); }
     else { state.arg=id; state.tab='notes'; render(); openModal(leadModal(), true); }
     return renderBell();
   }
   if(t.dataset.readall){ state.notifs.forEach(n=>n.unread=false); renderBell(); return togglePanel(), togglePanel(); }
+  if(t.dataset.stub){
+    const [title, body, note] = t.dataset.stub.split('|');
+    return stubModal(title, body, note);
+  }
   if(t.dataset.toast) return toast(t.dataset.toast);
 });
 
