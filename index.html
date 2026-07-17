@@ -1839,9 +1839,8 @@ ONB.verify = () => {
           ? row('Mobile number', esc(a.phoneFmt||'Mobile'),'Verified','p-green')
           : `<div class="list-row"><span><b>Mobile number</b>
                <div class="sub">Optional${a.phoneFmt ? ' · ' + esc(a.phoneFmt) : ''}</div></span>
-               <span class="row" style="gap:var(--v4-space-2)">
-                 ${a.phoneFmt ? '<button class="btn btn-sm" data-votp="verify">Verify</button>' : ''}
-                 <span class="pill p-gray">Optional</span></span></div>`}
+               ${a.phoneFmt ? '<button class="btn btn-sm" data-votp="verify">Verify</button>'
+                            : '<span class="pill p-gray">Optional</span>'}</div>`}
 
         <label class="list-row" style="cursor:pointer"><span><b>Terms &amp; Conditions</b>
           <div class="sub">Required</div></span>
