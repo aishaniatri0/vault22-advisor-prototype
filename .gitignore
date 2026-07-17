@@ -1,20 +1,22 @@
-# Publish rule: only the prototype and its references go public.
-# Prompts, audits and working material stay local.
-PROMPT.md
-PROMPT-ONBOARDING.md
-PROMPT-FIXES.md
-PROMPT-AUDIT.md
-PROMPT-FINAL.md
+# Publish rule: only the prototype and the assets it uses go public.
+# Prompts, specs, audits and working material stay local.
+# (Insights-Todo/FIX-PROMPT.md: "only index.html (and its assets/js/css) go public")
+_archive/
+BUILD-PROMPT.md
+SPEC-V2.md
 AUDIT.md
 SPEC-AUDIT.md
 standup-transcript-17jul.txt
 live-app-tokens.css
 DESIGN-TOKENS.css
 qr.js
+reference/
 .DS_Store
 
-# only the logo the prototype actually uses
+# only the assets the prototype actually uses
 assets/*
 !assets/img/
 assets/img/*
 !assets/img/vault22-logo.png
+!assets/img/auth-branding.png
+!assets/img/Vault22_Block_Icon_Black.png

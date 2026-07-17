@@ -79,6 +79,12 @@
      defines but the live chrome does not use, the chrome is Tailwind). */
   --surface:#ffffff;
   --canvas:var(--page);      /* #F7F8FA, live app background */
+  --live-header:#F5F5F5;     /* header: h-20 bg-[#F5F5F5] — NOT white */
+  --live-tile:#F1F2F4;       /* sub-tile fill, same grey as the live input */
+  --live-tile-hover:#E8E9EB; /* hover:bg-[#E8E9EB] */
+  --live-head:#22252B;       /* section head: text-xl font-medium text-[#22252B] */
+  --live-label:#6C6F7C;      /* card label: text-base font-medium text-[#6C6F7C] */
+  --live-radius:12px;        /* rounded-xl */
   --line:var(--g-200);       /* #E5E7EB, live border on pills/cards */
   --text:var(--g-900);       /* #111827, live body text */
   --muted:var(--g-500);      /* #6B7280, live secondary text */
@@ -107,8 +113,8 @@ a{color:var(--v4-info-dark)}
 .hidden{display:none!important}
 
 /* ---------- Topbar ---------- */
-/* Live app: 80px white sticky header, 28px side padding, logo img at 34px. */
-.topbar{position:fixed;top:0;left:0;right:0;height:80px;background:var(--surface);
+/* Live app: h-20 (80px) header on #F5F5F5, 28px side padding. */
+.topbar{position:fixed;top:0;left:0;right:0;height:80px;background:var(--live-header);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 28px;z-index:20;gap:var(--v4-space-4)}
 .logo{display:flex;align-items:center;gap:10px}
@@ -169,7 +175,7 @@ a{color:var(--v4-info-dark)}
 /* ---------- Layout ---------- */
 .main{margin-left:calc(var(--sidebar-w) + var(--v4-space-10));padding:calc(72px + var(--v4-space-6)) var(--v4-space-8) var(--v4-space-20);
   max-width:1320px}
-h1{font-size:28px;font-weight:700;letter-spacing:-.7px}
+h1{font-size:32px;font-weight:600;line-height:40px;letter-spacing:0;color:var(--text)}
 h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 .lede{color:var(--muted);font-size:14px;line-height:1.6;max-width:76ch;margin-top:var(--v4-space-1)}
 .page-head{margin-bottom:var(--v4-space-6)}
@@ -180,17 +186,22 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 @media(max-width:1100px){.grid2{grid-template-columns:1fr}}
 
 /* ---------- Cards ---------- */
-.card{background:var(--surface);border-radius:var(--v4-radius-xl);box-shadow:var(--v4-shadow-sm)}
+.card{background:var(--surface);border-radius:var(--live-radius)}
 .card-p{padding:var(--v4-space-6)}
-.sec-t{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--v4-navy-300);margin-bottom:var(--v4-space-4)}
+.sec-t{font-size:20px;font-weight:500;color:var(--live-head);
+  margin-bottom:var(--v4-space-4);letter-spacing:0}
 
+/* Live sub-tile: bg-[#F1F2F4] rounded-xl p-3, h-[72px]. The live app's tile
+   language for a figure inside a card. */
+.subtile{background:var(--live-tile);border-radius:var(--live-radius);padding:var(--v4-space-3);
+  transition:background var(--v4-duration-fast) var(--v4-easing-standard)}
+.subtile:hover{background:var(--live-tile-hover)}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--v4-space-4)}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
 
-.kpi{background:var(--surface);border-radius:var(--v4-radius-xl);padding:var(--v4-space-5);box-shadow:var(--v4-shadow-sm)}
-.kpi .k{font-size:12.5px;color:var(--muted);font-weight:500;margin-bottom:var(--v4-space-2)}
-.kpi .v{font-size:var(--v4-number-medium);font-weight:700;letter-spacing:-1.4px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi{background:var(--surface);border-radius:var(--live-radius);padding:var(--v4-space-5)}
+.kpi .k{font-size:16px;color:var(--live-label);font-weight:500;margin-bottom:var(--v4-space-2)}
+.kpi .v{font-size:32px;font-weight:600;letter-spacing:0;line-height:1.25;font-variant-numeric:tabular-nums}
 .kpi .d{font-size:12px;color:var(--v4-navy-300);margin-top:var(--v4-space-2)}
 .kpi.hero{background:var(--v4-navy-700)}
 .kpi.hero .k{color:var(--v4-navy-200)} .kpi.hero .v{color:#fff} .kpi.hero .d{color:var(--v4-navy-300)}
@@ -378,11 +389,12 @@ body:not(.onboarding) #onbRoot{display:none}
 .onb__formwrap{width:100%;max-width:428px;margin:0 auto;flex:1;
   display:flex;flex-direction:column;justify-content:center}
 .onb__top{display:flex;align-items:center;gap:var(--v4-space-3);min-height:34px}
+/* Live serves the entire green panel (mark, wordmark, shareholder logos) as one
+   image, so we use the same image rather than rebuilding it from parts. */
 .onb__brand{flex:1 1 59%;margin:var(--v4-space-4) var(--v4-space-4) var(--v4-space-4) 0;
-  border-radius:var(--v4-radius-2xl);
-  background:linear-gradient(158deg,var(--v4-teal-500) 0%,var(--v4-teal-600) 52%,var(--v4-teal-800) 100%);
-  color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:var(--v4-space-5);padding:var(--v4-space-12);position:relative}
+  border-radius:var(--v4-radius-2xl);overflow:hidden;display:flex;
+  align-items:center;justify-content:center;background:var(--v4-teal-700)}
+.onb__brand img{width:100%;height:100%;object-fit:cover;display:block}
 .onb__brand .bmark{width:60px;height:60px}
 .onb__brand .bword{font-size:34px;font-weight:800;letter-spacing:-.5px;margin-top:-8px}
 .brand-tagline{text-align:center;font-size:15px;line-height:1.55;
@@ -416,9 +428,7 @@ body:not(.onboarding) #onbRoot{display:none}
 /* Live register head: app icon, centred title, centred subtitle, mb-10. */
 .onb-head{display:flex;flex-direction:column;align-items:center;text-align:center;
   margin-bottom:var(--v4-space-10)}
-.app-icon{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;
-  background:linear-gradient(150deg,var(--v4-teal-500),var(--v4-teal-700));margin-bottom:var(--v4-space-4)}
-.app-icon svg{width:34px;height:34px}
+.app-icon{width:64px;height:64px;border-radius:18px;margin-bottom:var(--v4-space-4);display:block}
 .onb-h1{font-size:30px;font-weight:700;letter-spacing:-.7px;color:var(--live-field-text)}
 .onb-hsub{font-size:14px;color:var(--live-sub);line-height:1.5;margin-top:var(--v4-space-2);
   max-width:42ch;padding:0 var(--v4-space-4)}
@@ -989,6 +999,8 @@ const NAV = [
   {sep:'My platform'},
   {id:'landing',label:'Landing Page',ic:'landing'},
   {id:'profile',label:'My Profile',ic:'profile'},
+  {sep:'Client view'},
+  {id:'clientadvisor',label:'Financial Advisor',ic:'profile'},
   {sep:'Compliance'},
   {id:'audit',label:'Audit Log',ic:'audit'}
 ];
@@ -1126,14 +1138,8 @@ function onbShell({body, segs, back, urlbar, wide}){
       <div class="onb__formwrap ${wide?'onb__formwrap--wide':''}">${progress}${body}</div>
     </div>
     <div class="onb__brand">
-      <svg class="bmark" viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-white"/></svg>
-      <div class="bword">Vault22</div>
-      <div class="brand-tagline">Grow your practice on the platform your clients already trust.
-        Your own page, your own link, every signup tracked back to you.</div>
-      <div class="shareholders">
-        <div class="sh-label">Our Shareholders</div>
-        <div class="sh-row"><span>SC Ventures</span><span>Old Mutual</span><span>Franklin Templeton</span></div>
-      </div>
+      <img src="assets/img/auth-branding.png"
+           alt="Vault22 - Our Shareholders: SC Ventures by Standard Chartered, Old Mutual, Franklin Templeton">
     </div>
   </div>`;
 }
@@ -1142,7 +1148,7 @@ function onbShell({body, segs, back, urlbar, wide}){
    "Welcome to Vault22" and a centred subtitle (text-sm #6B7280, mb-10). */
 const onbHead = (title, sub) => `
   <div class="onb-head">
-    <span class="app-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-white"/></svg></span>
+    <img class="app-icon" src="assets/img/Vault22_Block_Icon_Black.png" alt="">
     <h1 class="onb-h1">${title}</h1>
     ${sub ? `<p class="onb-hsub">${sub}</p>` : ''}
   </div>`;
@@ -1179,7 +1185,7 @@ ONB.entry = () => onbShell({
   wide: true,
   body: `
     <div class="onb-head" style="margin-bottom:var(--v4-space-8)">
-      <span class="app-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-white"/></svg></span>
+      <img class="app-icon" src="assets/img/Vault22_Block_Icon_Black.png" alt="">
       <h1 class="entry-title">Grow your advisory business on Vault22</h1>
       <p class="onb-hsub">Acquire new clients, manage relationships, and earn recurring
         revenue, all from one platform.</p>
@@ -2102,6 +2108,78 @@ function vProfile(){
 }
 
 /* =====================================================================
+   Financial Advisor section, inside the CLIENT's profile (§ Stephen's email:
+   "we'll also need a new Financial Advisor section within the user profile to
+   support the experience"). This is the investor side, not the advisor side —
+   every other view in this prototype is the advisor's, so it is framed
+   explicitly as what the client sees.
+   ===================================================================== */
+function vClientAdvisor(){
+  const a = state.advisor;
+  if(!state.customers.length) return `
+    <div class="page-head"><h1>Financial Advisor</h1>
+      <p class="lede">How you appear inside your client's own Vault22 profile.</p></div>
+    <div class="card"><div class="empty"><div class="em">◔</div><h3>No clients yet</h3>
+      <p>Once someone signs up through your link, this is the section they see in their profile.</p>
+      <button class="btn btn-teal" data-share="1">Share my link</button></div></div>`;
+  const c = state.customers[0];
+  const wa = 'https://wa.me/' + a.phone.replace(/\D/g,'') +
+             '?text=' + encodeURIComponent('Hi ' + a.name.split(' ')[0] + ', ');
+  return `
+    <div class="page-head"><h1>Financial Advisor</h1>
+      <p class="lede">This is the client side. It is what ${esc(c.name)} sees inside their own
+        Vault22 profile, not one of your advisor screens.</p></div>
+
+    <div class="consent" style="background:#eff6ff;border-color:#bfdbfe;color:#1e40af">
+      <span><b>Client's view.</b> Shown here so you can check how you appear. In the real build
+        this lives in the investor app under Profile, and the client cannot edit it.</span>
+    </div>
+
+    <div class="grid2 mt6">
+      <div class="card card-p">
+        <div class="sec-t">Your financial advisor</div>
+        <div class="row" style="align-items:flex-start;gap:var(--v4-space-4)">
+          <span class="ava" style="width:72px;height:72px;font-size:24px;flex:none">${a.initials}</span>
+          <div style="flex:1;min-width:0">
+            <h2 style="font-size:20px">${esc(a.name)}</h2>
+            <div class="sub" style="margin-top:2px">${esc(a.company)}</div>
+            <div class="svc" style="margin-top:var(--v4-space-3)">
+              <span class="pill p-gray">Licence ${esc(a.licence)}</span>
+              <span class="pill p-teal">Your advisor since ${c.since}</span>
+            </div>
+          </div>
+        </div>
+        <p class="lede" style="margin-top:var(--v4-space-4)">${esc(a.bio)}</p>
+        <div class="sec-t" style="margin-top:var(--v4-space-6)">Get in touch</div>
+        <div class="row" style="flex-wrap:wrap">
+          <a class="btn" href="tel:${a.phone}">Call</a>
+          <a class="btn" href="mailto:${esc(a.email)}">Email</a>
+          <a class="btn" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>
+          <button class="btn" data-stub="Book a meeting|In the real build this opens your advisor's calendar (${esc(a.calendar||'no link set')}) so the client can book a slot directly.|Prototype: no calendar integration.">Book a meeting</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card card-p">
+          <div class="sec-t">Contact</div>
+          <div class="list-row"><span>Email</span><span class="sub">${esc(a.email)}</span></div>
+          <div class="list-row"><span>Phone</span><span class="sub num">${esc(a.phoneFmt)}</span></div>
+          <div class="list-row"><span>Calendar</span><span class="sub">${esc(a.calendar||'n/a')}</span></div>
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">What your advisor can see</div>
+          <p class="lede" style="margin-bottom:var(--v4-space-3)">Kept deliberately plain, because
+            consent is still under review.</p>
+          <div class="list-row"><span>Your KYC status</span><span class="pill p-gray">View only</span></div>
+          <div class="list-row"><span>Your portfolio and holdings</span><span class="pill p-gray">View only</span></div>
+          <div class="list-row"><span>Change your portfolio</span><span class="pill p-red">Not without your say-so</span></div>
+          <div class="list-row"><span>Your identity number</span><span class="pill p-red">Masked</span></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* =====================================================================
    Audit log (§15)
    ===================================================================== */
 function vAudit(){
@@ -2229,7 +2307,7 @@ function togglePanel(){
    ===================================================================== */
 const VIEWS = {dashboard:vDashboard, leads:vLeads, customers:vCustomers, customer:vCustomer,
   risk:vRisk, portfolios:vPortfolios, analytics:vAnalytics, landing:vLanding,
-  profile:vProfile, audit:vAudit};
+  profile:vProfile, clientadvisor:vClientAdvisor, audit:vAudit};
 
 function render(){
   /* Onboarding runs before the dashboard exists: no topbar, sidebar or nav. */
