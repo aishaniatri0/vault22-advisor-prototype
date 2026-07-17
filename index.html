@@ -3,6 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- GitHub Pages serves HTML with Cache-Control: max-age=600, so a tab opened before a
+     deploy can show a stale build for up to 10 minutes. These ask the browser to
+     revalidate on navigation so a reload always fetches the current version. -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Vault22 Advisor Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1381,6 +1387,8 @@ function loadScenario(s){
 const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
+/* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
+const BUILD_VERSION = '2026-07-17.8';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -1629,6 +1637,8 @@ function protoDrawer(){
       </div>
       <p class="pd-note">Switching reloads the scenario and returns you to its
         starting screen. Nothing persists across a page reload.</p>
+      <p class="pd-note" style="opacity:.7">Build ${BUILD_VERSION}. If two tabs differ,
+        one is a cached copy: hard-refresh (⌘⇧R) to load this build.</p>
     </div>`;
 }
 
@@ -1837,8 +1847,7 @@ ONB.verify = () => {
           ? row('Mobile number', esc(a.phoneFmt||'Mobile'),'Verified','p-green')
           : `<div class="list-row"><span><b>Mobile number</b>
                <div class="sub">Optional${a.phoneFmt ? ' · ' + esc(a.phoneFmt) : ''}</div></span>
-               ${a.phoneFmt ? '<button class="btn btn-sm" data-votp="verify">Verify</button>'
-                            : '<span class="pill p-gray">Optional</span>'}</div>`}
+               <button class="btn btn-sm" data-votp="verify">Verify</button></div>`}
 
         <label class="list-row" style="cursor:pointer"><span><b>Terms &amp; Conditions</b>
           <div class="sub">Required</div></span>
