@@ -1,0 +1,16 @@
+# Internal working material — stays local, never published.
+# (Matches the other prototype repos: only the runnable prototype ships.)
+PROMPT.md
+PROMPT-ONBOARDING.md
+PROMPT-FIXES.md
+standup-transcript-17jul.txt
+live-app-tokens.css
+DESIGN-TOKENS.css
+qr.js
+.DS_Store
+
+# only the logo the prototype actually uses is published
+assets/*
+!assets/img/
+assets/img/*
+!assets/img/vault22-logo.png

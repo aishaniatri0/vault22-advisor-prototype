@@ -1,0 +1,2120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vault22 Advisor — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Vault22 Advisor — prototype
+   Tokens below are verbatim from the live app's shipped CSS bundle
+   (global-website.dev.vault22.com /_next/static/css/2344e4df61c424b4.css,
+   extracted 17 Jul 2026 -> DESIGN-TOKENS.css).
+   Surfaces are LIGHT: the live app's chrome is Tailwind-light (see
+   orchestrator ffl-v4 screenshots). --v4-surface-* in the token file are
+   dark-theme values used by .v4-card only, and are deliberately not used here.
+   ============================================================ */
+:root{
+  /* ---------------------------------------------------------------
+     LIVE APP CHROME — read off the live DOM at
+     global-website.dev.vault22.com (computed styles + Tailwind classes).
+     Cross-checked against Vault22-Insights-Todo-Prototype/styles.css,
+     which was built the same way on 14 Jul 2026. These govern the shell:
+     header, sidebar, page background, headings, buttons.
+     --------------------------------------------------------------- */
+  --page:        #F7F8FA;   /* app background */
+  --green:       #01C38D;   /* bg-[#01C38D] — primary action */
+  --green-hover: #00A878;   /* hover:bg-[#00A878] */
+  --green-05:    rgba(1,195,141,.05);
+  --green-10:    rgba(1,195,141,.10);
+  --heading:     #1E3A5F;   /* text-[#1E3A5F] — every page heading */
+  --hero:        #12283F;   /* navy hero card */
+  --blue:        #3B82F6;
+  --nav-idle:    #4E5159;   /* text-[#4E5159] */
+  --nav-active:  #22252B;
+
+  --g-900:#111827; --g-700:#374151; --g-600:#4B5563; --g-500:#6B7280;
+  --g-400:#9CA3AF; --g-300:#D1D5DB; --g-200:#E5E7EB; --g-100:#F3F4F6; --g-50:#F9FAFB;
+  --red:#EF4444; --red-400:#F87171; --amber-100:#FEF3C7; --amber-700:#B45309;
+
+  --v4-navy-950:#050d16; --v4-navy-900:#0a1929; --v4-navy-800:#0f2236;
+  --v4-navy-700:#132d46; --v4-navy-600:#1a3a5c; --v4-navy-500:#214872;
+  --v4-navy-400:#4a6b92; --v4-navy-300:#7a95b8; --v4-navy-200:#a8bfd9;
+  --v4-navy-100:#d4e0f0; --v4-navy-50:#f0f4f9;
+
+  --v4-teal-950:#003329; --v4-teal-900:#004d3d; --v4-teal-800:#006b52;
+  --v4-teal-700:#008968; --v4-teal-600:#00a67d; --v4-teal-500:#00d4aa;
+  --v4-teal-400:#01c38d; --v4-teal-300:#33ddb3; --v4-teal-200:#66e7c6;
+  --v4-teal-100:#99f1d9; --v4-teal-50:#ccf8ec;
+
+  --v4-success:#10b981; --v4-success-dark:#059669; --v4-success-light:#34d399;
+  --v4-warning:#f59e0b; --v4-warning-dark:#d97706; --v4-warning-light:#fbbf24;
+  --v4-danger:#ef4444;  --v4-danger-dark:#dc2626;  --v4-danger-light:#f87171;
+  --v4-info:#3b82f6;    --v4-info-dark:#2563eb;    --v4-info-light:#60a5fa;
+
+  --v4-radius-sm:8px; --v4-radius-md:12px; --v4-radius-lg:16px;
+  --v4-radius-xl:20px; --v4-radius-2xl:24px; --v4-radius-3xl:32px; --v4-radius-full:9999px;
+
+  --v4-space-1:4px; --v4-space-2:8px; --v4-space-3:12px; --v4-space-4:16px;
+  --v4-space-5:20px; --v4-space-6:24px; --v4-space-8:32px; --v4-space-10:40px;
+  --v4-space-12:48px; --v4-space-16:64px; --v4-space-20:80px; --v4-space-24:96px;
+
+  --v4-number-hero:clamp(48px,8vw,96px); --v4-number-xlarge:64px;
+  --v4-number-large:48px; --v4-number-medium:32px; --v4-number-small:24px;
+
+  --v4-shadow-sm:0 2px 8px rgba(0,0,0,0.08);
+  --v4-shadow-md:0 4px 16px rgba(0,0,0,0.12);
+  --v4-shadow-lg:0 8px 32px rgba(0,0,0,0.16);
+  --v4-shadow-xl:0 16px 64px rgba(0,0,0,0.24);
+
+  --v4-duration-instant:100ms; --v4-duration-fast:200ms; --v4-duration-normal:300ms;
+  --v4-easing-standard:cubic-bezier(0.4,0,0.2,1);
+  --v4-glow-accent:0 0 24px rgba(1,195,141,0.4);
+  --v4-font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  /* Shell aliases → LIVE APP values (not the v4-* ramps, which the bundle
+     defines but the live chrome does not use — the chrome is Tailwind). */
+  --surface:#ffffff;
+  --canvas:var(--page);      /* #F7F8FA — live app background */
+  --line:var(--g-200);       /* #E5E7EB — live border on pills/cards */
+  --text:var(--g-900);       /* #111827 — live body text */
+  --muted:var(--g-500);      /* #6B7280 — live secondary text */
+  --sidebar-w:264px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--v4-font-family);background:var(--canvas);color:var(--text);
+  -webkit-font-smoothing:antialiased;font-feature-settings:"cv02","cv03","cv04","cv11";line-height:1.5}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+a{color:var(--v4-info-dark)}
+.num{font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+
+/* ---------- Topbar ---------- */
+/* Live app: 80px white sticky header, 28px side padding, logo img at 34px. */
+.topbar{position:fixed;top:0;left:0;right:0;height:80px;background:var(--surface);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;z-index:20;gap:var(--v4-space-4)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{height:34px;display:block}
+.logo .tag{font-size:11px;font-weight:600;color:var(--green-hover);background:var(--green-10);
+  padding:3px 8px;border-radius:9999px;letter-spacing:.02em}
+.tb-right{display:flex;align-items:center;gap:12px}
+/* Live app pill: 46px tall, white, 1px g-200, fully round, 14px/600 g-700. */
+.chip{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 16px;
+  border:1px solid var(--g-200);border-radius:9999px;background:var(--surface);
+  font-size:14px;font-weight:600;color:var(--g-700);transition:box-shadow .2s}
+.chip:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.icon-btn{width:46px;height:46px;border-radius:9999px;border:1px solid var(--g-200);
+  background:var(--surface);display:grid;place-items:center;position:relative;font-size:15px;
+  transition:box-shadow .2s}
+.icon-btn:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.dot{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;border-radius:9999px;
+  background:var(--red);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;
+  padding:0 5px;border:2px solid #fff}
+.who{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 16px 0 5px;
+  border:1px solid var(--g-200);border-radius:9999px;background:var(--surface);
+  font-size:14px;font-weight:600;color:var(--g-700)}
+.ava{width:32px;height:32px;border-radius:var(--v4-radius-full);background:var(--v4-teal-400);
+  color:var(--v4-teal-950);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+
+/* demo scenario switcher */
+.seg{display:inline-flex;align-items:center;background:var(--v4-navy-50);border:1px solid var(--line);
+  border-radius:var(--v4-radius-full);padding:3px;gap:2px}
+.seg b{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:0 8px}
+.seg button{border:0;background:none;padding:6px 12px;border-radius:var(--v4-radius-full);
+  font-size:12.5px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--v4-navy-700);color:#fff}
+
+/* ---------- Sidebar ---------- */
+/* Live app sidebar: plain white column in the shell, "Menu" heading,
+   idle items #4E5159, active #22252B on a light green wash. */
+.sidebar{position:fixed;top:80px;left:0;width:var(--sidebar-w);
+  bottom:0;background:var(--surface);padding:24px 16px;overflow-y:auto;z-index:10}
+.sb-h{font-size:17px;font-weight:700;letter-spacing:-.2px;color:var(--g-900);
+  margin-bottom:var(--v4-space-4);padding-left:var(--v4-space-2)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;
+  border-radius:10px;border:0;background:none;width:100%;text-align:left;
+  font-size:14.5px;font-weight:500;color:var(--nav-idle);position:relative;
+  transition:background .2s var(--v4-easing-standard)}
+.nav-item:hover{background:var(--g-50)}
+.nav-item.on{background:var(--green-10);color:var(--nav-active);font-weight:600}
+.nav-item .ic{width:20px;height:20px;flex:none;display:grid;place-items:center;color:var(--v4-navy-400)}
+.nav-item .ic svg{width:20px;height:20px;display:block}
+.nav-item.on .ic{color:var(--v4-teal-700)}
+.nav-item.on .ic{opacity:1}
+.nav-sep{font-size:10.5px;font-weight:700;color:var(--g-400);letter-spacing:.08em;
+  text-transform:uppercase;padding:var(--v4-space-5) var(--v4-space-3) var(--v4-space-2)}
+.sb-note{margin-top:var(--v4-space-4);padding:var(--v4-space-3);background:var(--v4-navy-50);
+  border-radius:var(--v4-radius-md);font-size:11.5px;color:var(--muted);line-height:1.45}
+
+/* ---------- Layout ---------- */
+.main{margin-left:calc(var(--sidebar-w) + var(--v4-space-10));padding:calc(72px + var(--v4-space-6)) var(--v4-space-8) var(--v4-space-20);
+  max-width:1320px}
+h1{font-size:28px;font-weight:700;letter-spacing:-.7px}
+h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
+.lede{color:var(--muted);font-size:14px;line-height:1.6;max-width:76ch;margin-top:var(--v4-space-1)}
+.page-head{margin-bottom:var(--v4-space-6)}
+.row{display:flex;align-items:center;gap:var(--v4-space-3)}
+.between{display:flex;align-items:center;justify-content:space-between;gap:var(--v4-space-4);flex-wrap:wrap}
+.mt{margin-top:var(--v4-space-4)} .mt6{margin-top:var(--v4-space-6)} .mt8{margin-top:var(--v4-space-8)}
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:var(--v4-space-4)}
+@media(max-width:1100px){.grid2{grid-template-columns:1fr}}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border-radius:var(--v4-radius-xl);box-shadow:var(--v4-shadow-sm)}
+.card-p{padding:var(--v4-space-6)}
+.sec-t{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--v4-navy-300);margin-bottom:var(--v4-space-4)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--v4-space-4)}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--surface);border-radius:var(--v4-radius-xl);padding:var(--v4-space-5);box-shadow:var(--v4-shadow-sm)}
+.kpi .k{font-size:12.5px;color:var(--muted);font-weight:500;margin-bottom:var(--v4-space-2)}
+.kpi .v{font-size:var(--v4-number-medium);font-weight:700;letter-spacing:-1.4px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;color:var(--v4-navy-300);margin-top:var(--v4-space-2)}
+.kpi.hero{background:var(--v4-navy-700)}
+.kpi.hero .k{color:var(--v4-navy-200)} .kpi.hero .v{color:#fff} .kpi.hero .d{color:var(--v4-navy-300)}
+.kpi.hero .v small{color:var(--v4-teal-400);font-size:16px;font-weight:600;letter-spacing:0}
+
+/* ---------- Bits ---------- */
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--text);
+  padding:10px var(--v4-space-4);border-radius:var(--v4-radius-md);font-size:14px;font-weight:600;
+  display:inline-flex;align-items:center;gap:var(--v4-space-2);white-space:nowrap;
+  transition:all var(--v4-duration-fast) var(--v4-easing-standard)}
+.btn:hover{border-color:var(--v4-navy-200);background:var(--v4-navy-50)}
+.btn-pri{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff}
+.btn-pri:hover{background:var(--v4-navy-600);border-color:var(--v4-navy-600)}
+.btn-teal{background:var(--v4-teal-400);border-color:var(--v4-teal-400);color:var(--v4-teal-950)}
+.btn-teal:hover{background:var(--v4-teal-500);border-color:var(--v4-teal-500);box-shadow:var(--v4-glow-accent)}
+.btn-sm{padding:6px 10px;font-size:12.5px;border-radius:var(--v4-radius-sm);font-weight:500}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--v4-radius-full);
+  font-size:11.5px;font-weight:600;white-space:nowrap}
+.p-gray{background:var(--v4-navy-50);color:var(--v4-navy-500)}
+.p-teal{background:var(--v4-teal-50);color:var(--v4-teal-800)}
+.p-green{background:var(--green-10);color:var(--green-hover)}
+.p-blue{background:#eff6ff;color:var(--v4-info-dark)}
+.p-amber{background:#fffbeb;color:var(--v4-warning-dark)}
+.p-red{background:#fef2f2;color:var(--v4-danger-dark)}
+
+label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.inp{width:100%;padding:11px var(--v4-space-3);border:1px solid var(--line);border-radius:var(--v4-radius-md);
+  font-size:14px;color:var(--text);background:var(--surface)}
+.inp:focus{outline:2px solid var(--v4-teal-400);outline-offset:-1px;border-color:transparent}
+.field{margin-bottom:var(--v4-space-4)}
+.opt{color:var(--v4-navy-300);font-weight:500}
+
+/* ---------- Tables ---------- */
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:820px}
+th{text-align:left;font-size:11.5px;color:var(--muted);font-weight:600;padding:12px var(--v4-space-4);
+  border-bottom:1px solid var(--line);white-space:nowrap;background:var(--v4-navy-50)}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--text)}
+th .ar{opacity:.4;font-size:9px;margin-left:3px}
+th.act .ar{opacity:1;color:var(--v4-teal-700)}
+td{padding:12px var(--v4-space-4);border-bottom:1px solid var(--v4-navy-50);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--v4-navy-50)}
+td .nm{font-weight:600}
+.sub{font-size:11.5px;color:var(--v4-navy-300)}
+.empty{padding:var(--v4-space-16) var(--v4-space-6);text-align:center}
+.empty .em{font-size:30px;margin-bottom:var(--v4-space-3);opacity:.5}
+.empty h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.empty p{font-size:13.5px;color:var(--muted);max-width:40ch;margin:0 auto var(--v4-space-5)}
+
+/* filter chips */
+.chips{display:flex;gap:var(--v4-space-2);flex-wrap:wrap}
+.fchip{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:var(--v4-radius-full);
+  font-size:12.5px;font-weight:500;color:var(--v4-navy-600)}
+.fchip:hover{border-color:var(--v4-navy-200)}
+.fchip.on{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff}
+
+/* ---------- consent / PII ---------- */
+.pii{border-bottom:1.5px dotted var(--v4-warning);cursor:help}
+body.mask .pii{color:transparent!important;background:repeating-linear-gradient(-45deg,
+  var(--v4-navy-50),var(--v4-navy-50) 4px,var(--v4-navy-100) 4px,var(--v4-navy-100) 8px);
+  border-radius:5px;border-bottom:0;user-select:none}
+.consent{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--v4-radius-lg);
+  padding:var(--v4-space-3) var(--v4-space-4);display:flex;align-items:center;justify-content:space-between;
+  gap:var(--v4-space-4);font-size:12.5px;color:var(--v4-warning-dark);flex-wrap:wrap;line-height:1.5}
+.switch{display:inline-flex;align-items:center;gap:var(--v4-space-2);font-weight:600;cursor:pointer;white-space:nowrap}
+.switch input{accent-color:var(--v4-warning);width:15px;height:15px;cursor:pointer}
+
+/* ---------- Modal / panel ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,25,41,.5);display:none;place-items:center;z-index:40;padding:var(--v4-space-6)}
+.scrim.open{display:grid}
+.modal{background:var(--surface);border-radius:var(--v4-radius-2xl);max-width:560px;width:100%;
+  padding:var(--v4-space-6);box-shadow:var(--v4-shadow-xl);max-height:88vh;overflow-y:auto}
+.modal.wide{max-width:720px}
+.x{border:0;background:none;font-size:22px;color:var(--muted);line-height:1;padding:4px}
+.panel{position:fixed;top:78px;right:var(--v4-space-6);width:380px;max-height:74vh;overflow-y:auto;
+  background:var(--surface);border-radius:var(--v4-radius-xl);box-shadow:var(--v4-shadow-lg);z-index:50;display:none}
+.panel.open{display:block}
+.nt{display:flex;gap:var(--v4-space-3);padding:var(--v4-space-3) var(--v4-space-4);
+  border-bottom:1px solid var(--v4-navy-50);cursor:pointer;text-align:left;border:0;background:none;width:100%}
+.nt:hover{background:var(--v4-navy-50)}
+.nt .em{font-size:15px;margin-top:1px}
+.nt .t{font-size:13px;font-weight:600;color:var(--text)}
+.nt .m{font-size:12px;color:var(--muted);margin-top:1px;white-space:normal;line-height:1.45}
+.nt .a{font-size:11px;color:var(--v4-navy-300);margin-top:3px}
+.nt.unread{background:var(--v4-teal-50)}
+.nt.unread:hover{background:var(--v4-teal-100)}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:var(--v4-space-1);border-bottom:1px solid var(--line);margin-bottom:var(--v4-space-5)}
+.tab{border:0;background:none;padding:10px var(--v4-space-4);font-size:13.5px;font-weight:600;
+  color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--v4-navy-900);border-bottom-color:var(--v4-teal-400)}
+
+/* ---------- misc ---------- */
+.bar{height:8px;border-radius:var(--v4-radius-full);background:var(--v4-navy-50);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--v4-teal-400);border-radius:var(--v4-radius-full)}
+.arow{display:flex;align-items:center;gap:var(--v4-space-3);margin-bottom:var(--v4-space-2);font-size:13px}
+.arow .lb{width:120px;color:var(--muted);flex:none}
+.arow .bar{flex:1} .arow .pc{width:42px;text-align:right;font-weight:600}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:var(--v4-space-4)}
+.dl .t{font-size:12px;color:var(--muted);margin-bottom:2px}
+.dl .v{font-size:15px;font-weight:600}
+.tl{position:relative;padding-left:var(--v4-space-6)}
+.tl::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl-i{position:relative;padding-bottom:var(--v4-space-5)}
+.tl-i:last-child{padding-bottom:0}
+.tl-i::before{content:'';position:absolute;left:-23px;top:4px;width:12px;height:12px;border-radius:50%;
+  background:var(--v4-teal-400);border:2px solid var(--surface);box-shadow:0 0 0 2px var(--v4-teal-100)}
+.tl-t{font-size:13.5px;font-weight:600} .tl-d{font-size:11.5px;color:var(--v4-navy-300);margin-top:1px}
+.qr{background:#fff;border:1px solid var(--line);border-radius:var(--v4-radius-md);padding:var(--v4-space-2)}
+.qr canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+.list-row{display:flex;align-items:center;justify-content:space-between;gap:var(--v4-space-3);
+  padding:11px 0;border-bottom:1px solid var(--v4-navy-50);font-size:13.5px}
+.list-row:last-child{border-bottom:0}
+.note{background:var(--v4-navy-50);border-radius:var(--v4-radius-md);padding:var(--v4-space-3);
+  font-size:13px;line-height:1.55;margin-bottom:var(--v4-space-2)}
+.note .meta{font-size:11px;color:var(--v4-navy-300);margin-top:var(--v4-space-2)}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--v4-radius-full);
+  font-size:11.5px;font-weight:600;background:var(--v4-teal-50);color:var(--v4-teal-800)}
+.tag button{border:0;background:none;color:inherit;opacity:.6;font-size:13px;line-height:1;padding:0}
+.tag button:hover{opacity:1}
+.stepper{display:flex;align-items:center;gap:var(--v4-space-2);margin-bottom:var(--v4-space-6);flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:var(--v4-space-2);font-size:12.5px;font-weight:600;color:var(--v4-navy-300)}
+.step .n{width:24px;height:24px;border-radius:var(--v4-radius-full);background:var(--v4-navy-50);
+  display:grid;place-items:center;font-size:11px}
+.step.on{color:var(--v4-navy-900)} .step.on .n{background:var(--v4-teal-400);color:var(--v4-teal-950)}
+.step.done .n{background:var(--v4-teal-50);color:var(--v4-teal-700)}
+.step-sep{width:16px;height:1px;background:var(--line)}
+.lp{border:1px solid var(--line);border-radius:var(--v4-radius-lg);overflow:hidden}
+.lp-ban{height:96px;background:linear-gradient(120deg,var(--v4-navy-700),var(--v4-navy-500))}
+.lp-b{padding:0 var(--v4-space-5) var(--v4-space-5)}
+.lp-av{width:64px;height:64px;border-radius:var(--v4-radius-full);border:3px solid var(--surface);
+  background:var(--v4-teal-400);color:var(--v4-teal-950);margin-top:-32px;display:grid;place-items:center;
+  font-weight:700;font-size:20px}
+.svc{display:flex;gap:var(--v4-space-2);flex-wrap:wrap}
+.funnel-row{display:flex;align-items:center;gap:var(--v4-space-3);margin-bottom:6px;font-size:12.5px}
+.funnel-row .lb{width:172px;color:var(--muted);flex:none}
+.funnel-row .tr{flex:1;height:26px;background:var(--v4-navy-50);border-radius:var(--v4-radius-sm);overflow:hidden}
+.funnel-row .fl{height:100%;background:var(--v4-teal-400);border-radius:var(--v4-radius-sm);
+  display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;
+  font-weight:700;color:var(--v4-teal-950);min-width:22px}
+.foot{margin-left:calc(var(--sidebar-w) + var(--v4-space-10));padding:var(--v4-space-5) var(--v4-space-8);
+  font-size:12px;color:var(--v4-navy-300)}
+.toast{position:fixed;bottom:var(--v4-space-6);left:50%;transform:translateX(-50%);
+  background:var(--v4-navy-800);color:#fff;padding:12px var(--v4-space-5);border-radius:var(--v4-radius-md);
+  font-size:13px;z-index:60;box-shadow:var(--v4-shadow-lg);max-width:540px;text-align:center;line-height:1.5}
+
+/* ============================================================
+   Onboarding — happens BEFORE the dashboard exists.
+   Split-screen shell mirroring the live onboarding prototype
+   (~/Downloads/Vault22-Onboarding-Prototype): form left ~52%,
+   green brand panel right ~48%. While onboarding runs there is no
+   app shell at all — no topbar, no sidebar, no nav, no avatar.
+   ============================================================ */
+body.onboarding .topbar, body.onboarding .sidebar,
+body.onboarding .main, body.onboarding .foot{display:none}
+body:not(.onboarding) #onbRoot{display:none}
+
+.onb{display:flex;min-height:100vh;background:var(--surface)}
+.onb__form{flex:1 1 52%;display:flex;flex-direction:column;
+  padding:var(--v4-space-8) var(--v4-space-10) var(--v4-space-10);overflow-y:auto;max-height:100vh}
+.onb__formwrap{width:100%;max-width:428px;margin:0 auto;flex:1;
+  display:flex;flex-direction:column;justify-content:center}
+.onb__top{display:flex;align-items:center;gap:var(--v4-space-3);min-height:34px}
+.onb__brand{flex:1 1 48%;margin:var(--v4-space-4) var(--v4-space-4) var(--v4-space-4) 0;
+  border-radius:var(--v4-radius-2xl);
+  background:linear-gradient(158deg,var(--v4-teal-500) 0%,var(--v4-teal-600) 52%,var(--v4-teal-800) 100%);
+  color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--v4-space-5);padding:var(--v4-space-12);position:relative}
+.onb__brand .bmark{width:60px;height:60px}
+.onb__brand .bword{font-size:34px;font-weight:800;letter-spacing:-.5px;margin-top:-8px}
+.brand-tagline{text-align:center;font-size:15px;line-height:1.55;
+  color:rgba(255,255,255,.92);max-width:340px;font-weight:500}
+.shareholders{position:absolute;bottom:var(--v4-space-12);left:0;right:0;text-align:center}
+.sh-label{opacity:.72;margin-bottom:var(--v4-space-2);letter-spacing:.07em;
+  text-transform:uppercase;font-size:10px;font-weight:700}
+.sh-row{display:flex;gap:var(--v4-space-8);justify-content:center;flex-wrap:wrap;
+  opacity:.92;font-weight:700;letter-spacing:.3px;font-size:12px}
+
+.urlbar{display:flex;align-items:center;gap:var(--v4-space-2);background:var(--v4-navy-50);
+  border:1px solid var(--line);border-radius:var(--v4-radius-full);
+  padding:7px var(--v4-space-4);font-size:12.5px;color:var(--muted)}
+.urlbar b{color:var(--text);font-weight:600}
+
+.progress{display:flex;align-items:center;gap:var(--v4-space-2);margin:var(--v4-space-5) 0 var(--v4-space-2)}
+.progress .seg{height:5px;flex:1;background:var(--v4-navy-50);border-radius:var(--v4-radius-full)}
+.progress .seg.done{background:linear-gradient(90deg,var(--v4-teal-400),var(--v4-teal-500))}
+.progress .label{font-size:11.5px;color:var(--muted);font-weight:600;
+  white-space:nowrap;margin-left:var(--v4-space-2)}
+
+.onb-title{font-size:26px;font-weight:700;letter-spacing:-.6px;margin-top:var(--v4-space-5)}
+.onb-sub{color:var(--muted);font-size:14px;line-height:1.6;margin-top:6px}
+.obtn{width:100%;border:1px solid transparent;border-radius:var(--v4-radius-md);padding:14px 18px;
+  font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  gap:var(--v4-space-2);transition:all var(--v4-duration-fast) var(--v4-easing-standard)}
+.obtn-pri{background:var(--v4-teal-400);color:var(--v4-teal-950)}
+.obtn-pri:hover:not(:disabled){background:var(--v4-teal-500);box-shadow:var(--v4-glow-accent)}
+.obtn-ghost{background:var(--surface);border-color:var(--line);color:var(--text)}
+.obtn-ghost:hover{background:var(--v4-navy-50)}
+.obtn:disabled{opacity:.4;cursor:not-allowed}
+.actions{margin-top:var(--v4-space-5);display:flex;flex-direction:column;gap:var(--v4-space-3)}
+.legalnote{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:var(--v4-space-3)}
+.center-link{text-align:center;font-size:13px;color:var(--muted);margin-top:var(--v4-space-4)}
+.back-btn{width:34px;height:34px;border-radius:var(--v4-radius-full);border:1px solid var(--line);
+  background:var(--surface);display:grid;place-items:center;font-size:15px;color:var(--muted)}
+.back-btn:hover{background:var(--v4-navy-50)}
+.urlpreview{font-size:17px;font-weight:700;letter-spacing:-.3px;word-break:break-all;
+  padding:var(--v4-space-3) 0}
+.urlpreview .s{color:var(--v4-teal-700)}
+.urlpreview .r{color:var(--v4-navy-300);font-weight:600}
+.onb-check{font-size:12.5px;font-weight:600;margin-top:var(--v4-space-2);min-height:18px}
+.onb-check.ok{color:var(--v4-success-dark)}
+.onb-check.bad{color:var(--v4-danger-dark)}
+.onb-check.idle{color:var(--v4-navy-300)}
+
+/* Entry screen — carries the value prop, so it gets the wide column. */
+.onb__formwrap--wide{max-width:540px}
+.entry-mark{display:flex;align-items:center;gap:var(--v4-space-2);font-size:14px;
+  color:var(--muted);font-weight:500;margin-bottom:var(--v4-space-5)}
+.entry-mark svg{width:30px;height:30px}
+.entry-mark b{color:var(--text);font-weight:700}
+.entry-title{font-size:clamp(24px,2.5vw,34px);font-weight:700;letter-spacing:-1.1px;
+  white-space:nowrap;line-height:1.15}
+.entry-list{margin:var(--v4-space-6) 0 var(--v4-space-2);display:flex;
+  flex-direction:column;gap:var(--v4-space-3)}
+.entry-li{display:flex;align-items:flex-start;gap:var(--v4-space-3);font-size:14px}
+.entry-li .tick{width:22px;height:22px;border-radius:var(--v4-radius-full);flex:none;
+  background:var(--v4-teal-50);color:var(--v4-teal-700);display:grid;place-items:center;
+  font-size:11px;font-weight:700;margin-top:1px}
+.entry-li b{font-weight:600;display:block}
+.entry-li .d{color:var(--muted);font-size:13px}
+
+/* Region cards — mirrors the investor onboarding prototype's .opt pattern. */
+.opt-list{display:flex;flex-direction:column;gap:var(--v4-space-3)}
+.opt{display:flex;align-items:center;gap:var(--v4-space-3);text-align:left;width:100%;
+  background:var(--surface);border:1.6px solid var(--line);border-radius:var(--v4-radius-md);
+  padding:15px 16px;color:var(--text);   /* buttons don't inherit body colour */
+  transition:all var(--v4-duration-fast) var(--v4-easing-standard)}
+.opt:hover{border-color:var(--v4-navy-200)}
+.opt.sel{border-color:var(--v4-teal-400);background:var(--v4-teal-50)}
+.opt-ic{width:40px;height:40px;border-radius:11px;background:var(--v4-navy-50);flex:none;
+  display:grid;place-items:center;font-size:20px}
+.opt.sel .opt-ic{background:var(--surface)}
+.opt-body{flex:1;min-width:0}
+.opt-t{font-size:15px;font-weight:700;display:block}
+.opt-d{font-size:12.5px;color:var(--muted);margin-top:2px;display:block}
+.opt-check{width:22px;height:22px;border-radius:var(--v4-radius-full);border:2px solid var(--v4-navy-100);
+  flex:none;display:grid;place-items:center;color:transparent;font-size:11px;font-weight:700}
+.opt.sel .opt-check{background:var(--v4-teal-400);border-color:var(--v4-teal-400);color:var(--v4-teal-950)}
+
+/* Share screen — QR centred, targets on one line, no link underlines. */
+.qr-center{display:flex;justify-content:center;margin:var(--v4-space-5) 0}
+.share-row{display:flex;gap:var(--v4-space-2)}
+.share-row .btn{flex:1;justify-content:center;padding-left:0;padding-right:0}
+.onb a.btn, .onb a{text-decoration:none}
+.link-a{color:var(--v4-info-dark);cursor:pointer;font-weight:600}
+
+/* prototype controls — internal demo tool, deliberately not product chrome.
+   Pinned bottom-left over the form column so it never covers the brand panel. */
+.protobar{position:fixed;left:var(--v4-space-4);bottom:var(--v4-space-4);z-index:70;
+  display:flex;align-items:center;gap:var(--v4-space-3);background:var(--v4-navy-800);color:#fff;
+  border-radius:var(--v4-radius-full);padding:8px var(--v4-space-4);
+  box-shadow:var(--v4-shadow-lg);font-size:12px}
+.protobar b{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--v4-navy-300)}
+.protobar button{border:0;background:rgba(255,255,255,.1);color:#fff;padding:5px 11px;
+  border-radius:var(--v4-radius-full);font-size:12px;font-weight:600}
+.protobar button.on{background:var(--v4-teal-400);color:var(--v4-teal-950)}
+.protobar .pb-note{color:var(--v4-navy-300)}
+
+.screen-anim > *{animation:screenIn .34s cubic-bezier(.2,.7,.2,1) both}
+@keyframes screenIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.screen-anim > *{animation:none}}
+@media(max-width:900px){.onb__brand{display:none}.onb__form{flex:1 1 100%}}
+</style>
+</head>
+<body>
+
+<!-- Vault22 mark, white variant — same symbol the live onboarding prototype uses
+     on its green brand panel (the assets/img PNG logo is teal and would vanish on it). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="v22mark-white" viewBox="0 0 64 64">
+    <path d="M12 15 L23 15 L32 37 L41 15 L52 15 L37 50 C36 52.6 33.5 53.6 32 53.6 C30.5 53.6 28 52.6 27 50 Z" fill="#fff"/>
+  </symbol>
+  <symbol id="v22mark-teal" viewBox="0 0 64 64">
+    <path d="M12 15 L23 15 L32 37 L41 15 L52 15 L37 50 C36 52.6 33.5 53.6 32 53.6 C30.5 53.6 28 52.6 27 50 Z" fill="var(--v4-teal-400)"/>
+  </symbol>
+</svg>
+
+<div id="onbRoot"></div>
+
+<header class="topbar">
+  <div class="logo">
+    <img src="assets/img/vault22-logo.png" alt="Vault22">
+    <span class="tag">Advisor</span>
+  </div>
+  <div class="tb-right">
+    <div class="seg" id="seg"><b>Demo</b>
+      <button data-scen="new">New advisor</button>
+      <button data-scen="est">Established</button>
+    </div>
+    <button class="icon-btn" id="bell" title="Notifications">&#9788;<span class="dot hidden" id="ndot">0</span></button>
+    <span class="chip num">ZAR</span>
+    <span class="who"><span class="ava" id="ava">AA</span><span id="whoName">Aishani Atri</span></span>
+  </div>
+</header>
+
+<nav class="sidebar">
+  <div class="sb-h">Menu</div>
+  <div class="nav" id="nav"></div>
+  <div class="sb-note" id="sbNote"></div>
+</nav>
+
+<main class="main" id="view"></main>
+<footer class="foot">Vault22 Advisor — internal prototype, mock data</footer>
+
+<div class="panel" id="panel"></div>
+<div class="scrim" id="scrim"><div class="modal" id="modal"></div></div>
+
+<script>
+/* =====================================================================
+   QR encoder — byte mode, ECC level M, versions 1-10.
+   Verified byte-identical to Apple's CIQRCodeGenerator reference and
+   decoded end-to-end by CIDetector across v2-v8 (see qr.js + PROTOTYPE-NOTES).
+   ===================================================================== */
+const GF_EXP=new Uint8Array(512), GF_LOG=new Uint8Array(256);
+(function(){let x=1;for(let i=0;i<255;i++){GF_EXP[i]=x;GF_LOG[x]=i;x<<=1;if(x&0x100)x^=0x11d;}
+for(let i=255;i<512;i++)GF_EXP[i]=GF_EXP[i-255];})();
+const gfMul=(a,b)=>(a&&b)?GF_EXP[GF_LOG[a]+GF_LOG[b]]:0;
+function rsGen(n){let g=[1];for(let i=0;i<n;i++){const ng=new Array(g.length+1).fill(0);
+  for(let j=0;j<g.length;j++){ng[j]^=g[j];ng[j+1]^=gfMul(g[j],GF_EXP[i]);}g=ng;}return g;}
+function rsEncode(d,n){const g=rsGen(n),r=[...d,...new Array(n).fill(0)];
+  for(let i=0;i<d.length;i++){const c=r[i];if(c)for(let j=0;j<g.length;j++)r[i+j]^=gfMul(g[j],c);}
+  return r.slice(d.length);}
+function bch(data,poly,len){const bit=n=>{let b=0;while(n){b++;n>>=1;}return b;};
+  let v=data<<(len-1);const pl=bit(poly);
+  while(bit(v)>=pl)v^=poly<<(bit(v)-pl);return (data<<(len-1))|v;}
+const QCAP=[0,14,26,42,62,84,106,122,152,180,213];
+const QECW=[0,10,16,26,18,24,16,18,22,22,26];
+const QBLK=[null,[1,16],[1,28],[1,44],[2,32],[2,43],[4,27],[4,31],[2,38,2,39],[3,36,2,37],[4,43,1,44]];
+const QALN=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50]];
+function qrMatrix(text){
+  const bytes=[...new TextEncoder().encode(text)];
+  let ver=0; for(let v=1;v<=10;v++) if(bytes.length<=QCAP[v]){ver=v;break;}
+  if(!ver) return null;
+  const bits=[], push=(v,n)=>{for(let i=n-1;i>=0;i--)bits.push((v>>i)&1);};
+  push(0b0100,4); push(bytes.length,8); bytes.forEach(b=>push(b,8));
+  const spec=QBLK[ver]; let totalData=0;
+  for(let i=0;i<spec.length;i+=2) totalData+=spec[i]*spec[i+1];
+  const capBits=totalData*8;
+  for(let i=0;i<4&&bits.length<capBits;i++) bits.push(0);
+  while(bits.length%8) bits.push(0);
+  const cw=[]; for(let i=0;i<bits.length;i+=8) cw.push(parseInt(bits.slice(i,i+8).join(''),2));
+  const PADB=[0xEC,0x11]; for(let i=0;cw.length<totalData;i++) cw.push(PADB[i%2]);
+  const dB=[],eB=[]; let p=0;
+  for(let i=0;i<spec.length;i+=2) for(let b=0;b<spec[i];b++){
+    const d=cw.slice(p,p+spec[i+1]); p+=spec[i+1]; dB.push(d); eB.push(rsEncode(d,QECW[ver]));
+  }
+  const out=[], maxD=Math.max(...dB.map(b=>b.length));
+  for(let i=0;i<maxD;i++) dB.forEach(b=>{if(i<b.length) out.push(b[i]);});
+  for(let i=0;i<QECW[ver];i++) eB.forEach(b=>out.push(b[i]));
+  const N=17+4*ver, m=Array.from({length:N},()=>new Array(N).fill(null));
+  const set=(r,c,v)=>{if(r>=0&&r<N&&c>=0&&c<N) m[r][c]=v;};
+  const finder=(r,c)=>{for(let i=-1;i<=7;i++)for(let j=-1;j<=7;j++){
+    const on=i>=0&&i<=6&&j>=0&&j<=6&&(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4));
+    set(r+i,c+j,on?1:0);}};
+  finder(0,0); finder(0,N-7); finder(N-7,0);
+  for(let i=8;i<N-8;i++){const v=i%2===0?1:0; set(6,i,v); set(i,6,v);}
+  QALN[ver].forEach(r=>QALN[ver].forEach(c=>{
+    if((r<9&&c<9)||(r<9&&c>N-10)||(r>N-10&&c<9)) return;
+    for(let i=-2;i<=2;i++)for(let j=-2;j<=2;j++)
+      set(r+i,c+j,(Math.abs(i)===2||Math.abs(j)===2||(i===0&&j===0))?1:0);
+  }));
+  set(N-8,8,1);
+  for(let i=0;i<9;i++){ if(m[8][i]===null) set(8,i,0); if(m[i][8]===null) set(i,8,0); }
+  for(let i=0;i<8;i++) set(8,N-1-i,0);
+  for(let i=0;i<7;i++) set(N-1-i,8,0);
+  if(ver>=7) for(let i=0;i<18;i++){const r=Math.floor(i/3),c=i%3; set(N-11+c,r,0); set(r,N-11+c,0);}
+  const reserved=m.map(row=>row.map(v=>v!==null));
+  const dataBits=[]; out.forEach(b=>{for(let i=7;i>=0;i--)dataBits.push((b>>i)&1);});
+  let bi=0, up=true;
+  for(let c=N-1;c>0;c-=2){ if(c===6) c--;
+    for(let k=0;k<N;k++){ const r=up?N-1-k:k;
+      for(const cc of [c,c-1]) if(!reserved[r][cc]) m[r][cc]=bi<dataBits.length?dataBits[bi++]:0; }
+    up=!up; }
+  const MASKS=[(r,c)=>(r+c)%2===0,(r,c)=>r%2===0,(r,c)=>c%3===0,(r,c)=>(r+c)%3===0,
+    (r,c)=>(Math.floor(r/2)+Math.floor(c/3))%2===0,(r,c)=>((r*c)%2)+((r*c)%3)===0,
+    (r,c)=>(((r*c)%2)+((r*c)%3))%2===0,(r,c)=>(((r+c)%2)+((r*c)%3))%2===0];
+  const penalty=g=>{let s=0;
+    for(let r=0;r<N-1;r++)for(let c=0;c<N-1;c++)
+      if(g[r][c]===g[r][c+1]&&g[r][c]===g[r+1][c]&&g[r][c]===g[r+1][c+1]) s+=3;
+    for(let r=0;r<N;r++){let run=1;for(let c=1;c<N;c++){if(g[r][c]===g[r][c-1])run++;else{if(run>=5)s+=3+(run-5);run=1;}}if(run>=5)s+=3+(run-5);}
+    for(let c=0;c<N;c++){let run=1;for(let r=1;r<N;r++){if(g[r][c]===g[r-1][c])run++;else{if(run>=5)s+=3+(run-5);run=1;}}if(run>=5)s+=3+(run-5);}
+    let dark=0; g.forEach(row=>row.forEach(v=>dark+=v));
+    s+=Math.floor(Math.abs(dark*100/(N*N)-50)/5)*10; return s;};
+  let best=null,bs=Infinity;
+  for(let k=0;k<8;k++){
+    const g=m.map((row,r)=>row.map((v,c)=>reserved[r][c]?v:(MASKS[k](r,c)?v^1:v)));
+    const fmt=bch((0b00<<3)|k,0x537,11)^0x5412;
+    for(let i=0;i<15;i++){ const b=(fmt>>i)&1;
+      if(i<6) g[i][8]=b; else if(i===6) g[7][8]=b; else if(i===7) g[8][8]=b;
+      else if(i===8) g[8][7]=b; else g[8][14-i]=b;
+      if(i<8) g[8][N-1-i]=b; else g[N-15+i][8]=b; }
+    g[N-8][8]=1;
+    if(ver>=7){ const vi=bch(ver,0x1f25,13);
+      for(let i=0;i<18;i++){const b=(vi>>i)&1,r=Math.floor(i/3),c=i%3; g[N-11+c][r]=b; g[r][N-11+c]=b;} }
+    const sc=penalty(g); if(sc<bs){bs=sc;best=g;}
+  }
+  return best;
+}
+function drawQR(cv, text){
+  if(!cv) return;
+  const m = qrMatrix(text); if(!m) return;
+  const N=m.length, Q=2, S=Math.max(2, Math.floor(cv.clientWidth/(N+2*Q)) || 4);
+  cv.width=cv.height=(N+2*Q)*S;
+  const x=cv.getContext('2d');
+  x.fillStyle='#fff'; x.fillRect(0,0,cv.width,cv.height);
+  x.fillStyle='#0a1929';
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(m[r][c]) x.fillRect((c+Q)*S,(r+Q)*S,S,S);
+}
+
+/* =====================================================================
+   Data — mock only. ZAR / en-ZA / SA names, per the brief.
+   ===================================================================== */
+const NOW = new Date('2026-07-17T09:30:00');
+const money = n => 'R' + Math.round(n).toLocaleString('en-ZA');
+const short = n => n>=1e6 ? 'R'+(n/1e6).toFixed(1)+'m' : n>=1e3 ? 'R'+Math.round(n/1e3)+'k' : money(n);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rel = iso => {
+  const d = (NOW - new Date(iso))/1000;
+  if(d<3600) return Math.max(1,Math.round(d/60))+'m ago';
+  if(d<86400) return Math.round(d/3600)+'h ago';
+  return Math.round(d/86400)+'d ago';
+};
+const maskId = s => s.slice(0,6) + '•'.repeat(Math.max(0,s.length-8)) + s.slice(-2);
+
+const STAGES = ['Registered','Email Verified','KYC Started','KYC Submitted','KYC Approved',
+                'Risk Assessment Pending','Risk Assessment Completed','Ready to Invest'];
+const stagePill = s => { const i=STAGES.indexOf(s);
+  return i>=6?'p-teal':i>=4?'p-green':i>=2?'p-blue':'p-gray'; };
+const TYPES = ['Very Conservative','Conservative','Balanced','Growth','Aggressive'];
+
+/* Qualification rule (Astute parity: an editable threshold shown on Leads) */
+const QUAL = { nw:500000, sav:8000 };
+const isQual = l => (l.nw||0) >= QUAL.nw || (l.sav||0) >= QUAL.sav;
+
+const ADVISOR_EST = {
+  name:'Aishani Atri', initials:'AA', email:'aishani@vault22.io', phone:'+27825550142',
+  phoneFmt:'+27 82 555 0142', company:'Vault22 Wealth', country:'South Africa',
+  licence:'FSP 48219', idNum:'8203155041083', status:'Active', slug:'aishani', code:'AISHANI22',
+  bio:'Certified financial planner helping South Africans build long-term wealth through low-cost, goal-based investing.',
+  calendar:'cal.com/aishaniatri/30min', welcome:'Let’s build your financial future, together.',
+  services:['Goal-based investing','Retirement planning','Tax-free savings','Portfolio reviews']
+};
+/* Scenario A starts genuinely empty — no prefills anywhere in onboarding.
+   Whatever the advisor types drives the rest of the journey (verify email,
+   dashboard greeting, avatar initials, referral code). */
+const ADVISOR_NEW = {
+  name:'', initials:'', email:'', phone:'',
+  phoneFmt:'', company:'', country:'',
+  licence:'', idNum:'9105120055086', status:'Pending Verification', slug:'', code:'',
+  bio:'', calendar:'', welcome:'', services:[]
+};
+
+/* Initials and referral code are derived from the advisor's name, never stored
+   independently: "Aishani Atri" -> AA / AISH22, "Jane Smith" -> JS / JANE22. */
+const initialsOf = n => (n||'').trim().split(/\s+/).filter(Boolean)
+  .slice(0,2).map(w => w[0].toUpperCase()).join('') || '?';
+const refCodeOf = n => {
+  const a = (n||'').replace(/[^a-zA-Z]/g,'').toUpperCase();
+  if(!a) return '';
+  return (a.length < 3 ? (a + 'XXX').slice(0,3) : a.slice(0,4)) + '22';
+};
+ADVISOR_EST.initials = initialsOf(ADVISOR_EST.name);
+ADVISOR_EST.code     = refCodeOf(ADVISOR_EST.name);   // Aishani Atri -> AISH22
+
+const LEADS_EST = [
+  {id:'L1',name:'Thandiwe Mokoena',email:'thandiwe.m@gmail.com',phone:'+27821145567',signup:'2026-07-15',stage:'Ready to Invest',ffs:742,nw:1250000,sav:18000,cap:250000,port:'Growth',act:'2026-07-17T07:10:00'},
+  {id:'L2',name:'Pieter van der Merwe',email:'pieter.vdm@outlook.com',phone:'+27832208891',signup:'2026-07-14',stage:'Risk Assessment Completed',ffs:688,nw:890000,sav:12500,cap:150000,port:'Balanced',act:'2026-07-16T14:22:00'},
+  {id:'L3',name:'Aisha Patel',email:'aisha.patel@yahoo.com',phone:'+27719083345',signup:'2026-07-14',stage:'KYC Approved',ffs:615,nw:540000,sav:8000,cap:90000,port:'Balanced',act:'2026-07-16T09:05:00'},
+  {id:'L4',name:'Sipho Ndlovu',email:'sipho.ndlovu@gmail.com',phone:'+27845512210',signup:'2026-07-13',stage:'Risk Assessment Pending',ffs:590,nw:410000,sav:6200,cap:60000,port:'—',act:'2026-07-15T16:40:00'},
+  {id:'L5',name:'Nadia Fourie',email:'nadia.f@icloud.com',phone:'+27763307712',signup:'2026-07-12',stage:'KYC Submitted',ffs:534,nw:275000,sav:4500,cap:40000,port:'—',act:'2026-07-14T11:15:00'},
+  {id:'L6',name:'Kabelo Dlamini',email:'kabelo.d@gmail.com',phone:'+27827761108',signup:'2026-07-11',stage:'KYC Started',ffs:498,nw:180000,sav:3200,cap:25000,port:'—',act:'2026-07-13T08:30:00'},
+  {id:'L7',name:'Rachel Adams',email:'rachel.adams@gmail.com',phone:'+27794426690',signup:'2026-07-10',stage:'Email Verified',ffs:462,nw:120000,sav:2800,cap:18000,port:'—',act:'2026-07-11T19:02:00'},
+  {id:'L8',name:'Johan Botha',email:'johan.botha@webmail.co.za',phone:'+27816634402',signup:'2026-07-09',stage:'Registered',ffs:null,nw:null,sav:null,cap:null,port:'—',act:'2026-07-09T12:00:00'}
+];
+
+const CUSTOMERS_EST = [
+  {id:'C1',name:'Lerato Khumalo',email:'lerato.k@gmail.com',phone:'+27823319087',country:'South Africa',
+   kyc:'Approved',idNum:'8807145566081',since:'2025-09-04',ffs:812,nw:2450000,income:78000,sav:22000,ef:180000,
+   insurance:420000,liabilities:610000,pv:1240000,inv:980000,risk:'Completed',score:78,type:'Growth',
+   lastLogin:'2026-07-16T20:11:00',lastInv:'2026-07-01',sip:12000,onetime:350000,
+   alloc:{'Equity':62,'Bonds':18,'Cash':8,'Property':12},
+   holdings:[{p:'V22 Global Equity Fund',u:4820.44,mv:642000,r:14.2,d:'2025-09-12'},
+             {p:'V22 SA Balanced Fund',u:3110.20,mv:398000,r:9.6,d:'2025-11-03'},
+             {p:'V22 Income Fund',u:1980.00,mv:200000,r:6.1,d:'2026-02-18'}]},
+  {id:'C2',name:'Marius Steyn',email:'marius.steyn@outlook.com',phone:'+27837742219',country:'South Africa',
+   kyc:'Approved',idNum:'7906225512087',since:'2026-01-22',ffs:701,nw:1180000,income:52000,sav:11000,ef:95000,
+   insurance:260000,liabilities:480000,pv:486000,inv:420000,risk:'Completed',score:61,type:'Balanced',
+   lastLogin:'2026-07-15T07:44:00',lastInv:'2026-06-28',sip:6000,onetime:180000,
+   alloc:{'Equity':45,'Bonds':32,'Cash':15,'Property':8},
+   holdings:[{p:'V22 SA Balanced Fund',u:2440.10,mv:312000,r:8.4,d:'2026-01-30'},
+             {p:'V22 Income Fund',u:1720.00,mv:174000,r:5.2,d:'2026-03-14'}]},
+  {id:'C3',name:'Zanele Mthembu',email:'zanele.m@gmail.com',phone:'+27712265540',country:'South Africa',
+   kyc:'Approved',idNum:'9202034477082',since:'2026-03-11',ffs:664,nw:720000,income:44000,sav:7500,ef:60000,
+   insurance:150000,liabilities:220000,pv:214000,inv:195000,risk:'Completed',score:84,type:'Aggressive',
+   lastLogin:'2026-07-17T06:20:00',lastInv:'2026-07-10',sip:4500,onetime:90000,
+   alloc:{'Equity':74,'Bonds':10,'Cash':6,'Property':10},
+   holdings:[{p:'V22 Global Equity Fund',u:1610.55,mv:214000,r:11.9,d:'2026-03-20'}]},
+  {id:'C4',name:'Grant Willemse',email:'grant.w@icloud.com',phone:'+27849903312',country:'South Africa',
+   kyc:'Approved',idNum:'8511095533084',since:'2026-05-02',ffs:598,nw:495000,income:38000,sav:5200,ef:42000,
+   insurance:90000,liabilities:310000,pv:96000,inv:92000,risk:'Completed',score:38,type:'Conservative',
+   lastLogin:'2026-07-12T18:02:00',lastInv:'2026-07-02',sip:3000,onetime:50000,
+   alloc:{'Equity':22,'Bonds':46,'Cash':28,'Property':4},
+   holdings:[{p:'V22 Income Fund',u:952.00,mv:96000,r:4.8,d:'2026-05-09'}]},
+  {id:'C5',name:'Fatima Ismail',email:'fatima.ismail@gmail.com',phone:'+27761187723',country:'South Africa',
+   kyc:'Approved',idNum:'9008115599083',since:'2026-06-19',ffs:723,nw:1640000,income:64000,sav:16000,ef:140000,
+   insurance:380000,liabilities:290000,pv:158000,inv:150000,risk:'Completed',score:55,type:'Balanced',
+   lastLogin:'2026-07-17T08:05:00',lastInv:'2026-07-14',sip:8000,onetime:120000,
+   alloc:{'Equity':48,'Bonds':30,'Cash':14,'Property':8},
+   holdings:[{p:'V22 SA Balanced Fund',u:1235.00,mv:158000,r:3.2,d:'2026-06-25'}]}
+];
+
+const NOTIFS_EST = [
+  {id:'N1',type:'New Lead',em:'👤',msg:'Thandiwe Mokoena signed up through your link',ts:'2026-07-17T07:10:00',go:['lead','L1'],unread:true},
+  {id:'N2',type:'Risk Assessment Completed',em:'📊',msg:'Pieter van der Merwe completed his risk assessment — Balanced',ts:'2026-07-16T14:22:00',go:['lead','L2'],unread:true},
+  {id:'N3',type:'Large Investment',em:'💰',msg:'Fatima Ismail invested R120,000 in one transaction',ts:'2026-07-14T10:40:00',go:['customer','C5'],unread:true},
+  {id:'N4',type:'KYC Completed',em:'✅',msg:'Aisha Patel’s KYC was approved',ts:'2026-07-16T09:05:00',go:['lead','L3'],unread:false},
+  {id:'N5',type:'First Investment',em:'🎉',msg:'Zanele Mthembu made her first investment — she is now a customer',ts:'2026-07-10T13:15:00',go:['customer','C3'],unread:false},
+  {id:'N6',type:'SIP Failed',em:'⚠️',msg:'Grant Willemse’s R3,000 recurring investment failed — insufficient funds',ts:'2026-07-12T06:00:00',go:['customer','C4'],unread:false},
+  {id:'N7',type:'Birthday',em:'🎂',msg:'Lerato Khumalo’s birthday is today',ts:'2026-07-17T05:00:00',go:['customer','C1'],unread:false},
+  {id:'N8',type:'Portfolio Review Due',em:'🔁',msg:'Marius Steyn’s annual portfolio review is due',ts:'2026-07-15T09:00:00',go:['customer','C2'],unread:false}
+];
+
+const AUDIT_EST = [
+  {ts:'2026-07-17T08:12:00',act:'Viewed customer profile',tgt:'Lerato Khumalo (C1)'},
+  {ts:'2026-07-17T08:10:00',act:'Signed in',tgt:'aishani@vault22.io'},
+  {ts:'2026-07-16T16:41:00',act:'Added note',tgt:'Pieter van der Merwe (L2)'},
+  {ts:'2026-07-16T15:02:00',act:'Exported lead list',tgt:'8 leads'},
+  {ts:'2026-07-16T09:20:00',act:'Viewed KYC document (read-only)',tgt:'Aisha Patel (L3)'},
+  {ts:'2026-07-15T11:33:00',act:'Shared landing page via WhatsApp',tgt:'aishani.advisor.vault22.com'}
+];
+
+/* ---------- runtime state ---------- */
+const state = {
+  scen:'est', route:'dashboard', arg:null,
+  onb:null, onboarded:true,      // onboarded=false -> the app shell does not exist yet
+  regErr:null,
+  q:'', filters:new Set(), sort:{k:'signup',d:-1}, tab:'notes',
+  advisor:null, leads:[], customers:[], notifs:[], audit:[], crm:{}
+};
+function loadScenario(s){
+  state.scen = s;
+  const est = s === 'est';
+  state.advisor   = JSON.parse(JSON.stringify(est ? ADVISOR_EST : ADVISOR_NEW));
+  state.leads     = est ? JSON.parse(JSON.stringify(LEADS_EST)) : [];
+  state.customers = est ? JSON.parse(JSON.stringify(CUSTOMERS_EST)) : [];
+  state.notifs    = est ? JSON.parse(JSON.stringify(NOTIFS_EST)) : [];
+  state.audit     = est ? JSON.parse(JSON.stringify(AUDIT_EST))
+                        : [{ts:'2026-07-17T09:00:00',act:'Signed in',tgt:'nomsa@dubewealth.co.za'}];
+  state.crm = {};
+  [...state.leads, ...state.customers].forEach(c => state.crm[c.id] = {
+    notes:[], tags:[], tasks:[], follow:[], meets:[], files:[]
+  });
+  if(est){
+    state.crm.L1.notes.push({t:'Called — wants to start with R250k lump sum plus R10k/month. Sending the Growth fact sheet.',by:'Aishani',ts:'2026-07-17T07:40:00'});
+    state.crm.L1.tags.push('Hot','High net worth');
+    state.crm.L1.tasks.push({t:'Send Growth portfolio fact sheet',done:false});
+    state.crm.L1.follow.push({d:'2026-07-18',t:'Follow-up call'});
+    state.crm.L2.notes.push({t:'Risk profile came out Balanced. Wants to discuss offshore exposure first.',by:'Aishani',ts:'2026-07-16T16:41:00'});
+    state.crm.L2.tags.push('Warm');
+    state.crm.L2.meets.push({d:'2026-07-16',t:'Intro call — 20 min'});
+    state.crm.C1.tags.push('VIP');
+    state.crm.C1.meets.push({d:'2026-06-02',t:'Annual review'});
+    state.crm.C4.tasks.push({t:'Chase failed SIP — update debit order',done:false});
+  }
+  /* 'new' starts at onboarding screen 1 with no app shell; 'est' is fully
+     onboarded and lands on the dashboard with aishani.advisor.vault22.com set. */
+  state.onboarded = est;
+  state.onb   = est ? null : 'entry';
+  state.regErr = null;
+  state.route = 'dashboard';
+  state.q=''; state.filters.clear();
+}
+/* The shareable link is {advisor-name}.advisor.vault22.com — note the `advisor`
+   segment. The name is mandatory (onboarding cannot complete without it), so
+   there is deliberately no fallback: an absent slug is a bug, not a state. */
+const advisorUrl = a => a.slug + '.advisor.vault22.com';
+/* The advisor dashboard itself lives at vault22.com/advisor. */
+const DASH_URL = 'vault22.com/advisor';
+const audit = (act,tgt) => state.audit.unshift({ts:new Date().toISOString(),act,tgt});
+
+/* =====================================================================
+   Nav
+   ===================================================================== */
+/* The live app's menu assets are the *investor* set — mixed colour fills and
+   metaphors that don't map here (Leads was a coloured family circle, Risk
+   Profiles a dumbbell). One monochrome line set instead, inheriting currentColor
+   so the active/inactive nav states carry it. */
+const ICONS = {
+  home:'M3 9.5 10 4l7 5.5V16a1 1 0 0 1-1 1h-4v-5H8v5H4a1 1 0 0 1-1-1Z',
+  leads:'M7.5 9.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm-4.5 6.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4M14 6.5v4M16 8.5h-4',
+  customers:'M7 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm6.5.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM2.5 16c0-2.4 2-3.8 4.5-3.8s4.5 1.4 4.5 3.8M13 12.4c2 .2 4.5 1.2 4.5 3.6',
+  risk:'M10 16a6 6 0 1 1 6-6M10 10l3.5-2.5',
+  portfolios:'M4 16V8M8 16V5M12 16v-6M16 16v-9',
+  analytics:'M3 14.5 7.5 9l3.5 3.5L17 5.5M17 5.5h-3.5M17 5.5V9',
+  landing:'M3 6.5h14M3 6.5v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9M3 6.5 4.5 4h11L17 6.5M8 10h4',
+  profile:'M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.5 6.5c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5',
+  audit:'M5 3.5h7l3 3v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1ZM11.5 3.5V7H15M7 10h6M7 13h4',
+  roadmap:'M5 17V4M5 4h9l-2 3 2 3H5'
+};
+const navIcon = k => `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"
+  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICONS[k]}"/></svg>`;
+const NAV = [
+  {id:'dashboard',label:'Dashboard',ic:'home'},
+  {id:'leads',label:'Leads',ic:'leads'},
+  {id:'customers',label:'Customers',ic:'customers'},
+  {id:'risk',label:'Risk Profiles',ic:'risk'},
+  {id:'portfolios',label:'Portfolios',ic:'portfolios'},
+  {id:'analytics',label:'Analytics',ic:'analytics'},
+  {sep:'My platform'},
+  {id:'landing',label:'Landing Page',ic:'landing'},
+  {id:'profile',label:'My Profile',ic:'profile'},
+  {sep:'Compliance'},
+  {id:'audit',label:'Audit Log',ic:'audit'},
+  {id:'roadmap',label:'Roadmap',ic:'roadmap'}
+];
+function renderNav(){
+  document.getElementById('nav').innerHTML = NAV.map(n => n.sep
+    ? `<div class="nav-sep">${n.sep}</div>`
+    : `<button class="nav-item ${state.route===n.id?'on':''}" data-go="${n.id}">
+         <span class="ic">${navIcon(n.ic)}</span>${n.label}</button>`).join('');
+  document.getElementById('sbNote').innerHTML = state.scen==='new'
+    ? 'Scenario A — just onboarded, no leads yet. Switch scenario to re-run onboarding.'
+    : 'Scenario B — an established advisor with 8 leads and 5 customers.';
+}
+function go(id,arg){ state.route=id; state.arg=arg||null; state.tab='notes'; window.scrollTo(0,0); render(); }
+
+/* =====================================================================
+   Shared bits
+   ===================================================================== */
+const consent = () => `
+  <div class="consent mt6">
+    <span><b>Consent pending review.</b> Dotted values are client financial data whose advisor
+      visibility is still under privacy review (17 Jul stand-up — consent to be designed after this prototype).
+      Toggle to preview the portal without them.</span>
+    <label class="switch"><input type="checkbox" id="maskTog" ${document.body.classList.contains('mask')?'checked':''}>
+      Hide consent-pending data</label>
+  </div>`;
+const pii = v => `<span class="pii" title="Pending consent review">${v}</span>`;
+const dash = '<span style="color:var(--v4-navy-200)">—</span>';
+
+/* =====================================================================
+   Scenario A — onboarding, BEFORE the dashboard exists.
+
+   A screen router (ONB / ONB_AFTER), one function per screen, mirroring
+   the live onboarding prototype's SCREENS[current] shape. This is not the
+   dashboard rendering a different view: while state.onboarded is false the
+   app shell is hidden entirely and only #onbRoot renders.
+   ===================================================================== */
+const ONB_ORDER = ['entry','register','region','verify','name','link','share'];
+const ONB_LABEL = {register:'Your details', region:'Your region', verify:'Verification',
+  name:'Your advisor name', link:'Your link & QR', share:'Share'};
+
+/* Region is an account attribute, so it comes after register — where the advisor
+   commits. Presented as cards, mirroring the investor onboarding prototype. */
+const REGIONS = [
+  {k:'South Africa',         f:'🇿🇦', d:'Rand (ZAR) · local banks and products'},
+  {k:'United Arab Emirates', f:'🇦🇪', d:'Dirham (AED) · regional providers'},
+  {k:'Global / other',       f:'🌍', d:'Set your currency and providers'}
+];
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+/* Mock availability: a few reserved names so the taken-state is demonstrable. */
+const SLUG_TAKEN = ['admin','www','test','advisor','api','support','help','app','vault22'];
+function slugCheck(v){
+  const s = (v||'').trim().toLowerCase();
+  if(!s)                      return {ok:false, tone:'idle', msg:'Choose a name to continue — this is how clients find you'};
+  if(!/^[a-z0-9-]+$/.test(s)) return {ok:false, tone:'bad',  msg:'Lowercase letters, numbers and hyphens only'};
+  if(s.startsWith('-') || s.endsWith('-')) return {ok:false, tone:'bad', msg:'Cannot start or end with a hyphen'};
+  if(s.length < 3)            return {ok:false, tone:'bad',  msg:'At least 3 characters'};
+  if(s.length > 30)           return {ok:false, tone:'bad',  msg:'At most 30 characters'};
+  if(SLUG_TAKEN.includes(s))  return {ok:false, tone:'bad',  msg:s + '.advisor.vault22.com is already taken'};
+  return {ok:true, tone:'ok', msg:s + '.advisor.vault22.com is available'};
+}
+
+/* Internal demo tool — deliberately not product chrome. During onboarding the
+   scenario switcher lives here rather than in an app topbar the advisor
+   should not be able to see yet. */
+function protobar(note){
+  return `<div class="protobar"><b>Prototype</b>
+    <button data-scen="new" class="${state.scen==='new'?'on':''}">New advisor</button>
+    <button data-scen="est" class="${state.scen==='est'?'on':''}">Established</button>
+    <span class="pb-note">${note||''}</span></div>`;
+}
+
+/* Split-screen shell: form left ~52%, brand panel right ~48%. */
+function onbShell({body, segs, back, urlbar, wide}){
+  const done = segs ? ONB_ORDER.indexOf(segs) : -1;
+  const steps = ONB_ORDER.slice(1);
+  const progress = segs ? `<div class="progress">
+      ${steps.map(s => `<div class="seg ${ONB_ORDER.indexOf(s) <= done ? 'done':''}"></div>`).join('')}
+      <span class="label">${ONB_LABEL[segs]}</span>
+    </div>` : '';
+  return `<div class="onb">
+    <div class="onb__form">
+      <div class="onb__top">
+        ${back ? `<button class="back-btn" data-onb="${back}" aria-label="Go back">‹</button>` : ''}
+        <div class="urlbar">🔒 <b>${urlbar || DASH_URL}</b></div>
+      </div>
+      <div class="onb__formwrap ${wide?'onb__formwrap--wide':''}">${progress}${body}</div>
+    </div>
+    <div class="onb__brand">
+      <svg class="bmark" viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-white"/></svg>
+      <div class="bword">Vault22</div>
+      <div class="brand-tagline">Grow your practice on the platform your clients already trust.
+        Your own page, your own link, every signup tracked back to you.</div>
+      <div class="shareholders">
+        <div class="sh-label">Our Shareholders</div>
+        <div class="sh-row"><span>SC Ventures</span><span>Old Mutual</span><span>Franklin Templeton</span></div>
+      </div>
+    </div>
+  </div>${protobar('Onboarding — the advisor is not signed in yet')}`;
+}
+
+const ONB = {}, ONB_AFTER = {};
+
+/* 1 — Entry. vault22.com/advisor is where the advisor dashboard lives;
+       onboarding is what happens on the way to it. */
+ONB.entry = () => onbShell({
+  wide: true,
+  body: `
+    <div class="entry-mark">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-teal"/></svg>
+      <span>Vault22 <b>Advisor</b></span>
+    </div>
+    <h1 class="entry-title">Grow your practice on Vault22</h1>
+    <p class="onb-sub" style="font-size:15px;max-width:52ch">Get your own branded page and QR code.
+      Share them, and everyone who signs up through your link becomes your lead — tracked all the
+      way from registration to first investment.</p>
+    <div class="entry-list">
+      ${[['Your own page','On {name}.advisor.vault22.com, branded to you'],
+         ['A link and a QR code','Every signup through them is tagged to you'],
+         ['One dashboard','Leads, customers, KYC and investments in one place']]
+        .map(([t,d])=>`<div class="entry-li">
+          <span class="tick">✓</span>
+          <span><b>${t}</b><span class="d">${esc(d)}</span></span></div>`).join('')}
+    </div>
+    <div class="actions">
+      <button class="obtn obtn-pri" data-onb="register">Become an advisor</button>
+      <button class="obtn obtn-ghost" data-onb="signin">Sign in</button>
+    </div>
+    <div class="legalnote">Once you're set up, your dashboard lives at <b>${DASH_URL}</b>.</div>`
+});
+
+/* Sign in — a returning advisor. Mock (no backend), so it drops straight into
+   the established dashboard: the honest demo of "an advisor who already exists". */
+ONB.signin = () => onbShell({
+  back:'entry',
+  body: `
+    <h1 class="onb-title">Welcome back</h1>
+    <p class="onb-sub">Sign in to your advisor dashboard at <b>${DASH_URL}</b>.</p>
+    <div class="field" style="margin-top:var(--v4-space-5)"><label>Email address</label>
+      <input class="inp" type="email" placeholder="demo@gmail.com"></div>
+    <div class="field" style="margin-bottom:var(--v4-space-2)"><label>Password</label>
+      <input class="inp" type="password" placeholder="••••••••"></div>
+    <div style="text-align:right"><a class="link-a" data-toast="Password reset is stubbed — no backend in the prototype.">Forgot password?</a></div>
+    <div class="actions"><button class="obtn obtn-pri" data-onb="__signin">Sign in</button></div>
+    <div class="center-link">New here? <a class="link-a" data-onb="register">Create an advisor account</a></div>
+    <div class="legalnote">Prototype: any credentials sign you in as Aishani Atri, the established advisor.</div>`
+});
+
+/* 2 — Register. Uday named exactly four fields on the 17 Jul call:
+       name, email, password, region. The doc's extras stay collapsed. */
+ONB.register = () => {
+  const a = state.advisor;
+  return onbShell({
+    segs:'register', back:'entry',
+    body: `
+      <h1 class="onb-title">Create your advisor account</h1>
+      <p class="onb-sub">Three details to get started. You can add the rest later.</p>
+      <div class="field" style="margin-top:var(--v4-space-5)"><label>Full name</label>
+        <input class="inp" id="r_name" value="${esc(a.name)}" placeholder="Jane Smith" autocomplete="off">
+        ${state.regErr==='name' ? `<div class="onb-check bad">Enter your full name</div>` : ''}</div>
+      <div class="field"><label>Email address</label>
+        <input class="inp" id="r_email" type="email" value="${esc(a.email)}" placeholder="demo@gmail.com" autocomplete="off">
+        ${state.regErr==='email' ? `<div class="onb-check bad">${a.email ? 'That doesn’t look like an email address' : 'Enter your email address'}</div>` : ''}</div>
+      <div class="field"><label>Password</label>
+        <input class="inp" type="password" placeholder="••••••••"></div>
+      <details style="margin-bottom:var(--v4-space-3)">
+        <summary style="font-size:13px;color:var(--muted);cursor:pointer;font-weight:600">Optional details</summary>
+        <div style="margin-top:var(--v4-space-4)">
+          <div class="field"><label>Mobile number <span class="opt">(optional)</span></label>
+            <input class="inp" placeholder="+27 82 000 0000"></div>
+          <div class="field"><label>Company <span class="opt">(optional)</span></label>
+            <input class="inp" placeholder="Smith Wealth"></div>
+          <div class="field"><label>Licence number <span class="opt">(optional, region dependent)</span></label>
+            <input class="inp" placeholder="FSP …"></div>
+          <div class="field" style="margin-bottom:0"><label>Referral code <span class="opt">(optional)</span></label>
+            <input class="inp"></div>
+        </div>
+      </details>
+      <div class="actions"><button class="obtn obtn-pri" data-onb="region">Create account</button></div>
+      <div class="legalnote">By continuing you agree to our Terms &amp; Conditions and Privacy Policy.</div>`
+  });
+};
+
+/* Region — its own screen, selectable cards rather than a dropdown. */
+ONB.region = () => {
+  const sel = state.advisor.country;
+  return onbShell({
+    segs:'region', back:'register',
+    body: `
+      <h1 class="onb-title">Select your region</h1>
+      <p class="onb-sub">This sets your currency, which products your clients see,
+        and the KYC checks that apply to them.</p>
+      <div class="opt-list" style="margin-top:var(--v4-space-5)">
+        ${REGIONS.map(r=>`
+          <button class="opt ${sel===r.k?'sel':''}" data-region="${esc(r.k)}">
+            <span class="opt-ic">${r.f}</span>
+            <span class="opt-body"><span class="opt-t">${r.k}</span><span class="opt-d">${r.d}</span></span>
+            <span class="opt-check">✓</span>
+          </button>`).join('')}
+      </div>
+      <div class="actions">
+        <button class="obtn obtn-pri" data-onb="verify" ${sel?'':'disabled'}>Continue</button></div>
+      <div class="center-link">You can change your region later.</div>`
+  });
+};
+
+/* 3 — Verify. Pending Verification -> Active. */
+ONB.verify = () => {
+  const a = state.advisor;
+  return onbShell({
+    segs:'verify', back:'region',
+    body: `
+      <h1 class="onb-title">Verify your account</h1>
+      <p class="onb-sub">We sent a link to <b>${esc(a.email)}</b>.</p>
+      <div style="margin-top:var(--v4-space-5)">
+        <div class="list-row"><span><b>Email verification</b>
+          <div class="sub">Confirmed just now</div></span><span class="pill p-green">Verified</span></div>
+        <div class="list-row"><span><b>Mobile OTP</b>
+          <div class="sub">Optional</div></span><span class="pill p-gray">Skipped</span></div>
+        <div class="list-row"><span><b>Terms &amp; Conditions</b></span><span class="pill p-green">Accepted</span></div>
+        <div class="list-row"><span><b>Privacy Policy</b></span><span class="pill p-green">Accepted</span></div>
+      </div>
+      <div style="margin-top:var(--v4-space-5);display:flex;align-items:center;gap:var(--v4-space-2);font-size:13px">
+        <span class="pill p-gray">Pending Verification</span> <span style="color:var(--v4-navy-300)">→</span>
+        <span class="pill p-green">Active</span>
+      </div>
+      <div class="actions"><button class="obtn obtn-pri" data-onb="name">Continue</button></div>`
+  });
+};
+
+/* 4 — The mandatory step. No skip, no fallback: without a name there is no
+       shareable link, so Continue stays disabled until the name is valid. */
+ONB.name = () => {
+  const v = state.advisor.slug || '';
+  const c = slugCheck(v);
+  return onbShell({
+    segs:'name', back:'verify',
+    body: `
+      <h1 class="onb-title">Choose your advisor name</h1>
+      <p class="onb-sub">This becomes your web address and the link you share with prospects.
+        You need one to continue — it is how every signup is tagged back to you.</p>
+      <div class="field" style="margin-top:var(--v4-space-5)">
+        <label>Advisor name</label>
+        <input class="inp" id="slugIn" value="${esc(v)}" placeholder="aishani" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="urlpreview" id="slugPrev">
+        <span class="${v?'s':'r'}">${esc(v || 'yourname')}</span><span class="r">.advisor.vault22.com</span>
+      </div>
+      <div class="onb-check ${c.tone}" id="slugMsg">${c.ok?'✓ ':''}${esc(c.msg)}</div>
+      <div class="actions">
+        <button class="obtn obtn-pri" id="slugNext" data-onb="link" ${c.ok?'':'disabled'}>Continue</button>
+      </div>
+      <div class="legalnote">Lowercase letters, numbers and hyphens. 3–30 characters.
+        Cannot start or end with a hyphen.</div>`
+  });
+};
+ONB_AFTER.name = () => { const i = document.getElementById('slugIn'); if(i) i.focus(); };
+
+/* 5 — Link & QR. Real scannable code for the chosen URL. */
+ONB.link = () => {
+  const a = state.advisor;
+  return onbShell({
+    segs:'link', back:'name',
+    body: `
+      <h1 class="onb-title">Your link and QR code</h1>
+      <p class="onb-sub">Both are live now. Every signup through them is tagged to you.</p>
+      <div class="field" style="margin-top:var(--v4-space-5)"><label>Your link</label>
+        <div class="row"><input class="inp" value="${esc(advisorUrl(a))}" readonly>
+          <button class="btn" data-copy="https://${esc(advisorUrl(a))}">Copy</button></div></div>
+      <div class="field"><label>Referral code</label>
+        <input class="inp" value="${esc(a.code)}" readonly></div>
+      <div class="row" style="align-items:flex-start;gap:var(--v4-space-4);margin-top:var(--v4-space-2)">
+        <div class="qr" style="width:132px;flex:none"><canvas id="obQr" width="132" height="132"></canvas></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">
+          A real, scannable code — point a phone at it. Print it, put it on a card,
+          or drop it into a deck.</div>
+      </div>
+      <div class="actions"><button class="obtn obtn-pri" data-onb="share">Continue</button></div>`
+  });
+};
+ONB_AFTER.link = () => drawQR(document.getElementById('obQr'), 'https://' + advisorUrl(state.advisor));
+
+/* 6 — Share, then hand off into the dashboard at vault22.com/advisor. */
+ONB.share = () => {
+  const a = state.advisor;
+  return onbShell({
+    segs:'share', back:'link',
+    body: `
+      <h1 class="onb-title">Share your page</h1>
+      <p class="onb-sub">Send it to prospects — every signup through it is tagged to you.</p>
+      <div class="field" style="margin-top:var(--v4-space-5)">
+        <label>Your link</label>
+        <div class="row"><input class="inp" value="${esc(advisorUrl(a))}" readonly>
+          <button class="btn" data-copy="https://${esc(advisorUrl(a))}">Copy link</button></div>
+      </div>
+      <div class="qr-center"><div class="qr" style="width:150px">
+        <canvas id="obQr2" width="150" height="150"></canvas></div></div>
+      <div class="share-row">${shareBtns(a, false)}</div>
+      <div class="actions">
+        <button class="obtn obtn-pri" data-onb="__done">Go to my dashboard</button>
+      </div>
+      <div class="legalnote">Your dashboard lives at <b>${DASH_URL}</b>.</div>`
+  });
+};
+ONB_AFTER.share = () => drawQR(document.getElementById('obQr2'), 'https://' + advisorUrl(state.advisor));
+
+function goOnb(id){
+  /* Sign in — mock: any credentials return the established advisor. */
+  if(id === '__signin'){ loadScenario('est'); return render(); }
+
+  /* Leaving register: capture what was typed and derive everything downstream
+     from it. Empty fields block progress — never invent a value. */
+  if(id === 'region'){
+    const n = document.getElementById('r_name'), em = document.getElementById('r_email');
+    if(n && em){
+      const nv = n.value.trim(), ev = em.value.trim();
+      state.advisor.name = nv; state.advisor.email = ev;   // keep what they typed
+      if(!nv){ state.regErr = 'name'; return render(); }
+      if(!EMAIL_RE.test(ev)){ state.regErr = 'email'; return render(); }
+      state.regErr = null;
+      state.advisor.initials = initialsOf(nv);
+      state.advisor.code     = refCodeOf(nv);
+      audit('Created advisor account', ev);
+    }
+  }
+  if(id === 'verify' && !state.advisor.country) return;   // region is required
+
+  if(id === '__done'){
+    state.onboarded = true;
+    state.advisor.status = 'Active';
+    audit('Completed advisor onboarding', advisorUrl(state.advisor));
+    return go('dashboard');
+  }
+  if(id === 'link'){
+    const i = document.getElementById('slugIn');
+    if(i){
+      const c = slugCheck(i.value);
+      if(!c.ok) return;                       // mandatory: cannot advance without a valid name
+      state.advisor.slug = i.value.trim().toLowerCase();
+      audit('Chose advisor name', advisorUrl(state.advisor));
+    }
+    if(!state.advisor.slug) return;
+  }
+  state.onb = id;
+  window.scrollTo(0,0);
+  render();
+}
+/* copy=false omits the Copy link button, for layouts that place it beside the
+   link field instead (the onboarding share screen). Default keeps it, so the
+   signed-off dashboard share modal is unchanged. */
+function shareBtns(a, copy){
+  const url = 'https://' + advisorUrl(a);
+  const txt = encodeURIComponent(`Start investing with me on Vault22: ${url}`);
+  const copyBtn = copy === false ? '' : `<button class="btn" data-copy="${url}">Copy link</button>`;
+  return `
+    <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${txt}" data-audit="Shared landing page via WhatsApp">WhatsApp</a>
+    <a class="btn" target="_blank" rel="noopener" href="mailto:?subject=${encodeURIComponent('Start investing with Vault22')}&body=${txt}" data-audit="Shared landing page via Email">Email</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}" data-audit="Shared landing page via LinkedIn">LinkedIn</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" data-audit="Shared landing page via Facebook">Facebook</a>
+    ${copyBtn}`;
+}
+
+/* =====================================================================
+   Dashboard
+   ===================================================================== */
+function vDashboard(){
+  const a = state.advisor, L = state.leads, C = state.customers;
+  const aua = C.reduce((s,c)=>s+c.pv,0), inv = C.reduce((s,c)=>s+c.inv,0);
+  const pkyc = L.filter(l=>STAGES.indexOf(l.stage)<4).length;
+  const prisk = L.filter(l=>l.stage==='Risk Assessment Pending').length;
+  const conv = (L.length+C.length) ? (C.length/(L.length+C.length)*100).toFixed(1) : '0.0';
+  const qual = L.filter(isQual).length;
+  const kpi=(k,v,d,hero)=>`<div class="kpi ${hero?'hero':''}"><div class="k">${k}</div>
+    <div class="v">${v}</div>${d?`<div class="d">${d}</div>`:''}</div>`;
+
+  if(!L.length && !C.length) return `
+    <div class="page-head"><h1>Welcome to Vault22, ${esc(a.name.split(' ')[0])}</h1>
+      <p class="lede">Your landing page is live. Share it to start bringing in leads.</p></div>
+    <div class="card card-p between">
+      <div><h2>${esc(advisorUrl(a))}</h2>
+        <p class="lede">Every signup through this link is tagged to you.</p></div>
+      <div class="row"><button class="btn" data-go="landing">Preview my Client Platform</button>
+        <button class="btn btn-pri" data-share="1">Share my Client Platform</button></div>
+    </div>
+    <div class="card mt6">
+      <div class="empty">
+        <div class="em">◎</div>
+        <h3>No leads yet</h3>
+        <p>Share your link or QR code to get started. New signups will appear here automatically,
+           and you'll be notified the moment one arrives.</p>
+        <button class="btn btn-teal" data-share="1">Share my link</button>
+      </div>
+    </div>
+    <div class="kpis mt6">
+      ${kpi('Total Leads','0','Nothing yet',true)}
+      ${kpi('Total Customers','0','Nothing yet',true)}
+      ${kpi('Conversion Rate','—','Needs at least one lead')}
+      ${kpi('Assets Under Advice','—','Needs at least one customer')}
+    </div>`;
+
+  return `
+    <div class="page-head"><h1>Welcome back, ${esc(a.name.split(' ')[0])}</h1>
+      <p class="lede">Share your Client Platform to keep engaging clients and capturing more leads.</p></div>
+    <div class="card card-p between">
+      <div><h2>${esc(advisorUrl(a))}</h2>
+        <p class="lede">Your landing page is live — every signup through it is tagged to you.</p></div>
+      <div class="row">
+        <button class="btn" data-go="landing">Preview my Client Platform</button>
+        <button class="btn btn-pri" data-share="1">Share my Client Platform</button>
+      </div>
+    </div>
+
+    <div class="kpis mt6">
+      ${kpi('Total Leads', L.length, `${qual} qualified · ${L.length-qual} unqualified`, true)}
+      ${kpi('Total Customers', C.length, 'Bought at least one product', true)}
+      ${kpi('Conversion Rate', conv+'%', 'Leads → customers')}
+      ${kpi('Assets Under Advice', short(aua), `Across ${C.length} customers`)}
+    </div>
+    <div class="kpis mt">
+      ${kpi('Total Investments', short(inv), 'Contributed to date')}
+      ${kpi('Monthly New Customers','2','July 2026')}
+      ${kpi('Monthly Investment Amount', short(214000),'July 2026')}
+      ${kpi('Revenue / Commission', short(18600),'This month, estimated')}
+    </div>
+    <div class="kpis mt">
+      ${kpi('Pending KYC', pkyc, 'Leads before KYC Approved')}
+      ${kpi('Pending Risk Assessments', prisk, 'Awaiting completion')}
+    </div>
+    ${consent()}`;
+}
+
+/* =====================================================================
+   Leads (§8) + search/filters (§13)
+   ===================================================================== */
+const LEAD_FILTERS = [
+  {k:'qual', t:'Qualified', f:l=>isQual(l)},
+  {k:'unqual', t:'Unqualified', f:l=>!isQual(l)},
+  {k:'kyc', t:'KYC Pending', f:l=>STAGES.indexOf(l.stage)<4},
+  {k:'risk', t:'Risk Pending', f:l=>l.stage==='Risk Assessment Pending'},
+  {k:'hnw', t:'High Net Worth', f:l=>(l.nw||0)>=1000000},
+  {k:'ffs', t:'Fitness ≥ 600', f:l=>(l.ffs||0)>=600},
+  {k:'ready', t:'Ready to Invest', f:l=>l.stage==='Ready to Invest'},
+  {k:'active', t:'Active this week', f:l=>(NOW-new Date(l.act))/86400000<=7}
+];
+function applyLeads(){
+  const q = state.q.trim().toLowerCase();
+  let r = state.leads.filter(l =>
+    !q || [l.name,l.email,l.phone].some(v=>String(v).toLowerCase().includes(q)));
+  LEAD_FILTERS.forEach(f => { if(state.filters.has(f.k)) r = r.filter(f.f); });
+  const {k,d} = state.sort;
+  return r.sort((a,b) => {
+    const x=a[k], y=b[k];
+    if(x==null) return 1; if(y==null) return -1;
+    return (typeof x==='number' ? x-y : String(x).localeCompare(String(y))) * d;
+  });
+}
+function th(k,label,cls){
+  const on = state.sort.k===k;
+  return `<th class="sortable ${on?'act':''} ${cls||''}" data-sort="${k}">${label}
+    <span class="ar">${on ? (state.sort.d===1?'▲':'▼') : '▲'}</span></th>`;
+}
+function vLeads(){
+  if(!state.leads.length) return `
+    <div class="page-head"><h1>Leads</h1>
+      <p class="lede">Signed up through your link, not yet invested.</p></div>
+    <div class="card"><div class="empty"><div class="em">◎</div><h3>No leads yet</h3>
+      <p>Share your link or QR code to get started. New signups appear here automatically.</p>
+      <button class="btn btn-teal" data-share="1">Share my link</button></div></div>`;
+  const rows = applyLeads();
+  const body = rows.length ? rows.map(l=>`<tr>
+    <td><div class="nm">${esc(l.name)}</div><div class="sub">${esc(l.email)}</div></td>
+    <td class="num">${l.phone}</td>
+    <td class="num">${l.signup}</td>
+    <td><span class="pill ${stagePill(l.stage)}">${l.stage}</span></td>
+    <td>${isQual(l)?'<span class="pill p-teal">Qualified</span>':'<span class="pill p-gray">Unqualified</span>'}</td>
+    <td class="num">${l.ffs?pii(l.ffs):dash}</td>
+    <td class="num">${l.nw?pii(money(l.nw)):dash}</td>
+    <td class="num">${l.sav?pii(money(l.sav)):dash}</td>
+    <td class="num">${l.cap?pii(money(l.cap)):dash}</td>
+    <td>${l.port==='—'?dash:`<span class="pill p-gray">${l.port}</span>`}</td>
+    <td class="num sub">${rel(l.act)}</td>
+    <td><button class="btn btn-sm" data-lead="${l.id}">Open ›</button></td>
+  </tr>`).join('') : '';
+
+  return `
+    <div class="page-head"><h1>Leads</h1>
+      <p class="lede">Signed up through your link, not yet invested. A lead becomes a customer
+        as soon as they buy any product.</p></div>
+
+    <div class="card card-p between" style="padding:var(--v4-space-4) var(--v4-space-5)">
+      <div class="row" style="font-size:13px">
+        <b>Qualified lead filtering</b>
+        <span style="color:var(--muted)">Minimum net worth: <b class="num">${money(QUAL.nw)}</b>
+          &nbsp;OR&nbsp; Minimum monthly savings: <b class="num">${money(QUAL.sav)}</b></span>
+      </div>
+      <button class="btn btn-sm" data-toast="Threshold editing is out of scope for the prototype — the rule is shown so the split is legible.">Edit settings</button>
+    </div>
+
+    <div class="card mt">
+      <div class="card-p between" style="padding-bottom:var(--v4-space-4)">
+        <div class="row"><h2>All leads</h2>
+          <span class="pill p-gray">${rows.length} of ${state.leads.length}</span></div>
+        <input class="inp" id="searchIn" style="width:280px" placeholder="Search name, email or phone" value="${esc(state.q)}">
+      </div>
+      <div class="card-p" style="padding-top:0;padding-bottom:var(--v4-space-4)">
+        <div class="chips">
+          ${LEAD_FILTERS.map(f=>`<button class="fchip ${state.filters.has(f.k)?'on':''}" data-filter="${f.k}">${f.t}</button>`).join('')}
+          ${state.filters.size?`<button class="fchip" data-filter="__clear">Clear all ✕</button>`:''}
+        </div>
+      </div>
+      ${rows.length ? `<div class="tbl-scroll"><table>
+        <thead><tr>
+          ${th('name','Name')}${th('phone','Phone')}${th('signup','Signup')}${th('stage','Lead Status')}
+          <th>Qualified</th>${th('ffs','Fitness')}${th('nw','Net Worth')}${th('sav','Savings')}
+          ${th('cap','Capacity')}<th>Portfolio</th>${th('act','Last Activity')}<th></th>
+        </tr></thead><tbody>${body}</tbody></table></div>`
+      : `<div class="empty"><div class="em">◎</div><h3>No leads match</h3>
+          <p>Nothing matches your search and filters. Try clearing them.</p>
+          <button class="btn" data-filter="__clear">Clear filters</button></div>`}
+    </div>
+    ${consent()}`;
+}
+
+/* =====================================================================
+   Customers (§9)
+   ===================================================================== */
+const CUST_FILTERS = [
+  {k:'hnw', t:'High Net Worth', f:c=>c.nw>=1000000},
+  {k:'ffs', t:'Fitness ≥ 700', f:c=>c.ffs>=700},
+  {k:'pv', t:'Portfolio ≥ R500k', f:c=>c.pv>=500000},
+  {k:'sip', t:'Has recurring', f:c=>c.sip>0},
+  {k:'active', t:'Active this week', f:c=>(NOW-new Date(c.lastLogin))/86400000<=7}
+];
+function applyCust(){
+  const q = state.q.trim().toLowerCase();
+  let r = state.customers.filter(c =>
+    !q || [c.name,c.email,c.phone].some(v=>String(v).toLowerCase().includes(q)));
+  CUST_FILTERS.forEach(f=>{ if(state.filters.has(f.k)) r = r.filter(f.f); });
+  const {k,d} = state.sort;
+  return r.sort((a,b)=>{
+    const x=a[k], y=b[k];
+    if(x==null) return 1; if(y==null) return -1;
+    return (typeof x==='number' ? x-y : String(x).localeCompare(String(y))) * d;
+  });
+}
+function vCustomers(){
+  const C = state.customers, rows = applyCust();
+  const aua = C.reduce((s,c)=>s+c.pv,0), inv = C.reduce((s,c)=>s+c.inv,0);
+  if(!C.length) return `
+    <div class="page-head"><h1>Customers</h1>
+      <p class="lede">Leads who have bought at least one product.</p></div>
+    <div class="card"><div class="empty"><div class="em">◍</div><h3>No customers yet</h3>
+      <p>Once a lead makes their first investment they'll appear here.</p>
+      <button class="btn" data-go="leads">View leads</button></div></div>`;
+  const body = rows.map(c=>`<tr>
+    <td><div class="nm">${esc(c.name)}</div><div class="sub">${esc(c.email)}</div></td>
+    <td class="num">${c.phone}</td>
+    <td><span class="pill p-green">KYC ${c.kyc}</span></td>
+    <td class="num">${pii(c.ffs)}</td>
+    <td class="num">${pii(money(c.nw))}</td>
+    <td class="num"><b>${money(c.pv)}</b></td>
+    <td class="num" style="color:${c.pv-c.inv>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">
+      ${c.pv-c.inv>=0?'+':''}${money(c.pv-c.inv)}</td>
+    <td><span class="pill p-teal">${c.type}</span></td>
+    <td class="num">${c.since}</td>
+    <td><button class="btn btn-sm" data-cust="${c.id}">Profile ›</button></td>
+  </tr>`).join('');
+  return `
+    <div class="page-head"><h1>Customers</h1>
+      <p class="lede">Leads who have bought at least one product.</p></div>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi"><div class="k">Assets Under Advice</div><div class="v">${short(aua)}</div></div>
+      <div class="kpi"><div class="k">Invested Amount</div><div class="v">${short(inv)}</div></div>
+      <div class="kpi"><div class="k">Unrealised Gain</div>
+        <div class="v" style="color:var(--v4-success-dark)">+${short(aua-inv)}</div></div>
+    </div>
+    <div class="card mt6">
+      <div class="card-p between" style="padding-bottom:var(--v4-space-4)">
+        <div class="row"><h2>All customers</h2>
+          <span class="pill p-gray">${rows.length} of ${C.length}</span></div>
+        <input class="inp" id="searchIn" style="width:280px" placeholder="Search name, email or phone" value="${esc(state.q)}">
+      </div>
+      <div class="card-p" style="padding-top:0;padding-bottom:var(--v4-space-4)">
+        <div class="chips">
+          ${CUST_FILTERS.map(f=>`<button class="fchip ${state.filters.has(f.k)?'on':''}" data-filter="${f.k}">${f.t}</button>`).join('')}
+          ${state.filters.size?`<button class="fchip" data-filter="__clear">Clear all ✕</button>`:''}
+        </div>
+      </div>
+      ${rows.length?`<div class="tbl-scroll"><table>
+        <thead><tr>${th('name','Name')}${th('phone','Phone')}<th>KYC</th>${th('ffs','Fitness')}
+          ${th('nw','Net Worth')}${th('pv','Portfolio Value')}<th>Unrealised G/L</th>
+          <th>Investor Type</th>${th('since','Client Since')}<th></th></tr></thead>
+        <tbody>${body}</tbody></table></div>`
+      :`<div class="empty"><div class="em">◍</div><h3>No customers match</h3>
+         <p>Nothing matches your search and filters.</p>
+         <button class="btn" data-filter="__clear">Clear filters</button></div>`}
+    </div>
+    ${consent()}`;
+}
+
+/* =====================================================================
+   Customer profile (§10) + CRM (§12)
+   ===================================================================== */
+function crmTabs(id){
+  const c = state.crm[id], t = state.tab;
+  const tabs = [['notes','Notes',c.notes.length],['tags','Tags',c.tags.length],
+    ['tasks','Tasks',c.tasks.length],['follow','Follow-ups',c.follow.length],
+    ['meets','Meetings',c.meets.length],['files','Files',c.files.length]];
+  let panel = '';
+  if(t==='notes') panel = `
+    ${c.notes.map(n=>`<div class="note">${esc(n.t)}<div class="meta">${esc(n.by)} · ${rel(n.ts)}</div></div>`).join('')
+      || '<p class="lede">No notes yet.</p>'}
+    <div class="row mt"><input class="inp" id="crmIn" placeholder="Add a note…">
+      <button class="btn btn-pri" data-crm="notes" data-id="${id}">Add</button></div>`;
+  if(t==='tags') panel = `
+    <div class="svc">${c.tags.map(g=>`<span class="tag">${esc(g)}
+      <button data-untag="${esc(g)}" data-id="${id}">✕</button></span>`).join('') || '<p class="lede">No tags yet.</p>'}</div>
+    <div class="row mt"><input class="inp" id="crmIn" placeholder="Add a tag…">
+      <button class="btn btn-pri" data-crm="tags" data-id="${id}">Add</button></div>`;
+  if(t==='tasks') panel = `
+    ${c.tasks.map((k,i)=>`<div class="list-row">
+      <label class="row" style="cursor:pointer;font-weight:500">
+        <input type="checkbox" ${k.done?'checked':''} data-task="${i}" data-id="${id}" style="accent-color:var(--v4-teal-400)">
+        <span style="${k.done?'text-decoration:line-through;color:var(--muted)':''}">${esc(k.t)}</span></label>
+      </div>`).join('') || '<p class="lede">No tasks yet.</p>'}
+    <div class="row mt"><input class="inp" id="crmIn" placeholder="Add a task…">
+      <button class="btn btn-pri" data-crm="tasks" data-id="${id}">Add</button></div>`;
+  if(t==='follow') panel = `
+    ${c.follow.map(f=>`<div class="list-row"><span>${esc(f.t)}</span>
+      <span class="pill p-amber">${f.d}</span></div>`).join('') || '<p class="lede">No follow-ups scheduled.</p>'}
+    <div class="row mt"><input class="inp" type="date" id="crmDate" value="2026-07-20" style="width:170px">
+      <input class="inp" id="crmIn" placeholder="Reminder…">
+      <button class="btn btn-pri" data-crm="follow" data-id="${id}">Add</button></div>`;
+  if(t==='meets') panel = `
+    ${c.meets.map(m=>`<div class="list-row"><span>${esc(m.t)}</span>
+      <span class="sub">${m.d}</span></div>`).join('') || '<p class="lede">No meetings logged.</p>'}
+    <div class="row mt"><input class="inp" type="date" id="crmDate" value="2026-07-17" style="width:170px">
+      <input class="inp" id="crmIn" placeholder="Meeting summary…">
+      <button class="btn btn-pri" data-crm="meets" data-id="${id}">Log</button></div>`;
+  if(t==='files') panel = `
+    ${c.files.map(f=>`<div class="list-row"><span>📎 ${esc(f)}</span>
+      <span class="sub">uploaded</span></div>`).join('') || '<p class="lede">No files uploaded.</p>'}
+    <button class="btn mt" style="width:100%" data-crm="files" data-id="${id}">Upload a file</button>`;
+  return `<div class="tabs">${tabs.map(([k,l,n])=>`
+      <button class="tab ${t===k?'on':''}" data-tab="${k}">${l}${n?` <span class="sub">(${n})</span>`:''}</button>`).join('')}</div>
+    ${panel}`;
+}
+function vCustomer(){
+  const c = state.customers.find(x=>x.id===state.arg);
+  if(!c) return vCustomers();
+  const gl = c.pv-c.inv;
+  const holds = c.holdings.map(h=>`<tr>
+    <td class="nm">${esc(h.p)}</td>
+    <td class="num">${h.u.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+    <td class="num">${money(h.mv)}</td>
+    <td class="num" style="color:${h.r>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">${h.r>=0?'+':''}${h.r}%</td>
+    <td class="num">${h.d}</td></tr>`).join('');
+  const alloc = Object.entries(c.alloc).map(([k,v])=>`
+    <div class="arow"><span class="lb">${k}</span><span class="bar"><i style="width:${v}%"></i></span>
+      <span class="pc num">${v}%</span></div>`).join('');
+  const tl = [
+    ['Signed up via your landing page', c.since],
+    ['Completed KYC', c.since],
+    [`Risk assessment completed — ${c.type} (score ${c.score})`, c.since],
+    [`First investment — ${money(c.onetime)}`, c.since],
+    [`Recurring investment started — ${money(c.sip)}/month`, c.since],
+    ['Last investment', c.lastInv]
+  ].map(([t,d])=>`<div class="tl-i"><div class="tl-t">${t}</div><div class="tl-d">${d}</div></div>`).join('');
+
+  return `
+    <button class="btn btn-sm" data-go="customers" style="margin-bottom:var(--v4-space-4)">‹ Customers</button>
+    <div class="page-head between">
+      <div><h1>${esc(c.name)}</h1>
+        <p class="lede">${esc(c.email)} · ${c.phone} · ${c.country}</p></div>
+      <div class="row">
+        <a class="btn btn-sm" href="tel:${c.phone}" data-audit="Called customer">Call</a>
+        <a class="btn btn-sm" href="mailto:${c.email}" data-audit="Emailed customer">Email</a>
+        <a class="btn btn-sm" target="_blank" rel="noopener"
+           href="https://wa.me/${c.phone.replace(/\D/g,'')}?text=${encodeURIComponent('Hi '+c.name.split(' ')[0]+', ')}"
+           data-audit="WhatsApped customer">WhatsApp</a>
+        <span class="pill p-teal">${c.type}</span>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="k">Client since</div><div class="v" style="font-size:20px">${c.since}</div></div>
+      <div class="kpi"><div class="k">Portfolio Value</div><div class="v">${short(c.pv)}</div>
+        <div class="d" style="color:${gl>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">${gl>=0?'+':''}${money(gl)} unrealised</div></div>
+      <div class="kpi"><div class="k">Financial Fitness</div><div class="v">${pii(c.ffs)}<small> /1000</small></div></div>
+      <div class="kpi"><div class="k">Last login</div><div class="v" style="font-size:20px">${rel(c.lastLogin)}</div>
+        <div class="d">Last investment ${c.lastInv}</div></div>
+    </div>
+
+    <div class="grid2 mt6">
+      <div>
+        <div class="card card-p">
+          <div class="sec-t">Holdings</div>
+          <div class="tbl-scroll"><table style="min-width:480px">
+            <thead><tr><th>Product</th><th>Units</th><th>Market Value</th><th>Return %</th><th>Purchase Date</th></tr></thead>
+            <tbody>${holds}</tbody></table></div>
+          <div class="sec-t" style="margin-top:var(--v4-space-6)">Asset allocation</div>${alloc}
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">CRM</div>
+          ${crmTabs(c.id)}
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">Activity timeline</div>
+          <div class="tl">${tl}</div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-p">
+          <div class="sec-t">Financial snapshot</div>
+          <div class="dl">
+            <div><div class="t">Net Worth</div><div class="v">${pii(money(c.nw))}</div></div>
+            <div><div class="t">Savings</div><div class="v">${pii(money(c.sav))}/mo</div></div>
+            <div><div class="t">Investments</div><div class="v">${money(c.inv)}</div></div>
+            <div><div class="t">Insurance</div><div class="v">${pii(money(c.insurance))}</div></div>
+            <div><div class="t">Liabilities</div><div class="v">${pii(money(c.liabilities))}</div></div>
+            <div><div class="t">Monthly Income</div><div class="v">${pii(money(c.income))}</div></div>
+            <div><div class="t">Emergency Fund</div><div class="v">${pii(money(c.ef))}</div></div>
+            <div><div class="t">Recurring</div><div class="v">${money(c.sip)}/mo</div></div>
+          </div>
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">Products owned</div>
+          ${c.holdings.map(h=>`<div class="list-row"><span>${esc(h.p)}</span>
+            <span class="sub num">${money(h.mv)}</span></div>`).join('')}
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">Risk</div>
+          <div class="dl" style="margin-bottom:var(--v4-space-4)">
+            <div><div class="t">Assessment</div><div class="v">${c.risk}</div></div>
+            <div><div class="t">Risk Score</div><div class="v num">${c.score} / 100</div></div>
+          </div>
+          <div class="svc">${TYPES.map(t=>`<span class="pill ${t===c.type?'p-teal':'p-gray'}">${t}</span>`).join('')}</div>
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">Documents</div>
+          <div class="list-row"><span>Identity number<div class="sub num">${maskId(c.idNum)}</div></span>
+            <span class="pill p-gray">Masked</span></div>
+          <div class="list-row"><span>KYC pack</span>
+            <button class="btn btn-sm" data-toast="View-only. Advisors cannot modify KYC information (§15).">View</button></div>
+          <div class="list-row"><span>Signed agreements</span>
+            <button class="btn btn-sm" data-toast="View-only. Advisors cannot modify KYC information (§15).">View</button></div>
+        </div>
+      </div>
+    </div>
+    ${consent()}`;
+}
+
+/* =====================================================================
+   Risk Profiles / Portfolios (Astute parity)
+   ===================================================================== */
+const PORTS = [
+  {t:'Very Conservative',n:'V22 Capital Preserver',r:5.5,v:3.0,a:{Equity:10,Bonds:45,Cash:40,Property:5}},
+  {t:'Conservative',n:'V22 Income Fund',r:7.2,v:5.5,a:{Equity:25,Bonds:45,Cash:22,Property:8}},
+  {t:'Balanced',n:'V22 SA Balanced Fund',r:9.8,v:9.0,a:{Equity:48,Bonds:30,Cash:14,Property:8}},
+  {t:'Growth',n:'V22 Global Equity Fund',r:12.4,v:14.0,a:{Equity:70,Bonds:14,Cash:6,Property:10}},
+  {t:'Aggressive',n:'V22 High Conviction',r:15.1,v:19.5,a:{Equity:85,Bonds:4,Cash:3,Property:8}}
+];
+function vRisk(){
+  const all = [...state.leads.map(l=>({...l,kind:'Lead'})), ...state.customers.map(c=>({...c,kind:'Customer'}))];
+  const done = all.filter(x=>x.risk==='Completed' || x.stage==='Risk Assessment Completed' || x.stage==='Ready to Invest');
+  const rows = all.map(x=>`<tr>
+    <td><div class="nm">${esc(x.name)}</div><div class="sub">${x.kind}</div></td>
+    <td>${x.risk==='Completed' ? '<span class="pill p-green">Completed</span>'
+      : x.stage==='Risk Assessment Completed'||x.stage==='Ready to Invest' ? '<span class="pill p-green">Completed</span>'
+      : x.stage==='Risk Assessment Pending' ? '<span class="pill p-amber">Pending</span>'
+      : '<span class="pill p-gray">Not started</span>'}</td>
+    <td class="num">${x.score ? x.score+' / 100' : dash}</td>
+    <td>${x.type ? `<span class="pill p-teal">${x.type}</span>` : x.port && x.port!=='—' ? `<span class="pill p-gray">${x.port}</span>` : dash}</td>
+  </tr>`).join('');
+  return `
+    <div class="page-head"><h1>Risk Profiles</h1>
+      <p class="lede">Vault22 Advisor ships five default risk profiles, from lowest to highest risk.
+        Each maps to a model portfolio.</p></div>
+    <div class="card card-p">
+      <div class="sec-t">The five profiles</div>
+      ${TYPES.map((t,i)=>`<div class="list-row">
+        <span><b>${t}</b><div class="sub">${['Capital preservation first; minimal volatility.',
+          'Mostly income assets with a small growth sleeve.','An even split of growth and income assets.',
+          'Growth-led, accepts meaningful volatility for long-term return.',
+          'Maximum growth; comfortable with high volatility.'][i]}</div></span>
+        <span class="pill ${i>=3?'p-amber':i===2?'p-blue':'p-teal'}">${['Lowest','Low','Medium','High','Highest'][i]} risk</span>
+      </div>`).join('')}
+    </div>
+    <div class="card mt6">
+      <div class="card-p between" style="padding-bottom:var(--v4-space-4)">
+        <div class="row"><h2>Client risk status</h2>
+          <span class="pill p-gray">${done.length} of ${all.length} completed</span></div>
+      </div>
+      <div class="tbl-scroll"><table>
+        <thead><tr><th>Client</th><th>Risk Assessment</th><th>Risk Score</th><th>Investor Type</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+    </div>`;
+}
+function vPortfolios(){
+  return `
+    <div class="page-head"><h1>Portfolios</h1>
+      <p class="lede">Your Client Platform matches each client to a model portfolio based on their
+        risk profile, so they receive a plan that fits.</p></div>
+    <div class="card">
+      <div class="tbl-scroll"><table>
+        <thead><tr><th>Risk Profile</th><th>Portfolio Name</th><th>Expected Annual Return</th>
+          <th>Expected Annual Volatility</th><th>Clients</th><th></th></tr></thead>
+        <tbody>${PORTS.map(p=>{
+          const n = state.customers.filter(c=>c.type===p.t).length;
+          return `<tr><td class="nm">${p.t}</td><td>${p.n}</td>
+            <td class="num">${p.r}%</td><td class="num">${p.v}%</td>
+            <td class="num">${n||dash}</td>
+            <td><button class="btn btn-sm" data-toast="Portfolio configuration is Astute-side; the doc does not spec it. Shown for parity.">Edit</button></td></tr>`;
+        }).join('')}</tbody></table></div>
+    </div>
+    <div class="card card-p mt6">
+      <div class="sec-t">Target allocation</div>
+      ${PORTS.map(p=>`<div style="margin-bottom:var(--v4-space-5)">
+        <div class="between" style="margin-bottom:var(--v4-space-2)">
+          <b style="font-size:13.5px">${p.t}</b><span class="sub">${p.n}</span></div>
+        ${Object.entries(p.a).map(([k,v])=>`<div class="arow">
+          <span class="lb">${k}</span><span class="bar"><i style="width:${v}%"></i></span>
+          <span class="pc num">${v}%</span></div>`).join('')}
+      </div>`).join('')}
+    </div>`;
+}
+
+/* =====================================================================
+   Analytics (§14)
+   ===================================================================== */
+function spark(vals,w=280,h=54){
+  const mx=Math.max(...vals), mn=Math.min(...vals), rg=(mx-mn)||1;
+  const pts=vals.map((v,i)=>[i*(w/(vals.length-1)), h-((v-mn)/rg)*(h-8)-4]);
+  const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const area=d+` L ${w} ${h} L 0 ${h} Z`;
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:${h}px;display:block">
+    <path d="${area}" fill="var(--v4-teal-50)"/>
+    <path d="${d}" fill="none" stroke="var(--v4-teal-400)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
+}
+function vAnalytics(){
+  const L=state.leads, C=state.customers;
+  if(!L.length && !C.length) return `
+    <div class="page-head"><h1>Analytics</h1><p class="lede">Your funnel and growth.</p></div>
+    <div class="card"><div class="empty"><div class="em">◪</div><h3>Nothing to chart yet</h3>
+      <p>Analytics appear once you have leads coming through your link.</p>
+      <button class="btn" data-share="1">Share my link</button></div></div>`;
+
+  /* funnel: how many reached at least each stage (customers reached all) */
+  const reached = STAGES.map((s,i)=> L.filter(l=>STAGES.indexOf(l.stage)>=i).length + C.length);
+  const top = reached[0] || 1;
+  const funnel = STAGES.map((s,i)=>`
+    <div class="funnel-row"><span class="lb">${s}</span>
+      <span class="tr"><span class="fl" style="width:${Math.max(4,reached[i]/top*100)}%">${reached[i]}</span></span>
+    </div>`).join('') + `
+    <div class="funnel-row"><span class="lb"><b>Customer</b></span>
+      <span class="tr"><span class="fl" style="width:${Math.max(4,C.length/top*100)}%;background:var(--v4-navy-700);color:#fff">${C.length}</span></span>
+    </div>`;
+
+  const inv = C.reduce((s,c)=>s+c.inv,0), aua = C.reduce((s,c)=>s+c.pv,0);
+  const avg = C.length ? inv/C.length : 0;
+  const conv = (C.length/(L.length+C.length)*100).toFixed(1);
+  const prod = {};
+  C.forEach(c=>c.holdings.forEach(h=>prod[h.p]=(prod[h.p]||0)+h.mv));
+  const prodTop = Object.entries(prod).sort((a,b)=>b[1]-a[1]);
+  const prodMax = prodTop[0] ? prodTop[0][1] : 1;
+  const MONTHS = ['Feb','Mar','Apr','May','Jun','Jul'];
+  const growth = [1,2,2,3,4,5], aumSeries=[180,420,610,760,980,1240], invSeries=[90,140,120,180,240,214];
+
+  return `
+    <div class="page-head"><h1>Analytics</h1>
+      <p class="lede">How your funnel is converting and where the book is growing.</p></div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="k">Conversion Rate</div><div class="v">${conv}%</div>
+        <div class="d">${C.length} of ${L.length+C.length} signups</div></div>
+      <div class="kpi"><div class="k">Average Investment</div><div class="v">${short(avg)}</div>
+        <div class="d">Per customer</div></div>
+      <div class="kpi"><div class="k">AUM Growth</div><div class="v">+${short(aua-180000)}</div>
+        <div class="d">Since Feb 2026</div></div>
+      <div class="kpi"><div class="k">Customer Retention</div><div class="v">100%</div>
+        <div class="d">No redemptions to date</div></div>
+    </div>
+
+    <div class="card card-p mt6">
+      <div class="sec-t">Lead funnel</div>
+      <p class="lede" style="margin-bottom:var(--v4-space-5)">Everyone who has reached at least each stage.
+        Customers have passed every stage.</p>
+      ${funnel}
+    </div>
+
+    <div class="grid2 mt6">
+      <div class="card card-p">
+        <div class="sec-t">Top products sold</div>
+        ${prodTop.map(([p,v])=>`<div class="arow"><span class="lb" style="width:180px">${esc(p)}</span>
+          <span class="bar"><i style="width:${v/prodMax*100}%"></i></span>
+          <span class="pc num" style="width:56px">${short(v)}</span></div>`).join('')}
+        <div class="sec-t" style="margin-top:var(--v4-space-6)">Monthly growth — new customers</div>
+        ${spark(growth)}
+        <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
+      </div>
+      <div class="card card-p">
+        <div class="sec-t">AUM growth (R000s)</div>
+        ${spark(aumSeries)}
+        <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
+        <div class="sec-t" style="margin-top:var(--v4-space-6)">Investment trends (R000s / month)</div>
+        ${spark(invSeries)}
+        <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
+      </div>
+    </div>`;
+}
+
+/* =====================================================================
+   Landing page (§3) + QR/referral (§4)
+   ===================================================================== */
+function vLanding(){
+  /* No "no landing page yet" state: the advisor name is mandatory in onboarding,
+     so by the time this view is reachable the slug always exists. */
+  const a = state.advisor, url = advisorUrl(a);
+  return `
+    <div class="page-head"><h1>Landing Page</h1>
+      <p class="lede">Your personalised page at <b>${esc(url)}</b>. Every signup through it is tagged to you.</p></div>
+    <div class="grid2">
+      <div class="card card-p">
+        <div class="sec-t">Preview</div>
+        <div class="lp">
+          <div class="lp-ban"></div>
+          <div class="lp-b">
+            <div class="lp-av">${a.initials}</div>
+            <h2 style="margin-top:var(--v4-space-3)">${esc(a.name)}</h2>
+            <div class="sub" style="margin-bottom:var(--v4-space-3)">${esc(a.company)} · ${esc(a.licence)}</div>
+            <p style="font-size:14px;line-height:1.6;margin-bottom:var(--v4-space-3)">${esc(a.welcome)}</p>
+            <p class="lede" style="margin-bottom:var(--v4-space-4)">${esc(a.bio)}</p>
+            <div class="sec-t">Services offered</div>
+            <div class="svc" style="margin-bottom:var(--v4-space-5)">
+              ${a.services.map(s=>`<span class="pill p-teal">${esc(s)}</span>`).join('')}</div>
+            <div class="between">
+              <button class="btn btn-teal" data-toast="This is the prospect's entry point — it starts the standard Vault22 onboarding, unchanged.">Start Investing</button>
+              <div class="sub">${esc(a.email)} · ${esc(a.phoneFmt)}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-p">
+          <div class="sec-t">Referral</div>
+          <div class="field"><label>Referral URL</label>
+            <div class="row"><input class="inp" value="${esc(url)}" readonly>
+              <button class="btn" data-copy="https://${esc(url)}">Copy</button></div></div>
+          <div class="field"><label>Referral code</label><input class="inp" value="${a.code}" readonly></div>
+          <button class="btn btn-pri" style="width:100%" data-share="1">Share my Client Platform</button>
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">QR code</div>
+          <div class="row" style="align-items:flex-start">
+            <div class="qr" style="width:132px;flex:none"><canvas id="lpQr" width="132" height="132"></canvas></div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.6">
+              A real, scannable code for <b>${esc(url)}</b>. Print it, put it on a card, or drop it in a deck.
+              <div class="mt"><button class="btn btn-sm" data-dl="1">Download PNG</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">Customise</div>
+          <div class="field"><label>Website name</label>
+            <div class="row"><input class="inp" value="${esc(a.slug)}" readonly>
+              <span class="sub" style="white-space:nowrap">.advisor.vault22.com</span></div></div>
+          <div class="field"><label>Welcome message</label><input class="inp" value="${esc(a.welcome)}"></div>
+          <div class="field"><label>Theme colour</label>
+            <div class="row"><input type="color" value="#01c38d" style="width:44px;height:40px;border:1px solid var(--line);border-radius:var(--v4-radius-md);background:#fff">
+              <input class="inp" value="#01c38d"></div></div>
+          <div class="field" style="margin-bottom:0"><label>Banner image</label>
+            <button class="btn" style="width:100%" data-toast="Upload is stubbed — the prototype has no backend.">Upload banner</button></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* =====================================================================
+   Advisor profile (§2)
+   ===================================================================== */
+function vProfile(){
+  const a = state.advisor;
+  return `
+    <div class="page-head"><h1>My Profile</h1>
+      <p class="lede">This is what prospects see on your landing page.</p></div>
+    <div class="grid2">
+      <div class="card card-p">
+        <div class="sec-t">Profile</div>
+        <div class="row" style="margin-bottom:var(--v4-space-5)">
+          <span class="ava" style="width:64px;height:64px;font-size:20px">${a.initials}</span>
+          <div><button class="btn btn-sm" data-toast="Upload is stubbed — the prototype has no backend.">Upload photo</button>
+            <div class="sub" style="margin-top:6px">JPEG or PNG, min 300×300</div></div>
+        </div>
+        <div class="field"><label>Full name</label><input class="inp" value="${esc(a.name)}"></div>
+        <div class="field"><label>Biography</label><textarea class="inp" rows="4">${esc(a.bio)}</textarea></div>
+        <div class="field" style="margin-bottom:0"><label>Company logo</label>
+          <button class="btn" style="width:100%" data-toast="Upload is stubbed — the prototype has no backend.">Upload logo</button></div>
+      </div>
+      <div>
+        <div class="card card-p">
+          <div class="sec-t">Contact details</div>
+          <div class="field"><label>Email</label><input class="inp" value="${esc(a.email)}"></div>
+          <div class="field"><label>Mobile</label><input class="inp" value="${esc(a.phoneFmt)}"></div>
+          <div class="field"><label>Company</label><input class="inp" value="${esc(a.company)}"></div>
+          <div class="field" style="margin-bottom:0"><label>Calendar booking link</label>
+            <input class="inp" value="${esc(a.calendar)}" placeholder="cal.com/…"></div>
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">Social media</div>
+          <div class="field"><label>LinkedIn</label><input class="inp" placeholder="linkedin.com/in/…"></div>
+          <div class="field"><label>Facebook</label><input class="inp" placeholder="facebook.com/…"></div>
+          <div class="field" style="margin-bottom:0"><label>X / Twitter</label><input class="inp" placeholder="x.com/…"></div>
+        </div>
+        <div class="card card-p mt">
+          <div class="sec-t">Account</div>
+          <div class="list-row"><span>Status</span>
+            <span class="pill ${a.status==='Active'?'p-green':'p-amber'}">${a.status}</span></div>
+          <div class="list-row"><span>Identity number</span><span class="sub num">${maskId(a.idNum)}</span></div>
+          <div class="list-row"><span>Licence</span><span class="sub">${esc(a.licence)||dash}</span></div>
+        </div>
+        <button class="btn btn-pri mt" style="width:100%" data-toast="Saved — nothing persists in the prototype.">Save profile</button>
+      </div>
+    </div>`;
+}
+
+/* =====================================================================
+   Audit log (§15) + roadmap
+   ===================================================================== */
+function vAudit(){
+  return `
+    <div class="page-head"><h1>Audit Log</h1>
+      <p class="lede">Every advisor action is logged. §15 also enforces: KYC is read-only, portfolios
+        cannot be changed without authorisation, other advisors' clients are unreachable, and identity
+        numbers are masked by default.</p></div>
+    <div class="card card-p">
+      <div class="sec-t">Permissions in force</div>
+      ${[['Modify KYC information','Blocked'],['Change customer portfolio','Requires authorisation'],
+         ['Access another advisor’s clients','Blocked'],['View full identity numbers','Masked']]
+        .map(([t,s])=>`<div class="list-row"><span>${t}</span>
+          <span class="pill ${s==='Blocked'?'p-red':'p-amber'}">${s}</span></div>`).join('')}
+    </div>
+    <div class="card mt6">
+      <div class="card-p"><h2>Recent activity</h2>
+        <p class="lede">Live — actions you take in this prototype are appended here.</p></div>
+      <div class="tbl-scroll"><table>
+        <thead><tr><th>When</th><th>Action</th><th>Target</th></tr></thead>
+        <tbody>${state.audit.map(a=>`<tr>
+          <td class="num sub">${rel(a.ts)}</td><td class="nm">${esc(a.act)}</td>
+          <td class="sub">${esc(a.tgt)}</td></tr>`).join('')}</tbody>
+      </table></div>
+    </div>`;
+}
+function vRoadmap(){
+  const R = [['Lead Management','Lead assignment and re-assignment','Handles advisor changes'],
+    ['Communication','Built-in email, WhatsApp, SMS logging','Keeps history in one place'],
+    ['Calendar','Appointment scheduling','Easier client meetings'],
+    ['Portfolio Reviews','Automatic review reminders','Supports ongoing advice'],
+    ['Referrals','Track referrals by advisor and campaign','Measures acquisition'],
+    ['Gamification','Advisor leaderboard and achievements','Encourages engagement'],
+    ['Commission','Commission and fee dashboard','Transparency into earnings'],
+    ['Team Support','Multi-advisor organisations with managers','Enterprise distribution'],
+    ['Marketing','Custom landing pages, campaign tracking, UTM','Measures marketing ROI'],
+    ['Consent','Client consent management for data sharing','Privacy regulations']];
+  return `
+    <div class="page-head"><h1>Roadmap</h1>
+      <p class="lede">From the doc's "Future plans" table — read-only, deliberately not built.
+        Consent management is the one to watch: it is what the 17 Jul stand-up parked.</p></div>
+    <div class="card"><div class="tbl-scroll"><table>
+      <thead><tr><th>Area</th><th>Feature</th><th>Benefit</th><th></th></tr></thead>
+      <tbody>${R.map(([a,f,b])=>`<tr><td class="nm">${a}</td><td>${f}</td>
+        <td class="sub">${b}</td><td><span class="pill p-gray">Future</span></td></tr>`).join('')}</tbody>
+    </table></div></div>`;
+}
+
+/* =====================================================================
+   Modals
+   ===================================================================== */
+function shareModal(){
+  const a = state.advisor, url = advisorUrl(a);
+  return `
+    <div class="between" style="margin-bottom:var(--v4-space-2)">
+      <h2>Share your Client Platform</h2><button class="x" data-close="1">×</button></div>
+    <p class="lede" style="margin-bottom:var(--v4-space-5)">Copy the link, share it directly, or let them
+      scan the QR. Every signup through it is tagged to you.</p>
+    <div class="row" style="margin-bottom:var(--v4-space-4)">
+      <input class="inp" value="${esc(url)}" readonly>
+      <button class="btn btn-pri" data-copy="https://${esc(url)}">Copy link</button></div>
+    <div class="row" style="margin-bottom:var(--v4-space-5);flex-wrap:wrap">
+      <span class="sub" style="width:100%">Share via — these open the real share targets</span>
+      ${shareBtns(a)}</div>
+    <div class="row" style="align-items:center;gap:var(--v4-space-4);padding:var(--v4-space-4);
+      background:var(--canvas);border-radius:var(--v4-radius-lg)">
+      <div class="qr" style="width:110px;flex:none"><canvas id="mQr" width="110" height="110"></canvas></div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6">
+        <b style="color:var(--text)">Referral code ${a.code}</b><br>Scan to open ${esc(url)}.
+        <div class="sub" style="margin-top:6px">Real code — try it with your phone.</div></div>
+    </div>`;
+}
+function leadModal(){
+  const l = state.leads.find(x=>x.id===state.arg);
+  if(!l) return '';
+  const idx = STAGES.indexOf(l.stage);
+  const wa = 'https://wa.me/'+l.phone.replace(/\D/g,'')+'?text='+encodeURIComponent('Hi '+l.name.split(' ')[0]+', ');
+  return `
+    <div class="between"><div><h2>${esc(l.name)}</h2>
+      <p class="lede">${esc(l.email)} · ${l.phone}</p></div>
+      <button class="x" data-close="1">×</button></div>
+    <div class="row mt" style="flex-wrap:wrap">
+      <a class="btn btn-sm" href="tel:${l.phone}" data-audit="Called lead">Call</a>
+      <a class="btn btn-sm" href="mailto:${l.email}" data-audit="Emailed lead">Email</a>
+      <a class="btn btn-sm" target="_blank" rel="noopener" href="${wa}" data-audit="WhatsApped lead">WhatsApp</a>
+      <button class="btn btn-sm" data-toast="Would open ${esc(state.advisor.calendar||'your calendar link')} — scheduling is roadmap (§Future).">Schedule Meeting</button>
+    </div>
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Lead stage</div>
+    ${STAGES.map((s,i)=>`<div class="list-row" style="padding:7px 0">
+      <span style="color:${i<=idx?'var(--text)':'var(--v4-navy-300)'};font-size:13px">${s}</span>
+      ${i<idx?'<span class="pill p-gray">Done</span>':i===idx?'<span class="pill p-teal">Current</span>':''}</div>`).join('')}
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">CRM</div>
+    ${crmTabs(l.id)}`;
+}
+function openModal(html, wide){
+  const m = document.getElementById('modal');
+  m.className = 'modal' + (wide?' wide':'');
+  m.innerHTML = html;
+  document.getElementById('scrim').classList.add('open');
+  drawQR(document.getElementById('mQr'), 'https://'+advisorUrl(state.advisor));
+}
+const closeModal = () => document.getElementById('scrim').classList.remove('open');
+
+/* =====================================================================
+   Notifications panel (§11)
+   ===================================================================== */
+function renderBell(){
+  const n = state.notifs.filter(x=>x.unread).length;
+  const d = document.getElementById('ndot');
+  d.textContent = n; d.classList.toggle('hidden', !n);
+}
+function togglePanel(){
+  const p = document.getElementById('panel');
+  if(p.classList.contains('open')) return p.classList.remove('open');
+  p.innerHTML = state.notifs.length ? `
+    <div class="card-p between" style="padding:var(--v4-space-4) var(--v4-space-4) var(--v4-space-3)">
+      <h2 style="font-size:15px">Notifications</h2>
+      <button class="btn btn-sm" data-readall="1">Mark all read</button></div>
+    ${state.notifs.map(n=>`<button class="nt ${n.unread?'unread':''}" data-notif="${n.id}">
+      <span class="em">${n.em}</span>
+      <span style="flex:1"><span class="t">${n.type}</span>
+        <div class="m">${esc(n.msg)}</div><div class="a">${rel(n.ts)}</div></span></button>`).join('')}`
+    : `<div class="empty" style="padding:var(--v4-space-10) var(--v4-space-6)">
+        <div class="em">☼</div><h3>No notifications</h3>
+        <p>You'll be notified when a lead signs up, completes KYC, or invests.</p></div>`;
+  p.classList.add('open');
+}
+
+/* =====================================================================
+   Render + events
+   ===================================================================== */
+const VIEWS = {dashboard:vDashboard, leads:vLeads, customers:vCustomers, customer:vCustomer,
+  risk:vRisk, portfolios:vPortfolios, analytics:vAnalytics, landing:vLanding,
+  profile:vProfile, audit:vAudit, roadmap:vRoadmap};
+
+function render(){
+  /* Onboarding runs before the dashboard exists: no topbar, sidebar or nav. */
+  if(!state.onboarded){
+    document.body.classList.add('onboarding');
+    const r = document.getElementById('onbRoot');
+    r.innerHTML = (ONB[state.onb] || ONB.entry)();
+    r.classList.remove('screen-anim'); void r.offsetWidth; r.classList.add('screen-anim');
+    if(ONB_AFTER[state.onb]) ONB_AFTER[state.onb]();
+    return;
+  }
+  document.body.classList.remove('onboarding');
+  document.getElementById('view').innerHTML = (VIEWS[state.route]||vDashboard)();
+  renderNav(); renderBell();
+  const a = state.advisor;
+  document.getElementById('whoName').textContent = a.name;
+  document.getElementById('ava').textContent = a.initials;
+  document.querySelectorAll('#seg button').forEach(b =>
+    b.classList.toggle('on', b.dataset.scen === state.scen));
+  drawQR(document.getElementById('lpQr'), 'https://' + advisorUrl(a));
+}
+function toast(msg){
+  const t = document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2800);
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
+    '[data-close],[data-scen],[data-onb],[data-region],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-notif],[data-readall],[data-audit],[data-dl]');
+  const panel = document.getElementById('panel');
+  if(!t){
+    if(e.target.id === 'scrim') closeModal();
+    if(!e.target.closest('#panel') && !e.target.closest('#bell')) panel.classList.remove('open');
+    return;
+  }
+  if(t.dataset.audit) audit(t.dataset.audit, state.arg || advisorUrl(state.advisor));
+  if(t.dataset.go)   return go(t.dataset.go);
+  if(t.dataset.cust){ audit('Viewed customer profile', t.dataset.cust); return go('customer', t.dataset.cust); }
+  if(t.dataset.lead){ state.arg=t.dataset.lead; state.tab='notes';
+    audit('Viewed lead', t.dataset.lead); return openModal(leadModal(), true); }
+  if(t.dataset.share) return openModal(shareModal());
+  if(t.dataset.close) return closeModal();
+  if(t.dataset.dl){
+    const cv = document.getElementById('lpQr');
+    const a2 = document.createElement('a');
+    a2.download = state.advisor.slug + '-vault22-qr.png';
+    a2.href = cv.toDataURL('image/png'); a2.click();
+    audit('Downloaded QR code', advisorUrl(state.advisor));
+    return toast('QR downloaded — it is a real code, try scanning it');
+  }
+  if(t.dataset.copy){ navigator.clipboard?.writeText(t.dataset.copy);
+    audit('Copied landing page link', advisorUrl(state.advisor)); return toast('Link copied'); }
+  if(t.dataset.scen){ loadScenario(t.dataset.scen); return render(); }
+  if(t.dataset.region){ state.advisor.country = t.dataset.region; return render(); }
+  if(t.dataset.onb) return goOnb(t.dataset.onb);
+  if(t.dataset.filter){
+    if(t.dataset.filter==='__clear'){ state.filters.clear(); state.q=''; }
+    else state.filters.has(t.dataset.filter) ? state.filters.delete(t.dataset.filter)
+                                             : state.filters.add(t.dataset.filter);
+    return render();
+  }
+  if(t.dataset.sort){
+    const k = t.dataset.sort;
+    state.sort = state.sort.k===k ? {k, d:-state.sort.d} : {k, d:1};
+    return render();
+  }
+  if(t.dataset.tab){ state.tab=t.dataset.tab;
+    return state.route==='customer' ? render() : openModal(leadModal(), true); }
+  if(t.dataset.crm){
+    const kind=t.dataset.crm, id=t.dataset.id, c=state.crm[id];
+    const inp=document.getElementById('crmIn'), dt=document.getElementById('crmDate');
+    if(kind==='files'){ c.files.push('client-document-'+(c.files.length+1)+'.pdf'); audit('Uploaded file', id); }
+    else {
+      const v=(inp?.value||'').trim(); if(!v) return toast('Type something first');
+      if(kind==='notes'){ c.notes.unshift({t:v,by:state.advisor.name.split(' ')[0],ts:new Date().toISOString()}); audit('Added note', id); }
+      if(kind==='tags'){ if(!c.tags.includes(v)) c.tags.push(v); audit('Added tag', id); }
+      if(kind==='tasks'){ c.tasks.push({t:v,done:false}); audit('Added task', id); }
+      if(kind==='follow'){ c.follow.push({d:dt?.value||'2026-07-20',t:v}); audit('Set follow-up reminder', id); }
+      if(kind==='meets'){ c.meets.push({d:dt?.value||'2026-07-17',t:v}); audit('Logged meeting', id); }
+    }
+    return state.route==='customer' ? render() : openModal(leadModal(), true);
+  }
+  if(t.dataset.untag){
+    const c=state.crm[t.dataset.id];
+    c.tags = c.tags.filter(g=>g!==t.dataset.untag);
+    return state.route==='customer' ? render() : openModal(leadModal(), true);
+  }
+  if(t.dataset.notif){
+    const n = state.notifs.find(x=>x.id===t.dataset.notif);
+    n.unread=false; panel.classList.remove('open');
+    const [kind,id]=n.go;
+    if(kind==='customer'){ go('customer', id); }
+    else { state.arg=id; state.tab='notes'; render(); openModal(leadModal(), true); }
+    return renderBell();
+  }
+  if(t.dataset.readall){ state.notifs.forEach(n=>n.unread=false); renderBell(); return togglePanel(), togglePanel(); }
+  if(t.dataset.toast) return toast(t.dataset.toast);
+});
+
+document.getElementById('bell').addEventListener('click', e => { e.stopPropagation(); togglePanel(); });
+
+document.addEventListener('input', e => {
+  if(e.target.id==='searchIn'){
+    state.q = e.target.value;
+    const pos = e.target.selectionStart;
+    render();
+    const n = document.getElementById('searchIn');
+    if(n){ n.focus(); n.setSelectionRange(pos,pos); }
+  }
+  /* The mandatory advisor name: URL assembles live, Continue stays disabled
+     until the name is valid and available. */
+  if(e.target.id==='slugIn'){
+    /* Normalise case in the field itself rather than rejecting it — a subdomain is
+       case-insensitive, so "Aishani" is a valid thing to type; it just resolves to
+       "aishani". Keeps the field and the live preview showing the same string. */
+    const pos = e.target.selectionStart;
+    const low = e.target.value.toLowerCase();
+    if(low !== e.target.value){ e.target.value = low; e.target.setSelectionRange(pos,pos); }
+    const c   = slugCheck(low);
+    const v   = low.trim();
+    const prev = document.getElementById('slugPrev');
+    const msg  = document.getElementById('slugMsg');
+    const next = document.getElementById('slugNext');
+    if(prev) prev.innerHTML = `<span class="${v?'s':'r'}">${esc(v || 'yourname')}</span>` +
+      `<span class="r">.advisor.vault22.com</span>`;
+    if(msg){ msg.className = 'onb-check ' + c.tone; msg.textContent = (c.ok?'✓ ':'') + c.msg; }
+    if(next) next.disabled = !c.ok;
+  }
+});
+document.addEventListener('change', e => {
+  if(e.target.id==='maskTog'){ document.body.classList.toggle('mask', e.target.checked);
+    audit(e.target.checked?'Hid consent-pending data':'Revealed consent-pending data','View setting'); }
+  if(e.target.dataset && e.target.dataset.task !== undefined){
+    const c = state.crm[e.target.dataset.id];
+    c.tasks[+e.target.dataset.task].done = e.target.checked;
+    audit('Updated task', e.target.dataset.id);
+    state.route==='customer' ? render() : openModal(leadModal(), true);
+  }
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal();
+  document.getElementById('panel').classList.remove('open'); } });
+
+/* Boot into Scenario A. The advisor onboarding journey is the first thing the
+   demo walks through, so it must be what you land on — booting into the
+   established advisor hid it behind the demo switcher entirely. */
+loadScenario('new');
+render();
+</script>
+</body>
+</html>
