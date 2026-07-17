@@ -20,3 +20,19 @@ assets/img/*
 !assets/img/vault22-logo.png
 !assets/img/auth-branding.png
 !assets/img/Vault22_Block_Icon_Black.png
+
+# the client scenario renders the live app's real menu (assets/nav.json), so its
+# icons must ship or the nav is a wall of broken images
+!assets/img/Budget.png
+!assets/img/Crypto.svg
+!assets/img/Family.svg
+!assets/img/FinancialFitness.svg
+!assets/img/Goals.svg
+!assets/img/Home.png
+!assets/img/Investments.png
+!assets/img/Marketplace.svg
+!assets/img/MyWealth.svg
+!assets/img/Transactions.svg
+!assets/img/Updates.png
+!assets/img/insights.png
+!assets/img/tara-advisor.png

@@ -193,6 +193,19 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 
 /* Live sub-tile: bg-[#F1F2F4] rounded-xl p-3, h-[72px]. The live app's tile
    language for a figure inside a card. */
+/* Consent: locked tab, and the dot on a gated tab that is not open. */
+.locked{background:var(--surface);border-radius:var(--live-radius);padding:var(--v4-space-6)}
+.locked-h{display:flex;align-items:flex-start;gap:var(--v4-space-4);flex-wrap:wrap}
+.locked-h .lock{font-size:22px;line-height:1.2}
+.locked-h h3{font-size:17px;font-weight:600;margin-bottom:2px}
+.locked-h .btn-pri{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff;margin-left:auto}
+.locked-h .btn-pri:hover{background:var(--v4-navy-600)}
+.locked-fields{display:flex;flex-wrap:wrap;gap:var(--v4-space-2)}
+.tdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--v4-navy-200);
+  vertical-align:middle;margin-left:2px}
+.tdot.amber{background:var(--v4-warning)}
+.tl-i.tl-off .tl-t{color:var(--v4-navy-300)}
+.tl-i.tl-off::before{background:var(--v4-navy-100);box-shadow:0 0 0 2px var(--v4-navy-50)}
 .subtile{background:var(--live-tile);border-radius:var(--live-radius);padding:var(--v4-space-3);
   transition:background var(--v4-duration-fast) var(--v4-easing-standard)}
 .subtile:hover{background:var(--live-tile-hover)}
@@ -638,6 +651,45 @@ body.nav-open .nav-scrim{display:block}
 /* long unbroken strings (emails, URLs) must never widen the page */
 body,.card,.foot,.lede,.sub{overflow-wrap:anywhere}
 
+
+/* ============================================================
+   CLIENT SCENARIO — the main Vault22 app. Its own shell, so it is
+   visibly a different product from the advisor portal.
+   ============================================================ */
+body.client-app #onbRoot{display:block}
+.capp{min-height:100vh;background:var(--canvas)}
+.ctop{position:fixed;top:0;left:0;right:0;height:80px;background:var(--live-header);
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:20}
+.clogo{height:34px;width:auto;display:block}
+.ctop-r{display:flex;align-items:center;gap:var(--v4-space-3)}
+.csidebar{position:fixed;top:80px;left:var(--v4-space-5);width:var(--sidebar-w);
+  bottom:var(--v4-space-5);background:var(--surface);border-radius:var(--v4-radius-2xl);
+  padding:var(--v4-space-5);overflow-y:auto;z-index:10}
+.cmain{margin-left:calc(var(--sidebar-w) + var(--v4-space-10));
+  padding:calc(80px + var(--v4-space-6)) var(--v4-space-8) var(--v4-space-20);max-width:1180px}
+.csidebar .nav-item .ic img{width:20px;height:20px;object-fit:contain}
+.ic-dot{width:8px;height:8px;border-radius:50%;background:var(--v4-navy-200);display:block}
+
+/* Permission control: says what it shares, in the client's own words. */
+.perm{padding:var(--v4-space-4) 0;border-bottom:1px solid var(--v4-navy-50)}
+.perm:last-child{border-bottom:0}
+.perm-h{display:flex;align-items:center;justify-content:space-between;gap:var(--v4-space-4)}
+.perm-h b{font-size:15px}
+.perm-f{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:var(--v4-space-3)}
+.tog{width:48px;height:28px;border-radius:999px;border:0;background:var(--v4-navy-100);
+  position:relative;flex:none;transition:background var(--v4-duration-fast) var(--v4-easing-standard)}
+.tog span{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+  background:#fff;transition:transform var(--v4-duration-fast) var(--v4-easing-standard)}
+.tog.on{background:var(--live-cta)}
+.tog.on span{transform:translateX(20px)}
+
+@media(max-width:1023px){
+  .csidebar{left:0;top:80px;bottom:0;border-radius:0;z-index:95;transform:translateX(-110%)}
+  body.nav-open .csidebar{transform:none}
+  .cmain{margin-left:0;max-width:100%;padding:calc(80px + var(--v4-space-5)) var(--v4-space-4) var(--v4-space-16)}
+  .ctop{padding:0 var(--v4-space-4)}
+  .ctop-r .chip{display:none}
+}
 </style>
 </head>
 <body>
@@ -865,11 +917,11 @@ ADVISOR_EST.initials = initialsOf(ADVISOR_EST.name);
 ADVISOR_EST.code     = refCodeOf(ADVISOR_EST.name);   // Aishani Atri -> AISH22
 
 const LEADS_EST = [
-  {id:'L1',name:'Thandiwe Mokoena',email:'thandiwe.m@gmail.com',phone:'+27821145567',signup:'2026-07-15',stage:'Ready to Invest',ffs:742,nw:1250000,sav:18000,cap:250000,port:'Growth',act:'2026-07-17T07:10:00'},
+  {id:'L1',dob:'1991-03-19',nationality:'South African',dependents:1,housing:'Tenant',name:'Thandiwe Mokoena',email:'thandiwe.m@gmail.com',phone:'+27821145567',signup:'2026-07-15',stage:'Ready to Invest',ffs:742,nw:1250000,sav:18000,cap:250000,port:'Growth',act:'2026-07-17T07:10:00'},
   {id:'L9',name:'Bongani Zulu',email:'bongani.zulu@gmail.com',phone:'+27824419902',signup:'2026-07-15',stage:'Fund wallet',ffs:705,nw:960000,sav:14000,cap:180000,port:'Growth',act:'2026-07-17T06:20:00'},
   {id:'L10',name:'Chantal Meyer',email:'chantal.meyer@outlook.com',phone:'+27713356628',signup:'2026-07-14',stage:'Link account',ffs:651,nw:620000,sav:9500,cap:110000,port:'Balanced',act:'2026-07-16T18:05:00'},
-  {id:'L2',name:'Pieter van der Merwe',email:'pieter.vdm@outlook.com',phone:'+27832208891',signup:'2026-07-14',stage:'Risk Assessment Completed',ffs:688,nw:890000,sav:12500,cap:150000,port:'Balanced',act:'2026-07-16T14:22:00'},
-  {id:'L3',name:'Aisha Patel',email:'aisha.patel@yahoo.com',phone:'+27719083345',signup:'2026-07-14',stage:'KYC Approved',ffs:615,nw:540000,sav:8000,cap:90000,port:'Balanced',act:'2026-07-16T09:05:00'},
+  {id:'L2',dob:'1976-09-02',nationality:'South African',dependents:2,housing:'Home owner',name:'Pieter van der Merwe',email:'pieter.vdm@outlook.com',phone:'+27832208891',signup:'2026-07-14',stage:'Risk Assessment Completed',ffs:688,nw:890000,sav:12500,cap:150000,port:'Balanced',act:'2026-07-16T14:22:00'},
+  {id:'L3',dob:'1994-12-30',nationality:'South African',dependents:0,housing:'Tenant',name:'Aisha Patel',email:'aisha.patel@yahoo.com',phone:'+27719083345',signup:'2026-07-14',stage:'KYC Approved',ffs:615,nw:540000,sav:8000,cap:90000,port:'Balanced',act:'2026-07-16T09:05:00'},
   {id:'L4',name:'Sipho Ndlovu',email:'sipho.ndlovu@gmail.com',phone:'+27845512210',signup:'2026-07-13',stage:'Risk Assessment Pending',ffs:590,nw:410000,sav:6200,cap:60000,port:', ',act:'2026-07-15T16:40:00'},
   {id:'L5',name:'Nadia Fourie',email:'nadia.f@icloud.com',phone:'+27763307712',signup:'2026-07-12',stage:'KYC Submitted',ffs:534,nw:275000,sav:4500,cap:40000,port:', ',act:'2026-07-14T11:15:00'},
   {id:'L6',name:'Kabelo Dlamini',email:'kabelo.d@gmail.com',phone:'+27827761108',signup:'2026-07-11',stage:'KYC Started',ffs:498,nw:180000,sav:3200,cap:25000,port:', ',act:'2026-07-13T08:30:00'},
@@ -878,7 +930,7 @@ const LEADS_EST = [
 ];
 
 const CUSTOMERS_EST = [
-  {id:'C1',name:'Lerato Khumalo',email:'lerato.k@gmail.com',phone:'+27823319087',country:'South Africa',
+  {id:'C1',dob:'1988-07-14',nationality:'South African',dependents:2,housing:'Home owner',totalSav:480000,name:'Lerato Khumalo',email:'lerato.k@gmail.com',phone:'+27823319087',country:'South Africa',
    kyc:'Approved',idNum:'8807145566081',since:'2025-09-04',ffs:812,nw:2450000,income:78000,sav:22000,ef:180000,
    insurance:420000,liabilities:610000,pv:1240000,inv:980000,risk:'Completed',score:78,type:'Growth',
    lastLogin:'2026-07-16T20:11:00',lastInv:'2026-07-01',sip:12000,onetime:350000,
@@ -886,26 +938,26 @@ const CUSTOMERS_EST = [
    holdings:[{p:'V22 Global Equity Fund',u:4820.44,mv:642000,r:14.2,d:'2025-09-12'},
              {p:'V22 SA Balanced Fund',u:3110.20,mv:398000,r:9.6,d:'2025-11-03'},
              {p:'V22 Income Fund',u:1980.00,mv:200000,r:6.1,d:'2026-02-18'}]},
-  {id:'C2',name:'Marius Steyn',email:'marius.steyn@outlook.com',phone:'+27837742219',country:'South Africa',
+  {id:'C2',dob:'1979-06-22',nationality:'South African',dependents:0,housing:'Home owner',totalSav:210000,name:'Marius Steyn',email:'marius.steyn@outlook.com',phone:'+27837742219',country:'South Africa',
    kyc:'Approved',idNum:'7906225512087',since:'2026-01-22',ffs:701,nw:1180000,income:52000,sav:11000,ef:95000,
    insurance:260000,liabilities:480000,pv:486000,inv:420000,risk:'Completed',score:61,type:'Balanced',
    lastLogin:'2026-07-15T07:44:00',lastInv:'2026-06-28',sip:6000,onetime:180000,
    alloc:{'Equity':45,'Bonds':32,'Cash':15,'Property':8},
    holdings:[{p:'V22 SA Balanced Fund',u:2440.10,mv:312000,r:8.4,d:'2026-01-30'},
              {p:'V22 Income Fund',u:1720.00,mv:174000,r:5.2,d:'2026-03-14'}]},
-  {id:'C3',name:'Zanele Mthembu',email:'zanele.m@gmail.com',phone:'+27712265540',country:'South Africa',
+  {id:'C3',dob:'1992-02-03',nationality:'South African',dependents:1,housing:'Tenant',totalSav:96000,name:'Zanele Mthembu',email:'zanele.m@gmail.com',phone:'+27712265540',country:'South Africa',
    kyc:'Approved',idNum:'9202034477082',since:'2026-03-11',ffs:664,nw:720000,income:44000,sav:7500,ef:60000,
    insurance:150000,liabilities:220000,pv:214000,inv:195000,risk:'Completed',score:84,type:'Aggressive',
    lastLogin:'2026-07-17T06:20:00',lastInv:'2026-07-10',sip:4500,onetime:90000,
    alloc:{'Equity':74,'Bonds':10,'Cash':6,'Property':10},
    holdings:[{p:'V22 Global Equity Fund',u:1610.55,mv:214000,r:11.9,d:'2026-03-20'}]},
-  {id:'C4',name:'Grant Willemse',email:'grant.w@icloud.com',phone:'+27849903312',country:'South Africa',
+  {id:'C4',dob:'1985-11-09',nationality:'South African',dependents:3,housing:'Home owner',totalSav:64000,name:'Grant Willemse',email:'grant.w@icloud.com',phone:'+27849903312',country:'South Africa',
    kyc:'Approved',idNum:'8511095533084',since:'2026-05-02',ffs:598,nw:495000,income:38000,sav:5200,ef:42000,
    insurance:90000,liabilities:310000,pv:96000,inv:92000,risk:'Completed',score:38,type:'Conservative',
    lastLogin:'2026-07-12T18:02:00',lastInv:'2026-07-02',sip:3000,onetime:50000,
    alloc:{'Equity':22,'Bonds':46,'Cash':28,'Property':4},
    holdings:[{p:'V22 Income Fund',u:952.00,mv:96000,r:4.8,d:'2026-05-09'}]},
-  {id:'C5',name:'Fatima Ismail',email:'fatima.ismail@gmail.com',phone:'+27761187723',country:'South Africa',
+  {id:'C5',dob:'1990-08-11',nationality:'Indian',dependents:1,housing:'Tenant',totalSav:330000,name:'Fatima Ismail',email:'fatima.ismail@gmail.com',phone:'+27761187723',country:'South Africa',
    kyc:'Approved',idNum:'9008115599083',since:'2026-06-19',ffs:723,nw:1640000,income:64000,sav:16000,ef:140000,
    insurance:380000,liabilities:290000,pv:158000,inv:150000,risk:'Completed',score:55,type:'Balanced',
    lastLogin:'2026-07-17T08:05:00',lastInv:'2026-07-14',sip:8000,onetime:120000,
@@ -934,22 +986,56 @@ const AUDIT_EST = [
 ];
 
 /* ---------- runtime state ---------- */
+/* Consent: per client, per section. The advisor's locked tabs (§8) and the
+   client's permission toggles (client scenario) are two views of THIS object.
+   States: 'granted' | 'pending' | 'none'. */
+const CONSENT_SECTIONS = [
+  {k:'financial', t:'Financial',
+   fields:['Net Worth','Total Savings','Monthly Savings','Financial Fitness Score','Amount Invested',
+           'Monthly Income','Emergency Fund','Total Investments','Insurance Coverage','Total Liabilities',
+           'Total fees earned']},
+  {k:'investment', t:'Investment',
+   fields:['Financial profile report','Current Portfolio Value','Asset Allocation','Products Owned',
+           'Invested Amount','Unrealized Gain/Loss','Recurring Investment','One-time Investments','Fees earned']},
+  {k:'risk', t:'Risk',
+   fields:['Risk Assessment Completed','Risk Score','Investor Type']}
+];
+/* Seeded so granted, pending and not-granted are all visible at once — Stephen
+   must see the whole model without walking a happy path. C1 is the client
+   persona, and starts closed so the round trip has something to open. */
+const CONSENT_SEED = {
+  C1:{financial:'none',    investment:'none',    risk:'granted'},
+  C2:{financial:'granted', investment:'granted', risk:'granted'},
+  C3:{financial:'pending', investment:'none',    risk:'pending'},
+  C4:{financial:'granted', investment:'none',    risk:'none'},
+  C5:{financial:'none',    investment:'pending', risk:'granted'}
+};
+const CLIENT_ID = 'C1';                 /* whose profile the client scenario shows */
+const consentOf = (id, k) => (state.consent[id] && state.consent[id][k]) || 'none';
+const CONSENT_LABEL = {granted:'Granted', pending:'Requested', none:'Not shared'};
+const CONSENT_PILL  = {granted:'p-green', pending:'p-amber', none:'p-gray'};
+
 const state = {
   scen:'est', route:'dashboard', arg:null,
   onb:null, onboarded:true,      // onboarded=false -> the app shell does not exist yet
   regErr:null, backTo:null,
   q:'', filters:new Set(), sort:{k:'signup',d:-1}, tab:'notes',
-  advisor:null, leads:[], customers:[], notifs:[], audit:[], crm:{}
+  advisor:null, leads:[], customers:[], notifs:[], audit:[], crm:{}, consent:{}, tab8:'personal'
 };
 function loadScenario(s){
   state.scen = s;
-  const est = s === 'est';
+  const est = s === 'est' || s === 'client';   /* client shares the est dataset */
   state.advisor   = JSON.parse(JSON.stringify(est ? ADVISOR_EST : ADVISOR_NEW));
   state.leads     = est ? JSON.parse(JSON.stringify(LEADS_EST)) : [];
   state.customers = est ? JSON.parse(JSON.stringify(CUSTOMERS_EST)) : [];
   state.notifs    = est ? JSON.parse(JSON.stringify(NOTIFS_EST)) : [];
-  state.audit     = est ? JSON.parse(JSON.stringify(AUDIT_EST))
+  state.audit     = est ? [...sharedLog, ...JSON.parse(JSON.stringify(AUDIT_EST))]
                         : [{ts:'2026-07-17T09:00:00',act:'Signed in',tgt:'nomsa@dubewealth.co.za'}];
+  /* Consent deliberately survives a scenario switch: the client grants in the
+     client app and the advisor sees it in theirs. Re-seeding here would wipe the
+     grant on the way across, which is the entire demo. Reset only on request. */
+  if(!state.consent || !Object.keys(state.consent).length)
+    state.consent = JSON.parse(JSON.stringify(CONSENT_SEED));
   state.crm = {};
   [...state.leads, ...state.customers].forEach(c => state.crm[c.id] = {
     notes:[], tags:[], tasks:[], follow:[], meets:[], files:[]
@@ -970,6 +1056,7 @@ function loadScenario(s){
      onboarded and lands on the dashboard with aishani.advisor.vault22.com set. */
   state.onboarded = est;
   state.onb   = est ? null : 'entry';
+  if(s === 'client'){ state.advQ=''; state.linkedAdvisor = ADVISOR_DIR[0]; }
   state.regErr = null;
   state.route = 'dashboard';
   state.q=''; state.filters.clear();
@@ -988,6 +1075,13 @@ const localISO = (d) => {
          'T'+z(d.getHours())+':'+z(d.getMinutes())+':'+z(d.getSeconds());
 };
 const audit = (act,tgt) => state.audit.unshift({ts:localISO(new Date()),act,tgt});
+/* Consent events survive a scenario switch, so the advisor can see WHY a tab
+   opened. Scenario data reseeds on every switch; this log does not. */
+const sharedLog = [];
+const auditShared = (act,tgt) => {
+  const e = {ts:localISO(new Date()),act,tgt};
+  sharedLog.unshift(e); state.audit.unshift(e);
+};
 
 /* =====================================================================
    Nav
@@ -1019,8 +1113,6 @@ const NAV = [
   {sep:'My platform'},
   {id:'landing',label:'Landing Page',ic:'landing'},
   {id:'profile',label:'My Profile',ic:'profile'},
-  {sep:'Client view'},
-  {id:'clientadvisor',label:'Financial Advisor',ic:'profile'},
   {sep:'Compliance'},
   {id:'audit',label:'Audit Log',ic:'audit'}
 ];
@@ -1039,6 +1131,7 @@ const ROUTE_LABEL = {dashboard:'Dashboard', leads:'Registered Users', customers:
   landing:'Landing Page', profile:'My Profile', audit:'Audit Log'};
 function go(id, arg, backTo){
   document.body.classList.remove('nav-open');
+  if(arg && arg !== state.arg) state.tab8 = 'personal';
   state.backTo = backTo || null;
   state.route=id; state.arg=arg||null; state.tab='notes'; window.scrollTo(0,0); render();
 }
@@ -1120,8 +1213,9 @@ function protoDrawer(){
     <div class="pd-body">
       <div class="pd-sec">Scenario</div>
       <div class="opt-list">
-        ${opt('new','New advisor','Onboarding from scratch, not signed in yet, no leads')}
-        ${opt('est','Established advisor','Aishani Atri · 8 leads, 5 customers, populated dashboard')}
+        ${opt('new','New advisor','Onboarding from scratch, not signed in yet, no registered users')}
+        ${opt('est','Established advisor','Aishani Atri · 10 registered users, 5 customers')}
+        ${opt('client','Client · main Vault22 app','Lerato Khumalo\'s own profile, where she grants access')}
       </div>
       <p class="pd-note">Switching reloads the scenario and returns you to its
         starting screen. Nothing persists across a page reload.</p>
@@ -1702,6 +1796,192 @@ function vCustomers(){
 }
 
 /* =====================================================================
+   §8 Registered User / Customer Management — ONE tabbed surface.
+   SPEC-V2 merges the old §8/§9/§10 into this, and it must exist for both
+   Registered Users and Customers. Financial, Investment and Risk are gated
+   by the consent object; Personal, Documents and Activity are not.
+   ===================================================================== */
+const TABS8 = [
+  {k:'personal',   t:'Personal'},
+  {k:'financial',  t:'Financial',  gated:true},
+  {k:'investment', t:'Investment', gated:true},
+  {k:'risk',       t:'Risk',       gated:true},
+  {k:'documents',  t:'Documents'},
+  {k:'activity',   t:'Activity'}
+];
+const dl = rows => `<div class="dl">${rows.map(([t,v]) =>
+  `<div><div class="t">${t}</div><div class="v">${v}</div></div>`).join('')}</div>`;
+
+/* Locked state: name exactly what it would reveal, and offer the request. */
+function lockedTab(p, sec){
+  const st = consentOf(p.id, sec.k);
+  return `
+    <div class="locked">
+      <div class="locked-h">
+        <span class="lock">🔒</span>
+        <div>
+          <h3>${sec.t} is ${st==='pending'?'awaiting the client’s approval':'not shared with you'}</h3>
+          <p class="lede">${esc(p.name.split(' ')[0])} controls this from their Vault22 profile.
+            ${st==='pending'
+              ? 'They have been asked and have not answered yet.'
+              : 'Request access and they will be asked to grant it.'}</p>
+        </div>
+        ${st==='pending'
+          ? `<span class="pill p-amber">Requested</span>`
+          : `<button class="btn btn-pri" data-req="${p.id}|${sec.k}">Request access</button>`}
+      </div>
+      <div class="sec-t" style="margin-top:var(--v4-space-5)">What this would show you</div>
+      <div class="locked-fields">${sec.fields.map(f=>`<span class="pill p-gray">${f}</span>`).join('')}</div>
+    </div>`;
+}
+
+function tab8Personal(p){
+  const isCust = !!p.pv;
+  return `<div class="card card-p">
+    <div class="sec-t">Personal</div>
+    ${dl([
+      ['First name', esc(p.name.split(' ')[0])],
+      ['Last name', esc(p.name.split(' ').slice(1).join(' ')) || dash],
+      ['Email', esc(p.email)],
+      ['Date of birth', p.dob || dash],
+      ['Country', esc(p.country || 'South Africa')],
+      ['Nationality', p.nationality || dash],
+      ['Dependents', p.dependents != null ? p.dependents : dash],
+      ['Phone', p.phone],
+      ['Home owner / tenant', p.housing || dash],
+      ['Signup date', p.signup || p.since],
+      ['Status', isCust ? '<span class="pill p-teal">Customer</span>'
+                        : `<span class="pill ${stagePill(p.stage)}">${p.stage}</span>`],
+      ['KYC status', p.kyc ? `<span class="pill p-green">${p.kyc}</span>`
+                           : (STAGES.indexOf(p.stage)>=4 ? '<span class="pill p-green">Approved</span>'
+                                                         : '<span class="pill p-gray">In progress</span>')],
+      ['Last login', p.lastLogin ? rel(p.lastLogin) : dash]
+    ])}
+  </div>`;
+}
+function tab8Financial(p){
+  const sec = CONSENT_SECTIONS[0];
+  if(consentOf(p.id,'financial') !== 'granted') return lockedTab(p, sec);
+  return `<div class="card card-p">
+    <div class="sec-t">Financial</div>
+    ${dl([
+      ['Net worth', p.nw!=null?money(p.nw):dash],
+      ['Total savings', p.totalSav!=null?money(p.totalSav):dash],
+      ['Monthly savings', p.sav!=null?money(p.sav)+'/mo':dash],
+      ['Financial fitness score', p.ffs!=null?p.ffs+' / 1000':dash],
+      ['Amount invested', p.inv!=null?money(p.inv):dash],
+      ['Monthly income', p.income!=null?money(p.income):dash],
+      ['Emergency fund', p.ef!=null?money(p.ef):dash],
+      ['Total investments', p.inv!=null?money(p.inv):dash],
+      ['Insurance coverage', p.insurance!=null?money(p.insurance):dash],
+      ['Total liabilities', p.liabilities!=null?money(p.liabilities):dash]
+    ])}
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Total fees earned</div>
+    <div class="row" style="margin-bottom:var(--v4-space-3)">
+      ${['Year to date','This quarter','This month','All time'].map(o=>
+        `<button class="fchip ${(state.feePeriod||'Year to date')===o?'on':''}" data-fee="${esc(o)}">${o}</button>`).join('')}
+    </div>
+    <div class="subtile" style="max-width:260px">
+      <div class="k" style="font-size:13px;color:var(--live-label)">${esc(state.feePeriod||'Year to date')}</div>
+      <div style="font-size:24px;font-weight:600" class="num">${money(feesFor(p, state.feePeriod||'Year to date'))}</div>
+    </div>
+  </div>`;
+}
+/* Fees are derived from the customer's own invested amount, not invented. */
+const FEE_FRACTION = {'Year to date':0.0075, 'This quarter':0.0019, 'This month':0.000625, 'All time':0.011};
+const feesFor = (p, period) => Math.round((p.inv||0) * (FEE_FRACTION[period]||0));
+
+function tab8Investment(p){
+  const sec = CONSENT_SECTIONS[1];
+  if(consentOf(p.id,'investment') !== 'granted') return lockedTab(p, sec);
+  if(!p.holdings) return `<div class="card card-p"><div class="sec-t">Investment</div>
+    <p class="lede">No holdings yet. This registered user has not invested.</p></div>`;
+  const gl = p.pv - p.inv;
+  return `<div class="card card-p">
+    <div class="sec-t">Investment</div>
+    ${dl([
+      ['Current portfolio value', money(p.pv)],
+      ['Invested amount', money(p.inv)],
+      ['Unrealised gain/loss', `<span style="color:${gl>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">${gl>=0?'+':''}${money(gl)}</span>`],
+      ['Recurring investment', money(p.sip)+'/mo'],
+      ['One-time investments', money(p.onetime)],
+      ['Fees earned', money(feesFor(p,'Year to date'))]
+    ])}
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Asset allocation</div>
+    ${Object.entries(p.alloc).map(([k,v])=>`<div class="arow"><span class="lb">${k}</span>
+      <span class="bar"><i style="width:${v}%"></i></span><span class="pc num">${v}%</span></div>`).join('')}
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Products owned</div>
+    ${p.holdings.map(x=>`<div class="list-row"><span>${esc(x.p)}</span>
+      <span class="sub num">${money(x.mv)}</span></div>`).join('')}
+    <div class="list-row"><span>Financial profile report</span>
+      <button class="btn btn-sm" data-stub="Financial profile report|In the real build this opens the client's full financial profile report as a PDF, the same document they can download from their own Vault22 profile.|Prototype: no document service.">Open</button></div>
+  </div>`;
+}
+function tab8Risk(p){
+  const sec = CONSENT_SECTIONS[2];
+  if(consentOf(p.id,'risk') !== 'granted') return lockedTab(p, sec);
+  const type = p.type || (p.port && p.port!=='n/a' ? p.port : null);
+  return `<div class="card card-p">
+    <div class="sec-t">Risk</div>
+    ${dl([
+      ['Risk assessment', p.risk || (p.stage==='Risk Assessment Completed'||STAGES.indexOf(p.stage)>=7 ? 'Completed' : 'Not completed')],
+      ['Risk score', p.score!=null ? p.score+' / 100' : dash]
+    ])}
+    <div class="sec-t" style="margin-top:var(--v4-space-5)">Investor type</div>
+    <div class="svc">${TYPES.map(t=>`<span class="pill ${t===type?'p-teal':'p-gray'}">${t}</span>`).join('')}</div>
+  </div>`;
+}
+function tab8Documents(p){
+  return `<div class="card card-p">
+    <div class="sec-t">Documents library</div>
+    <div class="list-row"><span>Identity number<div class="sub num">${p.idNum?maskId(p.idNum):'n/a'}</div></span>
+      <span class="pill p-gray">Masked</span></div>
+    <div class="list-row"><span>KYC documents</span>
+      <button class="btn btn-sm" data-stub="KYC documents|In the real build this opens the client's KYC pack read-only, and the view is written to the audit log.|§15: advisors cannot modify KYC information, and identity numbers stay masked.">View</button></div>
+    <div class="list-row"><span>Signed agreements</span>
+      <button class="btn btn-sm" data-stub="Signed agreements|In the real build this lists every agreement the client has signed, with dates.|Prototype: no document service.">View</button></div>
+  </div>`;
+}
+function tab8Activity(p){
+  const d = p.since || p.signup;
+  const items = [
+    ['Signed up', d],
+    ['Completed KYC', p.kyc==='Approved'||STAGES.indexOf(p.stage)>=4 ? d : null],
+    ['Risk assessment', p.risk==='Completed'||STAGES.indexOf(p.stage)>=6 ? d : null],
+    ['First investment', p.onetime ? d : null],
+    ['SIP started', p.sip ? d : null],
+    ['Portfolio review', p.lastInv || null]
+  ];
+  return `<div class="card card-p">
+    <div class="sec-t">Activity timeline</div>
+    <div class="tl">${items.map(([t,dt])=>`<div class="tl-i ${dt?'':'tl-off'}">
+      <div class="tl-t">${t}</div><div class="tl-d">${dt || 'Not yet'}</div></div>`).join('')}</div>
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Audit log for this client</div>
+    <p class="lede" style="margin-bottom:var(--v4-space-3)">Only this client's events. The
+      advisor-level log is under Compliance.</p>
+    ${custAudit(p.id).map(a=>`<div class="list-row"><span>${esc(a.act)}</span>
+      <span class="sub num">${rel(a.ts)}</span></div>`).join('') ||
+      '<p class="lede">Nothing logged yet.</p>'}
+  </div>`;
+}
+/* §15: two audit logs — advisor level, and per customer (advisor view). */
+const custAudit = id => state.audit.filter(a => (a.tgt||'').includes(id));
+
+function tabs8(p){
+  const cur = state.tab8 || 'personal';
+  const body = {personal:tab8Personal, financial:tab8Financial, investment:tab8Investment,
+                risk:tab8Risk, documents:tab8Documents, activity:tab8Activity}[cur](p);
+  return `
+    <div class="tabs">${TABS8.map(t=>{
+      const st = t.gated ? consentOf(p.id, t.k) : null;
+      const dot = st==='granted' ? '' : st==='pending' ? ' <span class="tdot amber"></span>'
+                : st==='none' ? ' <span class="tdot"></span>' : '';
+      return `<button class="tab ${cur===t.k?'on':''}" data-tab8="${t.k}">${t.t}${dot}</button>`;
+    }).join('')}</div>
+    ${body}`;
+}
+
+/* =====================================================================
    Customer profile (§10) + CRM (§12)
    ===================================================================== */
 function crmTabs(id){
@@ -1749,107 +2029,27 @@ function crmTabs(id){
     ${panel}`;
 }
 function vCustomer(){
-  const c = state.customers.find(x=>x.id===state.arg);
+  const c = state.customers.find(x=>x.id===state.arg) || state.leads.find(x=>x.id===state.arg);
   if(!c) return vCustomers();
-  const gl = c.pv-c.inv;
-  const holds = c.holdings.map(h=>`<tr>
-    <td class="nm">${esc(h.p)}</td>
-    <td class="num">${h.u.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-    <td class="num">${money(h.mv)}</td>
-    <td class="num" style="color:${h.r>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">${h.r>=0?'+':''}${h.r}%</td>
-    <td class="num">${h.d}</td></tr>`).join('');
-  const alloc = Object.entries(c.alloc).map(([k,v])=>`
-    <div class="arow"><span class="lb">${k}</span><span class="bar"><i style="width:${v}%"></i></span>
-      <span class="pc num">${v}%</span></div>`).join('');
-  const tl = [
-    ['Signed up via your landing page', c.since],
-    ['Completed KYC', c.since],
-    [`Risk assessment completed: ${c.type} (score ${c.score})`, c.since],
-    [`First investment: ${money(c.onetime)}`, c.since],
-    [`Recurring investment started: ${money(c.sip)}/month`, c.since],
-    ['Portfolio review', c.lastInv]
-  ].map(([t,d])=>`<div class="tl-i"><div class="tl-t">${t}</div><div class="tl-d">${d}</div></div>`).join('');
-
+  const isCust = !!c.pv;
+  const wa = 'https://wa.me/'+c.phone.replace(/\D/g,'')+'?text='+encodeURIComponent('Hi '+c.name.split(' ')[0]+', ');
   return `
     <div class="page-head between">
       <div><h1 class="h1-back">${backArrow()}${esc(c.name)}</h1>
-        <p class="lede">${esc(c.email)} · ${c.phone} · ${c.country}</p></div>
+        <p class="lede">${esc(c.email)} · ${c.phone} · ${esc(c.country||'South Africa')}</p></div>
       <div class="row">
-        <a class="btn btn-sm" href="tel:${c.phone}" data-audit="Called customer">Call</a>
-        <a class="btn btn-sm" href="mailto:${c.email}" data-audit="Emailed customer">Email</a>
-        <a class="btn btn-sm" target="_blank" rel="noopener"
-           href="https://wa.me/${c.phone.replace(/\D/g,'')}?text=${encodeURIComponent('Hi '+c.name.split(' ')[0]+', ')}"
-           data-audit="WhatsApped customer">WhatsApp</a>
-        <span class="pill p-teal">${c.type}</span>
+        <a class="btn btn-sm" href="tel:${c.phone}" data-audit="Called ${c.id}">Call</a>
+        <a class="btn btn-sm" href="mailto:${c.email}" data-audit="Emailed ${c.id}">Email</a>
+        <a class="btn btn-sm" target="_blank" rel="noopener" href="${wa}" data-audit="WhatsApped ${c.id}">WhatsApp</a>
+        <button class="btn btn-sm" data-book="${c.id}">Book</button>
+        <span class="pill ${isCust?'p-teal':stagePill(c.stage)}">${isCust?'Customer':c.stage}</span>
       </div>
     </div>
-
-    <div class="kpis">
-      <div class="kpi"><div class="k">Client since</div><div class="v" style="font-size:20px">${c.since}</div></div>
-      <div class="kpi"><div class="k">Portfolio Value</div><div class="v">${short(c.pv)}</div>
-        <div class="d" style="color:${gl>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">${gl>=0?'+':''}${money(gl)} unrealised</div></div>
-      <div class="kpi"><div class="k">Financial Fitness</div><div class="v">${pii(c.ffs)}<small> /1000</small></div></div>
-      <div class="kpi"><div class="k">Last login</div><div class="v" style="font-size:20px">${rel(c.lastLogin)}</div>
-        <div class="d">Last investment ${c.lastInv}</div></div>
-    </div>
-
-    <div class="grid2 mt6">
-      <div>
-        <div class="card card-p">
-          <div class="sec-t">Holdings</div>
-          <div class="tbl-scroll"><table style="min-width:480px">
-            <thead><tr><th>Product</th><th>Units</th><th>Market Value</th><th>Return %</th><th>Purchase Date</th></tr></thead>
-            <tbody>${holds}</tbody></table></div>
-          <div class="sec-t" style="margin-top:var(--v4-space-6)">Asset allocation</div>${alloc}
-        </div>
-        <div class="card card-p mt">
-          <div class="sec-t">CRM</div>
-          ${crmTabs(c.id)}
-        </div>
-        <div class="card card-p mt">
-          <div class="sec-t">Activity timeline</div>
-          <div class="tl">${tl}</div>
-        </div>
-      </div>
-      <div>
-        <div class="card card-p">
-          <div class="sec-t">Financial snapshot</div>
-          <div class="dl">
-            <div><div class="t">Net Worth</div><div class="v">${pii(money(c.nw))}</div></div>
-            <div><div class="t">Savings</div><div class="v">${pii(money(c.sav))}/mo</div></div>
-            <div><div class="t">Investments</div><div class="v">${money(c.inv)}</div></div>
-            <div><div class="t">Insurance</div><div class="v">${pii(money(c.insurance))}</div></div>
-            <div><div class="t">Liabilities</div><div class="v">${pii(money(c.liabilities))}</div></div>
-            <div><div class="t">Monthly Income</div><div class="v">${pii(money(c.income))}</div></div>
-            <div><div class="t">Emergency Fund</div><div class="v">${pii(money(c.ef))}</div></div>
-            <div><div class="t">Recurring</div><div class="v">${money(c.sip)}/mo</div></div>
-          </div>
-        </div>
-        <div class="card card-p mt">
-          <div class="sec-t">Products owned</div>
-          ${c.holdings.map(h=>`<div class="list-row"><span>${esc(h.p)}</span>
-            <span class="sub num">${money(h.mv)}</span></div>`).join('')}
-        </div>
-        <div class="card card-p mt">
-          <div class="sec-t">Risk</div>
-          <div class="dl" style="margin-bottom:var(--v4-space-4)">
-            <div><div class="t">Assessment</div><div class="v">${c.risk}</div></div>
-            <div><div class="t">Risk Score</div><div class="v num">${c.score} / 100</div></div>
-          </div>
-          <div class="svc">${TYPES.map(t=>`<span class="pill ${t===c.type?'p-teal':'p-gray'}">${t}</span>`).join('')}</div>
-        </div>
-        <div class="card card-p mt">
-          <div class="sec-t">Documents</div>
-          <div class="list-row"><span>Identity number<div class="sub num">${maskId(c.idNum)}</div></span>
-            <span class="pill p-gray">Masked</span></div>
-          <div class="list-row"><span>KYC pack</span>
-            <button class="btn btn-sm" data-stub="KYC pack|In the real build this opens the client's KYC documents read-only, and the view itself is written to the audit log.|§15: advisors cannot modify KYC information, and identity numbers stay masked.">View</button></div>
-          <div class="list-row"><span>Signed agreements</span>
-            <button class="btn btn-sm" data-stub="KYC pack|In the real build this opens the client's KYC documents read-only, and the view itself is written to the audit log.|§15: advisors cannot modify KYC information, and identity numbers stay masked.">View</button></div>
-        </div>
-      </div>
-    </div>
-    ${consent()}`;
+    ${tabs8(c)}
+    <div class="card card-p mt6">
+      <div class="sec-t">CRM</div>
+      ${crmTabs(c.id)}
+    </div>`;
 }
 
 /* =====================================================================
@@ -2130,77 +2330,6 @@ function vProfile(){
     </div>`;
 }
 
-/* =====================================================================
-   Financial Advisor section, inside the CLIENT's profile (§ Stephen's email:
-   "we'll also need a new Financial Advisor section within the user profile to
-   support the experience"). This is the investor side, not the advisor side —
-   every other view in this prototype is the advisor's, so it is framed
-   explicitly as what the client sees.
-   ===================================================================== */
-function vClientAdvisor(){
-  const a = state.advisor;
-  if(!state.customers.length) return `
-    <div class="page-head"><h1>Financial Advisor</h1>
-      <p class="lede">How you appear inside your client's own Vault22 profile.</p></div>
-    <div class="card"><div class="empty"><div class="em">◔</div><h3>No clients yet</h3>
-      <p>Once someone signs up through your link, this is the section they see in their profile.</p>
-      <button class="btn btn-teal" data-share="1">Share my link</button></div></div>`;
-  const c = state.customers[0];
-  const wa = 'https://wa.me/' + a.phone.replace(/\D/g,'') +
-             '?text=' + encodeURIComponent('Hi ' + a.name.split(' ')[0] + ', ');
-  return `
-    <div class="page-head"><h1>Financial Advisor</h1>
-      <p class="lede">This is the client side. It is what ${esc(c.name)} sees inside their own
-        Vault22 profile, not one of your advisor screens.</p></div>
-
-    <div class="consent" style="background:#eff6ff;border-color:#bfdbfe;color:#1e40af">
-      <span><b>Client's view.</b> Shown here so you can check how you appear. In the real build
-        this lives in the investor app under Profile, and the client cannot edit it.</span>
-    </div>
-
-    <div class="grid2 mt6">
-      <div class="card card-p">
-        <div class="sec-t">Your financial advisor</div>
-        <div class="row" style="align-items:flex-start;gap:var(--v4-space-4)">
-          <span class="ava" style="width:72px;height:72px;font-size:24px;flex:none">${a.initials}</span>
-          <div style="flex:1;min-width:0">
-            <h2 style="font-size:20px">${esc(a.name)}</h2>
-            <div class="sub" style="margin-top:2px">${esc(a.company)}</div>
-            <div class="svc" style="margin-top:var(--v4-space-3)">
-              <span class="pill p-gray">Licence ${esc(a.licence)}</span>
-              <span class="pill p-teal">Your advisor since ${c.since}</span>
-            </div>
-          </div>
-        </div>
-        <p class="lede" style="margin-top:var(--v4-space-4)">${esc(a.bio)}</p>
-        <div class="sec-t" style="margin-top:var(--v4-space-6)">Get in touch</div>
-        <div class="row" style="flex-wrap:wrap">
-          <a class="btn" href="tel:${a.phone}">Call</a>
-          <a class="btn" href="mailto:${esc(a.email)}">Email</a>
-          <a class="btn" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>
-          <button class="btn" data-stub="Book a meeting|In the real build this opens your advisor's calendar (${esc(a.calendar||'no link set')}) so the client can book a slot directly.|Prototype: no calendar integration.">Book a meeting</button>
-        </div>
-      </div>
-
-      <div>
-        <div class="card card-p">
-          <div class="sec-t">Contact</div>
-          <div class="list-row"><span>Email</span><span class="sub">${esc(a.email)}</span></div>
-          <div class="list-row"><span>Phone</span><span class="sub num">${esc(a.phoneFmt)}</span></div>
-          <div class="list-row"><span>Calendar</span><span class="sub">${esc(a.calendar||'n/a')}</span></div>
-        </div>
-        <div class="card card-p mt">
-          <div class="sec-t">What your advisor can see</div>
-          <p class="lede" style="margin-bottom:var(--v4-space-3)">Kept deliberately plain, because
-            consent is still under review.</p>
-          <div class="list-row"><span>Your KYC status</span><span class="pill p-gray">View only</span></div>
-          <div class="list-row"><span>Your portfolio and holdings</span><span class="pill p-gray">View only</span></div>
-          <div class="list-row"><span>Change your portfolio</span><span class="pill p-red">Not without your say-so</span></div>
-          <div class="list-row"><span>Your identity number</span><span class="pill p-red">Masked</span></div>
-        </div>
-      </div>
-    </div>`;
-}
 
 /* =====================================================================
    Audit log (§15)
@@ -2268,22 +2397,24 @@ function shareModal(){
 function leadModal(){
   const l = state.leads.find(x=>x.id===state.arg);
   if(!l) return '';
-  const idx = STAGES.indexOf(l.stage);
   const wa = 'https://wa.me/'+l.phone.replace(/\D/g,'')+'?text='+encodeURIComponent('Hi '+l.name.split(' ')[0]+', ');
   return `
     <div class="between"><div><h2>${esc(l.name)}</h2>
       <p class="lede">${esc(l.email)} · ${l.phone}</p></div>
       <button class="x" data-close="1">×</button></div>
     <div class="row mt" style="flex-wrap:wrap">
-      <a class="btn btn-sm" href="tel:${l.phone}" data-audit="Called lead">Call</a>
-      <a class="btn btn-sm" href="mailto:${l.email}" data-audit="Emailed lead">Email</a>
-      <a class="btn btn-sm" target="_blank" rel="noopener" href="${wa}" data-audit="WhatsApped lead">WhatsApp</a>
-      <button class="btn btn-sm" data-stub="Schedule a meeting|In the real build this opens your calendar booking link (${esc(state.advisor.calendar||'set one in My Profile')}) with the client's details prefilled, and logs the meeting against them.|Appointment scheduling is Future plans in the doc, so it is not built here.">Schedule Meeting</button>
+      <a class="btn btn-sm" href="tel:${l.phone}" data-audit="Called ${l.id}">Call</a>
+      <a class="btn btn-sm" href="mailto:${l.email}" data-audit="Emailed ${l.id}">Email</a>
+      <a class="btn btn-sm" target="_blank" rel="noopener" href="${wa}" data-audit="WhatsApped ${l.id}">WhatsApp</a>
+      <button class="btn btn-sm" data-book="${l.id}">Book</button>
+      <button class="btn btn-sm" data-cust="${l.id}">Open full profile ›</button>
     </div>
     <div class="sec-t" style="margin-top:var(--v4-space-6)">Stage</div>
-    ${STAGES.map((s,i)=>`<div class="list-row" style="padding:7px 0">
-      <span style="color:${i<=idx?'var(--text)':'var(--v4-navy-300)'};font-size:13px">${s}</span>
-      ${i<idx?'<span class="pill p-gray">Done</span>':i===idx?'<span class="pill p-teal">Current</span>':''}</div>`).join('')}
+    ${STAGES.map((s,i)=>{ const idx=STAGES.indexOf(l.stage);
+      return `<div class="list-row" style="padding:6px 0">
+        <span style="color:${i<=idx?'var(--text)':'var(--v4-navy-300)'};font-size:13px">${s}</span>
+        ${i<idx?'<span class="pill p-gray">Done</span>':i===idx?'<span class="pill p-teal">Current</span>':''}</div>`;
+    }).join('')}
     <div class="sec-t" style="margin-top:var(--v4-space-6)">CRM</div>
     ${crmTabs(l.id)}`;
 }
@@ -2325,14 +2456,154 @@ function togglePanel(){
   p.classList.add('open');
 }
 
+
+/* =====================================================================
+   CLIENT SCENARIO — the MAIN Vault22 app, not the advisor portal.
+   Different product, different shell, different nav. The consent story only
+   works if the client grants access in THEIR app and the advisor sees it
+   unlock in THEIRS, so this renders as its own application.
+   Nav is the live app's real 16-item menu, verbatim from assets/nav.json.
+   ===================================================================== */
+const CLIENT_NAV = [
+  {l:"Home", i:"Home.png"}, {l:"Transactions", i:"Transactions.svg"}, {l:"Budget", i:"Budget.png"},
+  {l:"Investments", i:"Investments.png"}, {l:"My Wealth", i:"MyWealth.svg"},
+  {l:"Financial Fitness", i:"FinancialFitness.svg"}, {l:"Goals", i:"Goals.svg"},
+  {l:"Family Circle", i:"Family.svg"}, {l:"Debt", i:"Goals.svg"}, {l:"Insurance", i:"FinancialFitness.svg"},
+  {l:"Crypto Portfolio", i:"Crypto.svg"}, {l:"Marketplace", i:"Marketplace.svg"},
+  {l:"Insights", i:"insights.png"}, {l:"Product Updates", i:"Updates.png"},
+  {l:"Tara AI", i:"tara-advisor.png"}, {l:"Connect Telegram", i:""}
+];
+/* A small mock directory so "search advisors, then link" actually searches. */
+const ADVISOR_DIR = [
+  {id:'A1', name:'Aishani Atri',   firm:'Vault22 Wealth',   licence:'FSP 48219', city:'Johannesburg'},
+  {id:'A2', name:'Thabo Molefe',   firm:'Molefe Financial', licence:'FSP 51204', city:'Pretoria'},
+  {id:'A3', name:'Sarah Delport',  firm:'Delport Advisory', licence:'FSP 44911', city:'Cape Town'},
+  {id:'A4', name:'Rajesh Naidoo',  firm:'Naidoo & Partners',licence:'FSP 39880', city:'Durban'}
+];
+
+function clientShell(body){
+  const c = CUSTOMERS_EST.find(x=>x.id===CLIENT_ID);
+  return `
+  <div class="capp">
+    <header class="ctop">
+      <img class="clogo" src="assets/img/vault22-logo.png" alt="Vault22">
+      <div class="ctop-r">
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+        <span class="chip num">R ZAR</span>
+        <span class="chip">🇿🇦 South Africa</span>
+        <span class="who"><span class="ava">${initialsOf(c.name)}</span>
+          <span>${esc(c.name.split(' ')[0])}</span></span>
+      </div>
+    </header>
+    <nav class="csidebar">
+      <div class="sb-h">Menu</div>
+      <div class="nav">
+        ${CLIENT_NAV.map(n=>`<button class="nav-item" data-cnav="${esc(n.l)}">
+          <span class="ic">${n.i?`<img src="assets/img/${n.i}" alt="">`:'<span class="ic-dot"></span>'}</span>${n.l}</button>`).join('')}
+      </div>
+      <div class="nav" style="margin-top:var(--v4-space-5);border-top:1px solid var(--line);padding-top:var(--v4-space-4)">
+        <button class="nav-item on" data-cnav="Profile"><span class="ic">${navIcon('profile')}</span>Profile</button>
+      </div>
+    </nav>
+    <main class="cmain">${body}</main>
+  </div>`;
+}
+
+function vClientProfile(){
+  const c = CUSTOMERS_EST.find(x=>x.id===CLIENT_ID);
+  const linked = state.linkedAdvisor;
+  const q = (state.advQ||'').trim().toLowerCase();
+  const results = q ? ADVISOR_DIR.filter(a =>
+    [a.name,a.firm,a.city].some(v=>v.toLowerCase().includes(q))) : [];
+  return clientShell(`
+    <div class="page-head"><h1>Profile</h1>
+      <p class="lede">Your details, your money, and who you share them with.</p></div>
+
+    <div class="card card-p">
+      <div class="sec-t">Financial Advisor</div>
+      ${linked ? `
+        <div class="row" style="align-items:flex-start;gap:var(--v4-space-4)">
+          <span class="ava" style="width:56px;height:56px;font-size:19px;flex:none">${initialsOf(linked.name)}</span>
+          <div style="flex:1;min-width:0">
+            <h2 style="font-size:18px">${esc(linked.name)}</h2>
+            <div class="sub">${esc(linked.firm)} · Licence ${esc(linked.licence)}</div>
+            <div class="sub" style="margin-top:2px">Your advisor since ${c.since}</div>
+          </div>
+          <button class="btn btn-sm" data-link-adv="__unlink">Unlink</button>
+        </div>`
+      : `<p class="lede">You have no advisor linked. Search for one below.</p>`}
+    </div>
+
+    <div class="card card-p mt">
+      <div class="sec-t">${linked?'Change advisor':'Find an advisor'}</div>
+      <input class="inp inp-sm" id="advQ" placeholder="Search by name, firm or city" value="${esc(state.advQ||'')}"
+             style="max-width:420px">
+      ${q ? (results.length ? `<div class="mt">${results.map(a=>`
+          <div class="list-row">
+            <span><b>${esc(a.name)}</b><div class="sub">${esc(a.firm)} · ${esc(a.city)} · Licence ${esc(a.licence)}</div></span>
+            ${linked && linked.id===a.id
+              ? '<span class="pill p-green">Linked</span>'
+              : `<button class="btn btn-sm" data-link-adv="${a.id}">Link</button>`}
+          </div>`).join('')}</div>`
+        : `<p class="lede mt">No advisor matches "${esc(state.advQ)}".</p>`)
+      : `<p class="lede mt">Type to search ${plural(ADVISOR_DIR.length,'advisor')} in the directory.</p>`}
+    </div>
+
+    ${linked ? `
+    <div class="card card-p mt">
+      <div class="sec-t">What you share with ${esc(linked.name.split(' ')[0])}</div>
+      <p class="lede" style="margin-bottom:var(--v4-space-5)">You decide, section by section.
+        Your advisor sees only what you switch on, and you can switch it off again at any time.</p>
+      ${CONSENT_SECTIONS.map(sec=>{
+        const st = consentOf(CLIENT_ID, sec.k);
+        return `
+        <div class="perm">
+          <div class="perm-h">
+            <div>
+              <b>${sec.t}</b>
+              ${st==='pending' ? '<span class="pill p-amber" style="margin-left:8px">They asked for this</span>' : ''}
+            </div>
+            <button class="tog ${st==='granted'?'on':''}" role="switch" aria-checked="${st==='granted'}"
+              aria-label="Share ${sec.t}" data-perm="${sec.k}"><span></span></button>
+          </div>
+          <div class="perm-f">
+            <span class="sub">${st==='granted'?'You are sharing:':'You are not sharing:'}</span>
+            ${sec.fields.map(f=>`<span class="pill ${st==='granted'?'p-teal':'p-gray'}">${f}</span>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
+
+    <div class="card card-p mt">
+      <div class="sec-t">Documents library</div>
+      <div class="list-row"><span>KYC documents</span>
+        <button class="btn btn-sm" data-stub="KYC documents|In the real build this is your KYC pack: the documents you uploaded when you opened your account.|Prototype: no document service.">View</button></div>
+      <div class="list-row"><span>Signed agreements</span>
+        <button class="btn btn-sm" data-stub="Signed agreements|In the real build this lists every agreement you have signed, with dates.|Prototype: no document service.">View</button></div>
+    </div>`);
+}
+
 /* =====================================================================
    Render + events
    ===================================================================== */
 const VIEWS = {dashboard:vDashboard, leads:vLeads, customers:vCustomers, customer:vCustomer,
   risk:vRisk, portfolios:vPortfolios, analytics:vAnalytics, landing:vLanding,
-  profile:vProfile, clientadvisor:vClientAdvisor, audit:vAudit};
+  profile:vProfile, audit:vAudit};
 
 function render(){
+  /* The client scenario is a different product: the main Vault22 app, not the
+     advisor portal. It replaces the shell entirely. */
+  if(state.scen === 'client'){
+    document.body.classList.add('onboarding');      /* hides the advisor shell */
+    document.body.classList.add('client-app');
+    document.getElementById('onbRoot').innerHTML = vClientProfile();
+    return;
+  }
+  document.body.classList.remove('client-app');
   /* Onboarding runs before the dashboard exists: no topbar, sidebar or nav. */
   if(!state.onboarded){
     document.body.classList.add('onboarding');
@@ -2358,7 +2629,7 @@ function toast(msg){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-fee],[data-book],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
     '[data-notif],[data-readall],[data-audit],[data-dl]');
   const panel = document.getElementById('panel');
   if(!t){
@@ -2366,6 +2637,47 @@ document.addEventListener('click', e => {
     return;
   }
   if(t.dataset.audit) audit(t.dataset.audit, state.arg || advisorUrl(state.advisor));
+  /* §8 tabs */
+  if(t.dataset.tab8){ state.tab8 = t.dataset.tab8; return render(); }
+  /* Consent: the advisor asks; the client decides. Writes to the audit log. */
+  if(t.dataset.req){
+    const [id, sec] = t.dataset.req.split('|');
+    state.consent[id] = state.consent[id] || {};
+    state.consent[id][sec] = 'pending';
+    const who = (state.customers.concat(state.leads)).find(x=>x.id===id);
+    auditShared('Requested ' + sec + ' access', (who?who.name+' ':'') + '(' + id + ')');
+    toast('Access requested. ' + (who?who.name.split(' ')[0]:'They') + ' will be asked to approve it.');
+    return render();
+  }
+  if(t.dataset.fee){ state.feePeriod = t.dataset.fee; return render(); }
+  /* THE ROUND TRIP. The client's toggle and the advisor's locked tab are two
+     views of state.consent. Flip it here, and the advisor's tab opens. */
+  if(t.dataset.perm){
+    const k = t.dataset.perm;
+    const now = consentOf(CLIENT_ID, k);
+    state.consent[CLIENT_ID][k] = now === 'granted' ? 'none' : 'granted';
+    const sec = CONSENT_SECTIONS.find(s=>s.k===k);
+    auditShared(now==='granted' ? 'Client revoked ' + k + ' access' : 'Client granted ' + k + ' access',
+          'Lerato Khumalo (' + CLIENT_ID + ')');
+    toast(now === 'granted'
+      ? sec.t + ' is no longer shared with your advisor'
+      : sec.t + ' is now shared with your advisor');
+    return render();
+  }
+  if(t.dataset.linkAdv){
+    const v = t.dataset.linkAdv;
+    if(v === '__unlink'){ state.linkedAdvisor = null; toast('Advisor unlinked'); }
+    else { state.linkedAdvisor = ADVISOR_DIR.find(a=>a.id===v); state.advQ='';
+           toast('Linked to ' + state.linkedAdvisor.name); }
+    return render();
+  }
+  if(t.dataset.cnav){
+    if(t.dataset.cnav !== 'Profile')
+      return stubModal(t.dataset.cnav, 'This is the client\'s own Vault22 app. ' + t.dataset.cnav +
+        ' is a real section of it; the prototype only builds Profile, where the Financial Advisor section lives.',
+        'Out of scope: this prototype is the advisor portal. The client app is shown to demonstrate consent.');
+    return render();
+  }
   if(t.dataset.back) return goBack();
   if(t.dataset.go)   return go(t.dataset.go, null, t.dataset.backto ? state.route : null);
   if(t.dataset.cust){ audit('Viewed customer profile', t.dataset.cust); return go('customer', t.dataset.cust, state.route); }
@@ -2489,6 +2801,13 @@ document.addEventListener('input', e => {
   }
   /* The mandatory advisor name: URL assembles live, Continue stays disabled
      until the name is valid and available. */
+  if(e.target.id==='advQ'){
+    const pos = e.target.selectionStart;
+    state.advQ = e.target.value; render();
+    const n2 = document.getElementById('advQ');
+    if(n2){ n2.focus(); n2.setSelectionRange(pos,pos); }
+    return;
+  }
   if(e.target.id==='slugIn'){
     /* Normalise case in the field itself rather than rejecting it, a subdomain is
        case-insensitive, so "Aishani" is a valid thing to type; it just resolves to
