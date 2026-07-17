@@ -82,7 +82,9 @@
   --live-header:#F5F5F5;     /* header: h-20 bg-[#F5F5F5] — NOT white */
   --live-tile:#F1F2F4;       /* sub-tile fill, same grey as the live input */
   --live-tile-hover:#E8E9EB; /* hover:bg-[#E8E9EB] */
-  --live-head:#22252B;       /* section head: text-xl font-medium text-[#22252B] */
+  --live-head:#1E3A5F;       /* heading navy — text-[#1E3A5F], 16x in the live DOM.
+                                #22252B is the auth page's INPUT text, not a heading. */
+  --live-eyebrow:#6C6F7C;    /* eyebrow / stat label — text-[#6C6F7C] uppercase */
   --live-label:#6C6F7C;      /* card label: text-base font-medium text-[#6C6F7C] */
   --live-radius:12px;        /* rounded-xl */
   --line:var(--g-200);       /* #E5E7EB, live border on pills/cards */
@@ -175,21 +177,33 @@ a{color:var(--v4-info-dark)}
 /* ---------- Layout ---------- */
 .main{margin-left:calc(var(--sidebar-w) + var(--v4-space-10));padding:calc(72px + var(--v4-space-6)) var(--v4-space-8) var(--v4-space-20);
   max-width:1320px}
-h1{font-size:32px;font-weight:600;line-height:40px;letter-spacing:0;color:var(--text)}
+h1{font-size:32px;font-weight:700;line-height:40px;letter-spacing:-.2px;color:var(--live-head)}
 h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 .lede{color:var(--muted);font-size:14px;line-height:1.6;max-width:76ch;margin-top:var(--v4-space-1)}
 .page-head{margin-bottom:var(--v4-space-6)}
 .row{display:flex;align-items:center;gap:var(--v4-space-3)}
 .between{display:flex;align-items:center;justify-content:space-between;gap:var(--v4-space-4);flex-wrap:wrap}
-.mt{margin-top:var(--v4-space-4)} .mt6{margin-top:var(--v4-space-6)} .mt8{margin-top:var(--v4-space-8)}
+/* Live vertical rhythm: 14-18px between cards, not 24-32px. */
+.mt{margin-top:var(--v4-space-4)} .mt6{margin-top:var(--v4-space-4)} .mt8{margin-top:var(--v4-space-5)}
 .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:var(--v4-space-4)}
 @media(max-width:1100px){.grid2{grid-template-columns:1fr}}
 
 /* ---------- Cards ---------- */
 .card{background:var(--surface);border-radius:var(--live-radius)}
 .card-p{padding:var(--v4-space-6)}
-.sec-t{font-size:20px;font-weight:500;color:var(--live-head);
-  margin-bottom:var(--v4-space-4);letter-spacing:0}
+/* Card title: 20/600 navy. The live app's card headline tier. */
+.sec-t{font-size:20px;font-weight:600;color:var(--live-head);
+  margin-bottom:var(--v4-space-4);letter-spacing:-.2px}
+/* Eyebrow: the tier a previous brief deleted. Live pattern, verbatim:
+   text-xs font-semibold uppercase tracking-wider text-[#6C6F7C]. */
+.eyebrow{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--live-eyebrow);margin-bottom:6px;display:block}
+.eyebrow.teal{color:var(--v4-teal-700)}
+/* Stat tile: eyebrow label + a big number, as the live app does it. */
+.stat{background:var(--live-tile);border-radius:var(--live-radius);padding:var(--v4-space-4)}
+.stat .n{font-size:26px;font-weight:700;letter-spacing:-.6px;color:var(--live-head);
+  font-variant-numeric:tabular-nums;line-height:1.15}
+.stat .s{font-size:12px;color:var(--muted);margin-top:2px}
 
 /* Live sub-tile: bg-[#F1F2F4] rounded-xl p-3, h-[72px]. The live app's tile
    language for a figure inside a card. */
@@ -209,15 +223,17 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 .subtile{background:var(--live-tile);border-radius:var(--live-radius);padding:var(--v4-space-3);
   transition:background var(--v4-duration-fast) var(--v4-easing-standard)}
 .subtile:hover{background:var(--live-tile-hover)}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--v4-space-4)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--v4-space-3)}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
 
 .kpi{background:var(--surface);border-radius:var(--live-radius);padding:var(--v4-space-5)}
-.kpi .k{font-size:16px;color:var(--live-label);font-weight:500;margin-bottom:var(--v4-space-2)}
-.kpi .v{font-size:32px;font-weight:600;letter-spacing:0;line-height:1.25;font-variant-numeric:tabular-nums}
+.kpi .k{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--live-eyebrow);margin-bottom:var(--v4-space-2)}
+.kpi .v{font-size:32px;font-weight:700;letter-spacing:-.8px;line-height:1.2;
+  color:var(--live-head);font-variant-numeric:tabular-nums}
 .kpi .d{font-size:12px;color:var(--v4-navy-300);margin-top:var(--v4-space-2)}
 .kpi.hero{background:var(--v4-navy-700)}
-.kpi.hero .k{color:var(--v4-navy-200)} .kpi.hero .v{color:#fff} .kpi.hero .d{color:var(--v4-navy-300)}
+.kpi.hero .k{color:rgba(255,255,255,.72)} .kpi.hero .v{color:#fff} .kpi.hero .d{color:var(--v4-navy-200)}
 .kpi.hero .v small{color:var(--v4-teal-400);font-size:16px;font-weight:600;letter-spacing:0}
 
 /* ---------- Bits ---------- */
@@ -662,15 +678,37 @@ body.client-app #onbRoot{display:block}
   display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:20}
 .clogo{height:34px;width:auto;display:block}
 .ctop-r{display:flex;align-items:center;gap:var(--v4-space-3)}
-.csidebar{position:fixed;top:80px;left:var(--v4-space-5);width:var(--sidebar-w);
-  bottom:var(--v4-space-5);background:var(--surface);border-radius:var(--v4-radius-2xl);
-  padding:var(--v4-space-5);overflow-y:auto;z-index:10}
+/* Live: .side{width:232px;border-radius:24px;box-shadow:0 2px 12px rgba(0,0,0,.05);
+   padding:18px 0 14px;position:sticky;top:96px} inside
+   .shell{display:flex;gap:28px;padding:0 28px 40px;align-items:flex-start}.
+   Ours inherited the advisor shell's position:fixed, so the card ran to the
+   viewport floor with dead space under Profile. */
+.capp .shell{display:flex;gap:28px;padding:calc(80px + var(--v4-space-5)) 28px 40px;
+  align-items:flex-start}
+.csidebar{width:232px;flex:none;background:var(--surface);border-radius:24px;
+  box-shadow:0 2px 12px rgba(0,0,0,.05);padding:18px 14px 14px;position:sticky;top:96px}
+.collapse{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);
+  background:var(--surface);color:var(--muted);font-size:13px;line-height:1;display:grid;place-items:center}
+.collapse:hover{background:var(--v4-navy-50)}
+.chev{color:var(--v4-navy-300);font-size:11px;margin-left:2px}
+.cfoot{display:flex;align-items:center;justify-content:space-between;gap:var(--v4-space-4);
+  flex-wrap:wrap;background:var(--surface);border-radius:var(--live-radius);
+  padding:var(--v4-space-4) var(--v4-space-5);margin-top:var(--v4-space-5);font-size:13px;color:var(--muted)}
+.cfoot-soc{display:flex;gap:var(--v4-space-3)}
+.soc{width:24px;height:24px;border-radius:50%;background:var(--v4-navy-50);display:grid;
+  place-items:center;font-size:11px;color:var(--muted)}
+/* Tara lives bottom-right on the real app; our demo gear was in her spot. */
+.tara{position:fixed;right:var(--v4-space-5);bottom:var(--v4-space-5);z-index:80;
+  width:56px;height:56px;border-radius:50%;border:2px solid #fff;padding:0;overflow:hidden;
+  box-shadow:var(--v4-shadow-lg);background:var(--v4-teal-100)}
+.tara img{width:100%;height:100%;object-fit:cover;display:block}
+body:not(.client-app) .tara{display:none}
+body.client-app .proto-fab{right:auto;left:var(--v4-space-5)}
 .crumb-live{display:flex;align-items:center;gap:var(--v4-space-2);font-size:13px;
   color:var(--muted);margin-bottom:var(--v4-space-4)}
 .crumb-live .sep{color:var(--v4-navy-200)}
 .crumb-live .ch{font-size:14px}
-.cmain{margin-left:calc(var(--sidebar-w) + var(--v4-space-10));
-  padding:calc(80px + var(--v4-space-6)) var(--v4-space-8) var(--v4-space-20);max-width:1180px}
+.cmain{flex:1;min-width:0;max-width:1180px;padding:0}
 .csidebar .nav-item .ic img{width:20px;height:20px;object-fit:contain}
 .ic-dot{width:8px;height:8px;border-radius:50%;background:var(--v4-navy-200);display:block}
 
@@ -679,7 +717,12 @@ body.client-app #onbRoot{display:block}
 .perm:last-child{border-bottom:0}
 .perm-h{display:flex;align-items:center;justify-content:space-between;gap:var(--v4-space-4)}
 .perm-h b{font-size:15px}
-.perm-f{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:var(--v4-space-3)}
+.perm-f{margin-top:var(--v4-space-2)}
+.perm-f summary{cursor:pointer;list-style:none}
+.perm-f summary::-webkit-details-marker{display:none}
+.perm-f summary::before{content:'▸';color:var(--v4-navy-300);margin-right:6px;font-size:10px}
+.perm-f[open] summary::before{content:'▾'}
+.perm-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--v4-space-2)}
 .tog{width:48px;height:28px;border-radius:999px;border:0;background:var(--v4-navy-100);
   position:relative;flex:none;transition:background var(--v4-duration-fast) var(--v4-easing-standard)}
 .tog span{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
@@ -688,11 +731,17 @@ body.client-app #onbRoot{display:block}
 .tog.on span{transform:translateX(20px)}
 
 @media(max-width:1023px){
-  .csidebar{left:0;top:80px;bottom:0;border-radius:0;z-index:95;transform:translateX(-110%)}
+  /* The client rail is off-canvas on mobile; the shell stops being a flex row,
+     or the 232px rail + 28px gap + 28px padding cannot fit 390px. */
+  .capp .shell{display:block;padding:calc(80px + var(--v4-space-5)) var(--v4-space-4) var(--v4-space-16)}
+  .csidebar{position:fixed;left:0;top:80px;bottom:0;width:280px;border-radius:0;z-index:95;
+    overflow-y:auto;transform:translateX(-110%)}
   body.nav-open .csidebar{transform:none}
-  .cmain{margin-left:0;max-width:100%;padding:calc(80px + var(--v4-space-5)) var(--v4-space-4) var(--v4-space-16)}
+  .cmain{margin-left:0;max-width:100%;padding:0}
   .ctop{padding:0 var(--v4-space-4)}
   .ctop-r .chip{display:none}
+  .tara{width:48px;height:48px}
+  .perm-chips .pill{max-width:100%}
 }
 </style>
 </head>
@@ -1241,7 +1290,7 @@ function protoDrawer(){
       <div class="opt-list">
         ${opt('new','New advisor','Onboarding from scratch, not signed in yet, no registered users')}
         ${opt('est','Established advisor','Aishani Atri · 10 registered users, 5 customers')}
-        ${opt('client','Client · main Vault22 app','Lerato Khumalo\'s own profile, where she grants access')}
+        ${opt('client','Financial Advisor view','Lerato Khumalo\'s own Vault22 profile, where she grants access')}
       </div>
       <p class="pd-note">Switching reloads the scenario and returns you to its
         starting screen. Nothing persists across a page reload.</p>
@@ -2587,6 +2636,38 @@ const ADVISOR_DIR = [
   {id:'A4', name:'Rajesh Naidoo',  firm:'Naidoo & Partners',licence:'FSP 39880', city:'Durban'}
 ];
 
+/* The client's own notifications. Derived from the consent state, so they say
+   what has actually happened rather than being decoration. */
+function clientNotifs(){
+  const a = state.linkedAdvisor;
+  const out = [];
+  if(a){
+    CONSENT_SECTIONS.forEach(sec=>{
+      const st = consentOf(CLIENT_ID, sec.k);
+      if(st === 'pending') out.push({em:'🔐', t:a.name.split(' ')[0] + ' requested access to your ' + sec.t + ' data',
+        m:'They can see nothing until you allow it. Profile is below.', unread:true});
+      if(st === 'granted') out.push({em:'✅', t:'You are sharing your ' + sec.t + ' data with ' + a.name.split(' ')[0],
+        m:'You can switch this off at any time.', unread:false});
+    });
+    if((state.poa||{})[CLIENT_ID]) out.push({em:'✍️', t:a.name.split(' ')[0] + ' has power of attorney',
+      m:'They can change your portfolio. Every change is logged.', unread:false});
+  }
+  out.push({em:'📈', t:'Your portfolio is up 2.1% this month', m:'Nothing for you to do.', unread:false});
+  return out;
+}
+function clientNotifDrawer(){
+  const n = clientNotifs();
+  return `
+    <div class="between" style="margin-bottom:var(--v4-space-2)">
+      <h2>Notifications</h2><button class="x" data-close="1">×</button></div>
+    ${n.map(x=>`<div class="nt ${x.unread?'unread':''}" style="cursor:default">
+      <span class="em">${x.em}</span>
+      <span style="flex:1"><span class="t">${esc(x.t)}</span>
+        <div class="m">${esc(x.m)}</div></span></div>`).join('')}
+    <div class="legalnote" style="margin-top:var(--v4-space-4)">These are your notifications
+      as the client. Your advisor has their own, in their portal.</div>`;
+}
+
 function clientShell(body){
   const c = CUSTOMERS_EST.find(x=>x.id===CLIENT_ID);
   return `
@@ -2594,19 +2675,23 @@ function clientShell(body){
     <header class="ctop">
       <img class="clogo" src="assets/img/vault22-logo.png" alt="Vault22">
       <div class="ctop-r">
-        <button class="icon-btn" aria-label="Notifications">
+        <button class="icon-btn" id="cbell" aria-label="Notifications" data-cbell="1">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
-        <span class="chip num">R ZAR</span>
-        <span class="chip">🇿🇦 South Africa</span>
+            <path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          ${(()=>{const u=clientNotifs().filter(n=>n.unread).length;
+             return u ? `<span class="dot">${u}</span>` : '';})()}</button>
+        <span class="chip num">R ZAR <span class="chev">⌄</span></span>
+        <span class="chip">🇿🇦 South Africa <span class="chev">⌄</span></span>
         <span class="who"><span class="ava">${initialsOf(c.name)}</span>
-          <span>${esc(c.name.split(' ')[0])}</span></span>
+          <span>${esc(c.name.split(' ')[0])}</span> <span class="chev">⌄</span></span>
       </div>
     </header>
+    <div class="shell">
     <nav class="csidebar">
-      <div class="sb-h">Menu</div>
+      <div class="sb-h between" style="margin-bottom:var(--v4-space-4)">Menu
+        <button class="collapse" data-stub="Collapse menu|In the real build this collapses the menu to icons only, as it does in the live Vault22 app.|Prototype: the menu stays open." aria-label="Collapse menu">‹</button></div>
       <div class="nav">
         ${CLIENT_NAV.map(n=>`<button class="nav-item" data-cnav="${esc(n.l)}">
           <span class="ic">${n.i?`<img src="assets/img/${n.i}" alt="">`:'<span class="ic-dot"></span>'}</span>${n.l}</button>`).join('')}
@@ -2620,8 +2705,18 @@ function clientShell(body){
         <span class="ch">⌂</span> <a class="link-a" data-cnav="Home">Home</a>
         <span class="sep">/</span> <span>Profile</span>
       </nav>
-      ${body}</main>
-  </div>`;
+      ${body}
+      <footer class="cfoot">
+        <img class="clogo" src="assets/img/vault22-logo.png" alt="Vault22" style="height:26px">
+        <span class="cfoot-mid">✉ <a class="link-a" data-stub="Contact support|In the real build this opens support chat.|Prototype: no support service.">Need Help? Contact support</a></span>
+        <span class="cfoot-soc">${['in','X','f','◎','▶'].map(s=>`<span class="soc">${s}</span>`).join('')}</span>
+      </footer>
+    </main>
+    </div>
+  </div>
+  <button class="tara" data-stub="Tara|Tara is your AI money coach in the live Vault22 app. She reads your accounts and tells you what to do next.|Prototype: this is the advisor prototype, so Tara is shown where she lives but is not built." aria-label="Tara, your AI coach">
+    <img src="assets/img/tara-advisor.png" alt="">
+  </button>`;
 }
 
 function vClientProfile(){
@@ -2635,7 +2730,7 @@ function vClientProfile(){
       <p class="lede">Your details, your money, and who you share them with.</p></div>
 
     <div class="card card-p">
-      <div class="sec-t">Financial Advisor</div>
+      <span class="eyebrow teal">Your adviser</span><div class="sec-t">Financial Advisor</div>
       ${linked ? `
         <div class="row" style="align-items:flex-start;gap:var(--v4-space-4)">
           <span class="ava" style="width:56px;height:56px;font-size:19px;flex:none">${initialsOf(linked.name)}</span>
@@ -2681,10 +2776,13 @@ function vClientProfile(){
             <button class="tog ${st==='granted'?'on':''}" role="switch" aria-checked="${st==='granted'}"
               aria-label="Share ${sec.t}" data-perm="${sec.k}"><span></span></button>
           </div>
-          <div class="perm-f">
-            <span class="sub">${st==='granted'?'You are sharing:':'You are not sharing:'}</span>
-            ${sec.fields.map(f=>`<span class="pill ${st==='granted'?'p-teal':'p-gray'}">${f}</span>`).join('')}
-          </div>
+          <details class="perm-f" ${st==='granted'?'open':''}>
+            <summary><span class="eyebrow" style="display:inline">${st==='granted'?'Sharing':'Not sharing'}
+              ${plural(sec.fields.length,'field')}</span></summary>
+            <div class="perm-chips">
+              ${sec.fields.map(f=>`<span class="pill ${st==='granted'?'p-teal':'p-gray'}">${f}</span>`).join('')}
+            </div>
+          </details>
         </div>`;
       }).join('')}
     </div>` : ''}
@@ -2876,7 +2974,7 @@ function toast(msg){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-fee],[data-book],[data-bday],[data-bslot],[data-bconfirm],[data-invite],[data-nprefs],[data-nsave],[data-cnav],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-cbell],[data-fee],[data-book],[data-bday],[data-bslot],[data-bconfirm],[data-invite],[data-nprefs],[data-nsave],[data-cnav],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
     '[data-notif],[data-readall],[data-audit],[data-dl]');
   const panel = document.getElementById('panel');
   if(!t){
@@ -2949,6 +3047,7 @@ document.addEventListener('click', e => {
       : sec.t + ' is now shared with your advisor');
     return render();
   }
+  if(t.dataset.cbell) return openModal(clientNotifDrawer());
   if(t.dataset.poa){
     state.poa = state.poa || {};
     const now = !!state.poa[CLIENT_ID];
