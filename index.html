@@ -665,6 +665,10 @@ body.client-app #onbRoot{display:block}
 .csidebar{position:fixed;top:80px;left:var(--v4-space-5);width:var(--sidebar-w);
   bottom:var(--v4-space-5);background:var(--surface);border-radius:var(--v4-radius-2xl);
   padding:var(--v4-space-5);overflow-y:auto;z-index:10}
+.crumb-live{display:flex;align-items:center;gap:var(--v4-space-2);font-size:13px;
+  color:var(--muted);margin-bottom:var(--v4-space-4)}
+.crumb-live .sep{color:var(--v4-navy-200)}
+.crumb-live .ch{font-size:14px}
 .cmain{margin-left:calc(var(--sidebar-w) + var(--v4-space-10));
   padding:calc(80px + var(--v4-space-6)) var(--v4-space-8) var(--v4-space-20);max-width:1180px}
 .csidebar .nav-item .ic img{width:20px;height:20px;object-fit:contain}
@@ -929,6 +933,19 @@ const LEADS_EST = [
   {id:'L8',name:'Johan Botha',email:'johan.botha@webmail.co.za',phone:'+27816634402',signup:'2026-06-25',stage:'Registered',ffs:null,nw:null,sav:null,cap:null,port:', ',act:'2026-07-09T12:00:00'}
 ];
 
+/* SPEC-V2 §14: Customer Retention = (Total customers − lost customers) / Total customers.
+   The formula needs a lost count, so the book carries one. Two customers left in the
+   period; they are not in CUSTOMERS_EST because they are no longer customers. */
+const LOST_CUSTOMERS = [
+  {name:'Dumisani Khoza', left:'2026-05-19', reason:'Moved to another advisor'},
+  {name:'Elmarie Roux',   left:'2026-06-30', reason:'Withdrew and closed the account'}
+];
+/* Prior-period snapshot, so Customer Trends can compute change instead of guessing. */
+const PREV_PERIOD = {C1:{pv:1120000,sav:19000,liab:640000,nw:2310000},
+                     C2:{pv:503000, sav:11000,liab:495000,nw:1150000},
+                     C3:{pv:188000, sav:6800, liab:232000,nw:668000},
+                     C4:{pv:99000,  sav:5400, liab:318000,nw:487000},
+                     C5:{pv:141000, sav:15000,liab:301000,nw:1590000}};
 const CUSTOMERS_EST = [
   {id:'C1',dob:'1988-07-14',nationality:'South African',dependents:2,housing:'Home owner',totalSav:480000,name:'Lerato Khumalo',email:'lerato.k@gmail.com',phone:'+27823319087',country:'South Africa',
    kyc:'Approved',idNum:'8807145566081',since:'2025-09-04',ffs:812,nw:2450000,income:78000,sav:22000,ef:180000,
@@ -973,8 +990,12 @@ const NOTIFS_EST = [
   {id:'N5',type:'First Investment',em:'🎉',msg:'Zanele Mthembu made her first investment, she is now a customer',ts:'2026-07-10T13:15:00',go:['customer','C3'],unread:false},
   {id:'N6',type:'SIP Failed',em:'⚠️',msg:'Grant Willemse’s R3,000 recurring investment failed: insufficient funds',ts:'2026-07-12T06:00:00',go:['customer','C4'],unread:false},
   {id:'N7',type:'Birthday',em:'🎂',msg:'Lerato Khumalo’s birthday is today',ts:'2026-07-17T05:00:00',go:['customer','C1'],unread:false},
-  {id:'N8',type:'Portfolio Review Due',em:'🔁',msg:'Marius Steyn’s annual portfolio review is due',ts:'2026-07-15T09:00:00',go:['customer','C2'],unread:false}
+  {id:'N8',type:'Portfolio Review Due',em:'🔁',msg:'Marius Steyn’s quarterly portfolio review is due',ts:'2026-07-15T09:00:00',go:['customer','C2'],unread:false},
+  {id:'N9',type:'% change in portfolio value',em:'📉',msg:'Zanele Mthembu’s portfolio moved 6.2% this week, above your 5% threshold',ts:'2026-07-16T17:30:00',go:['customer','C3'],unread:true},
+  {id:'N10',type:'Withdrawals above threshold',em:'🏧',msg:'Grant Willemse withdrew R25,000, above your R20,000 threshold',ts:'2026-07-13T11:05:00',go:['customer','C4'],unread:false}
 ];
+/* The advisor sets these two thresholds; §11 says the % "can be set by advisor". */
+const NOTIF_PREFS = {pct:5, withdrawal:20000};
 
 const AUDIT_EST = [
   {ts:'2026-07-17T08:12:00',act:'Viewed customer profile',tgt:'Lerato Khumalo (C1)'},
@@ -1010,6 +1031,7 @@ const CONSENT_SEED = {
   C4:{financial:'granted', investment:'none',    risk:'none'},
   C5:{financial:'none',    investment:'pending', risk:'granted'}
 };
+const POA_SEED = {C2:true};   /* client-granted, like consent */
 const CLIENT_ID = 'C1';                 /* whose profile the client scenario shows */
 const consentOf = (id, k) => (state.consent[id] && state.consent[id][k]) || 'none';
 const CONSENT_LABEL = {granted:'Granted', pending:'Requested', none:'Not shared'};
@@ -1036,6 +1058,7 @@ function loadScenario(s){
      grant on the way across, which is the entire demo. Reset only on request. */
   if(!state.consent || !Object.keys(state.consent).length)
     state.consent = JSON.parse(JSON.stringify(CONSENT_SEED));
+  if(!state.poa) state.poa = JSON.parse(JSON.stringify(POA_SEED));
   state.crm = {};
   [...state.leads, ...state.customers].forEach(c => state.crm[c.id] = {
     notes:[], tags:[], tasks:[], follow:[], meets:[], files:[]
@@ -1056,6 +1079,8 @@ function loadScenario(s){
      onboarded and lands on the dashboard with aishani.advisor.vault22.com set. */
   state.onboarded = est;
   state.onb   = est ? null : 'entry';
+  state.invites = est ? JSON.parse(JSON.stringify(INVITES_SEED)) : [];
+  state.nprefs = {...NOTIF_PREFS};
   if(s === 'client'){ state.advQ=''; state.linkedAdvisor = ADVISOR_DIR[0]; }
   state.regErr = null;
   state.route = 'dashboard';
@@ -1113,6 +1138,7 @@ const NAV = [
   {sep:'My platform'},
   {id:'landing',label:'Landing Page',ic:'landing'},
   {id:'profile',label:'My Profile',ic:'profile'},
+  {id:'invites',label:'Invite advisors',ic:'leads'},
   {sep:'Compliance'},
   {id:'audit',label:'Audit Log',ic:'audit'}
 ];
@@ -1128,7 +1154,7 @@ function renderNav(){
    top-level destinations never show a Back they don't need. */
 const ROUTE_LABEL = {dashboard:'Dashboard', leads:'Registered Users', customers:'Customers',
   risk:'Risk Profiles', portfolios:'Portfolios', analytics:'Analytics',
-  landing:'Landing Page', profile:'My Profile', audit:'Audit Log'};
+  landing:'Landing Page', profile:'My Profile', invites:'Invite advisors', audit:'Audit Log'};
 function go(id, arg, backTo){
   document.body.classList.remove('nav-open');
   if(arg && arg !== state.arg) state.tab8 = 'personal';
@@ -2148,7 +2174,7 @@ function vAnalytics(){
       <p>Analytics appear once you have registered users coming through your link.</p>
       <button class="btn" data-share="1">Share my link</button></div></div>`;
 
-  /* funnel: how many reached at least each stage (customers reached all) */
+  /* §14 User Registration > Customer Funnel — cumulative across the 10 stages. */
   const reached = STAGES.map((s,i)=> L.filter(l=>STAGES.indexOf(l.stage)>=i).length + C.length);
   const top = reached[0] || 1;
   const funnel = STAGES.map((s,i)=>`
@@ -2159,15 +2185,49 @@ function vAnalytics(){
       <span class="tr"><span class="fl" style="width:${Math.max(4,C.length/top*100)}%;background:var(--v4-navy-700);color:#fff">${C.length}</span></span>
     </div>`;
 
-  const inv = C.reduce((s,c)=>s+c.inv,0), aua = C.reduce((s,c)=>s+c.pv,0);
-  const avg = C.length ? inv/C.length : 0;
-  const conv = (C.length/(L.length+C.length)*100).toFixed(1);
-  const prod = {};
-  C.forEach(c=>c.holdings.forEach(h=>prod[h.p]=(prod[h.p]||0)+h.mv));
-  const prodTop = Object.entries(prod).sort((a,b)=>b[1]-a[1]);
-  const prodMax = prodTop[0] ? prodTop[0][1] : 1;
-  const MONTHS = ['Feb','Mar','Apr','May','Jun','Jul'];
-  const growth = [1,2,2,3,4,5], aumSeries=[180,420,610,760,980,1240], invSeries=[90,140,120,180,240,214];
+  const inv=C.reduce((s,c)=>s+c.inv,0), aua=C.reduce((s,c)=>s+c.pv,0);
+  const avg=C.length?inv/C.length:0;
+  const conv=(C.length/(L.length+C.length)*100).toFixed(1);
+  const prod={}; C.forEach(c=>c.holdings.forEach(x=>prod[x.p]=(prod[x.p]||0)+x.mv));
+  const prodTop=Object.entries(prod).sort((a,b)=>b[1]-a[1]); const prodMax=prodTop[0]?prodTop[0][1]:1;
+
+  /* §14 Customer Retention = (Total customers − lost customers) / Total customers.
+     Implemented exactly as the spec states it, with the working shown. */
+  const lost = LOST_CUSTOMERS.length;
+  const totalEver = C.length + lost;
+  const retention = ((totalEver - lost) / totalEver * 100).toFixed(1);
+
+  /* §14 Customer Trends. The spec names four; each is period-over-period across the
+     book, computed from PREV_PERIOD. Nothing here is invented — a metric the mock
+     data cannot compute is not shown. */
+  const sum = (f) => C.reduce((s,c)=>s+f(c),0);
+  const prevSum = (k) => C.reduce((s,c)=>s+((PREV_PERIOD[c.id]||{})[k]||0),0);
+  const pct = (now,was) => was ? ((now-was)/was*100) : 0;
+  const TRENDS = [
+    {t:'Change in portfolios', now:sum(c=>c.pv),         was:prevSum('pv'),   note:'Total portfolio value across the book'},
+    {t:'Change in savings',    now:sum(c=>c.sav),        was:prevSum('sav'),  note:'Monthly savings across the book'},
+    {t:'Change in liabilities',now:sum(c=>c.liabilities),was:prevSum('liab'), note:'Total liabilities across the book', invert:true},
+    {t:'Change in net worth',  now:sum(c=>c.nw),         was:prevSum('nw'),   note:'Total net worth across the book'}
+  ];
+  /* Two more the data genuinely supports. */
+  const EXTRA = [
+    {t:'Change in assets under advice', now:aua, was:prevSum('pv'), note:'AUA is the same base as portfolios, tracked as your book value'},
+    {t:'Change in average portfolio',   now:C.length?aua/C.length:0, was:C.length?prevSum('pv')/C.length:0, note:'Per customer'}
+  ];
+  const trendRow = r => {
+    const d = pct(r.now, r.was);
+    const good = r.invert ? d<=0 : d>=0;
+    return `<div class="list-row">
+      <span><b>${r.t}</b><div class="sub">${r.note}</div></span>
+      <span style="text-align:right">
+        <span class="pill ${good?'p-green':'p-red'}">${d>=0?'+':''}${d.toFixed(1)}%</span>
+        <div class="sub num" style="margin-top:2px">${short(r.was)} → ${short(r.now)}</div>
+      </span></div>`;
+  };
+
+  const MONTHS=['Feb','Mar','Apr','May','Jun','Jul'];
+  const usersSeries=[2,4,5,7,9,10], custSeries=[1,2,2,3,4,5];
+  const aumSeries=[180,420,610,760,980,1240], invSeries=[90,140,120,180,240,214];
 
   return `
     <div class="page-head"><h1>Analytics</h1>
@@ -2180,35 +2240,65 @@ function vAnalytics(){
         <div class="d">Per customer</div></div>
       <div class="kpi"><div class="k">AUM Growth</div><div class="v">+${short(aua-180000)}</div>
         <div class="d">Since Feb 2026</div></div>
-      <div class="kpi"><div class="k">Customer Retention</div><div class="v">100%</div>
-        <div class="d">No redemptions to date</div></div>
+      <div class="kpi"><div class="k">Customer Retention</div><div class="v">${retention}%</div>
+        <div class="d">(${totalEver} − ${lost}) / ${totalEver}</div></div>
     </div>
 
     <div class="card card-p mt6">
       <div class="sec-t">User registration &gt; customer funnel</div>
-      <p class="lede" style="margin-bottom:var(--v4-space-5)">Everyone who has reached at least each stage.
-        Customers have passed every stage.</p>
+      <p class="lede" style="margin-bottom:var(--v4-space-5)">Everyone who has reached at least
+        each stage. Customers have passed every stage.</p>
       ${funnel}
     </div>
 
     <div class="grid2 mt6">
       <div class="card card-p">
-        <div class="sec-t">Top products sold</div>
-        ${prodTop.map(([p,v])=>`<div class="arow"><span class="lb" style="width:180px">${esc(p)}</span>
-          <span class="bar"><i style="width:${v/prodMax*100}%"></i></span>
-          <span class="pc num" style="width:56px">${short(v)}</span></div>`).join('')}
-        <div class="sec-t" style="margin-top:var(--v4-space-6)">Monthly growth, new customers</div>
-        ${spark(growth)}
-        <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
+        <div class="sec-t">Customer retention</div>
+        <p class="lede">(Total customers − lost customers) / Total customers</p>
+        <div class="subtile mt" style="max-width:320px">
+          <div class="num" style="font-size:24px;font-weight:600">(${totalEver} − ${lost}) / ${totalEver} = ${retention}%</div>
+        </div>
+        <div class="sec-t" style="margin-top:var(--v4-space-6)">Customers lost this period</div>
+        ${LOST_CUSTOMERS.map(x=>`<div class="list-row"><span>${esc(x.name)}
+          <div class="sub">${esc(x.reason)}</div></span><span class="sub num">${x.left}</span></div>`).join('')}
       </div>
       <div class="card card-p">
-        <div class="sec-t">AUM growth (R000s)</div>
-        ${spark(aumSeries)}
-        <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
-        <div class="sec-t" style="margin-top:var(--v4-space-6)">Investment trends (R000s / month)</div>
-        ${spark(invSeries)}
-        <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
+        <div class="sec-t">Top products sold</div>
+        ${prodTop.map(([p2,v])=>`<div class="arow"><span class="lb" style="width:180px">${esc(p2)}</span>
+          <span class="bar"><i style="width:${v/prodMax*100}%"></i></span>
+          <span class="pc num" style="width:56px">${short(v)}</span></div>`).join('')}
+        <div class="sec-t" style="margin-top:var(--v4-space-6)">Monthly growth in registered users / customers</div>
+        ${spark(usersSeries)}
+        <div class="row" style="gap:var(--v4-space-4);margin:6px 0">
+          <span class="sub"><b style="color:var(--v4-teal-600)">━</b> Registered users</span>
+          <span class="sub"><b style="color:var(--v4-navy-400)">━</b> Customers</span>
+        </div>
+        ${spark(custSeries)}
+        <div class="between sub">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
       </div>
+    </div>
+
+    <div class="card card-p mt6">
+      <div class="between" style="margin-bottom:var(--v4-space-3)">
+        <div class="sec-t" style="margin:0">Customer trends</div>
+        <span class="pill p-amber">Proposal, for Stephen</span>
+      </div>
+      <p class="lede" style="margin-bottom:var(--v4-space-4)">The spec asks what we suggest here.
+        These are the four it names, each as period-over-period change across the book, plus two
+        more the data genuinely supports. Every figure is computed from the book, so nothing is
+        shown that we cannot derive.</p>
+      ${TRENDS.map(trendRow).join('')}
+      <div class="sec-t" style="margin-top:var(--v4-space-5)">Suggested additions</div>
+      ${EXTRA.map(trendRow).join('')}
+    </div>
+
+    <div class="card card-p mt6">
+      <div class="sec-t">AUM growth (R000s)</div>
+      ${spark(aumSeries)}
+      <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
+      <div class="sec-t" style="margin-top:var(--v4-space-6)">Investment trends (R000s / month)</div>
+      ${spark(invSeries)}
+      <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
     </div>`;
 }
 
@@ -2342,10 +2432,24 @@ function vAudit(){
         numbers are masked by default.</p></div>
     <div class="card card-p">
       <div class="sec-t">Permissions in force</div>
-      ${[['Modify KYC information','Blocked'],['Change customer portfolio','Requires authorisation'],
-         ['Access another advisor’s clients','Blocked'],['View full identity numbers','Masked']]
-        .map(([t,s])=>`<div class="list-row"><span>${t}</span>
+      ${[['Modify KYC information','Blocked','Never, for any advisor'],
+         ['Change customer portfolios without authorisation','Requires authorisation',
+          'Unless power of attorney is in place, which itself requires the customer to approve it'],
+         ['Access another advisor’s clients','Blocked','Single-advisor dataset'],
+         ['View full identity numbers','Masked','Identity numbers are masked by default']]
+        .map(([t,s,d])=>`<div class="list-row"><span>${t}<div class="sub">${d}</div></span>
           <span class="pill ${s==='Blocked'?'p-red':'p-amber'}">${s}</span></div>`).join('')}
+      <div class="sec-t" style="margin-top:var(--v4-space-6)">Power of attorney</div>
+      <p class="lede" style="margin-bottom:var(--v4-space-3)">§15 allows a portfolio change where
+        power of attorney is in place. It is per client, and the client approves it, so it behaves
+        like consent rather than an advisor setting.</p>
+      ${state.customers.map(c=>{
+        const poa = (state.poa||{})[c.id];
+        return `<div class="list-row"><span>${esc(c.name)}
+          <div class="sub">${poa ? 'You may change this portfolio, with the change logged'
+                                 : 'You may not change this portfolio'}</div></span>
+          <span class="pill ${poa?'p-amber':'p-gray'}">${poa?'Power of attorney':'Not granted'}</span></div>`;
+      }).join('')}
     </div>
     <div class="card mt6">
       <div class="card-p"><h2>Recent activity</h2>
@@ -2445,7 +2549,9 @@ function togglePanel(){
   p.innerHTML = state.notifs.length ? `
     <div class="card-p between" style="padding:var(--v4-space-4) var(--v4-space-4) var(--v4-space-3)">
       <h2 style="font-size:15px">Notifications</h2>
-      <button class="btn btn-sm" data-readall="1">Mark all read</button></div>
+      <span class="row" style="gap:var(--v4-space-2)">
+        <button class="btn btn-sm" data-nprefs="1">Thresholds</button>
+        <button class="btn btn-sm" data-readall="1">Mark all read</button></span></div>
     ${state.notifs.map(n=>`<button class="nt ${n.unread?'unread':''}" data-notif="${n.id}">
       <span class="em">${n.em}</span>
       <span style="flex:1"><span class="t">${n.type}</span>
@@ -2509,7 +2615,12 @@ function clientShell(body){
         <button class="nav-item on" data-cnav="Profile"><span class="ic">${navIcon('profile')}</span>Profile</button>
       </div>
     </nav>
-    <main class="cmain">${body}</main>
+    <main class="cmain">
+      <nav class="crumb-live" aria-label="Breadcrumb">
+        <span class="ch">⌂</span> <a class="link-a" data-cnav="Home">Home</a>
+        <span class="sep">/</span> <span>Profile</span>
+      </nav>
+      ${body}</main>
   </div>`;
 }
 
@@ -2578,6 +2689,21 @@ function vClientProfile(){
       }).join('')}
     </div>` : ''}
 
+    ${linked ? `
+    <div class="card card-p mt">
+      <div class="sec-t">Power of attorney</div>
+      <div class="perm">
+        <div class="perm-h">
+          <div><b>Let ${esc(linked.name.split(' ')[0])} change my portfolio</b>
+            <div class="sub">Without this, your advisor can look but cannot act. Every change
+              they make is logged.</div></div>
+          <button class="tog ${(state.poa||{})[CLIENT_ID]?'on':''}" role="switch"
+            aria-checked="${!!(state.poa||{})[CLIENT_ID]}" aria-label="Power of attorney"
+            data-poa="1"><span></span></button>
+        </div>
+      </div>
+    </div>` : ''}
+
     <div class="card card-p mt">
       <div class="sec-t">Documents library</div>
       <div class="list-row"><span>KYC documents</span>
@@ -2588,11 +2714,131 @@ function vClientProfile(){
 }
 
 /* =====================================================================
+   §"Also add" — Calendar: appointment scheduling, send cal invite.
+   Was Future plans in the PDF; SPEC-V2 brings it into scope.
+   ===================================================================== */
+const SLOTS = ['09:00','09:30','10:00','11:00','13:30','14:00','15:00','16:30'];
+const nextDays = n => Array.from({length:n}, (_,i) => {
+  const d = new Date(2026, 6, 18 + i);           /* fixed for the prototype */
+  return {v: localISO(d).slice(0,10),
+          l: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] + ' ' + d.getDate() + ' Jul'};
+});
+function bookDrawer(id){
+  const who = state.customers.concat(state.leads).find(x=>x.id===id);
+  if(!who) return '';
+  const days = nextDays(5);
+  const day  = state.bookDay || days[0].v;
+  const slot = state.bookSlot;
+  const booked = (state.crm[id] && state.crm[id].meets) || [];
+  return `
+    <div class="between" style="margin-bottom:var(--v4-space-2)">
+      <div><h2>Book a meeting</h2>
+        <p class="lede">With ${esc(who.name)} · ${esc(who.email)}</p></div>
+      <button class="x" data-close="1">×</button></div>
+    <div class="sec-t" style="margin-top:var(--v4-space-5)">Day</div>
+    <div class="chips">${days.map(d=>`
+      <button class="fchip ${day===d.v?'on':''}" data-bday="${d.v}">${d.l}</button>`).join('')}</div>
+    <div class="sec-t" style="margin-top:var(--v4-space-5)">Time</div>
+    <div class="chips">${SLOTS.map(s=>`
+      <button class="fchip ${slot===s?'on':''}" data-bslot="${s}">${s}</button>`).join('')}</div>
+    <div class="actions" style="margin-top:var(--v4-space-5)">
+      <button class="obtn obtn-pri" ${slot?'':'disabled'} data-bconfirm="${id}">
+        ${slot ? 'Send invite for ' + day + ' at ' + slot : 'Pick a time'}</button>
+    </div>
+    <div class="legalnote">Sends a calendar invite to ${esc(who.email)} and logs the meeting
+      against them. In the real build this writes to your linked calendar
+      (${esc(state.advisor.calendar || 'set a link in My Profile')}); the prototype has no
+      calendar service, so it books here only.</div>
+    ${booked.length ? `<div class="sec-t" style="margin-top:var(--v4-space-6)">Already booked</div>
+      ${booked.map(m=>`<div class="list-row"><span>${esc(m.t)}</span>
+        <span class="sub num">${m.d}</span></div>`).join('')}` : ''}`;
+}
+
+/* =====================================================================
+   §"Also add" — Invite other advisors to the platform.
+   ===================================================================== */
+const INVITES_SEED = [
+  {email:'thabo@molefefinancial.co.za', sent:'2026-07-14', status:'Joined'},
+  {email:'sarah@delportadvisory.co.za', sent:'2026-07-15', status:'Opened'},
+  {email:'r.naidoo@naidoopartners.co.za', sent:'2026-07-16', status:'Sent'}
+];
+const INV_PILL = {Joined:'p-green', Opened:'p-blue', Sent:'p-gray'};
+function vInvites(){
+  const a = state.advisor;
+  const url = 'https://vault22.com/advisor?ref=' + encodeURIComponent(a.code || '');
+  const txt = encodeURIComponent('I use Vault22 to run my advisory practice. Join here: ' + url);
+  const inv = state.invites || [];
+  return `
+    <div class="page-head"><h1>Invite advisors</h1>
+      <p class="lede">Bring other advisors onto Vault22. They sign up against your referral
+        code, so the platform knows the introduction came from you.</p></div>
+    <div class="grid2">
+      <div class="card card-p">
+        <div class="sec-t">Invite by email</div>
+        <div class="row">
+          <input class="inp inp-sm" id="invEmail" placeholder="advisor@firm.co.za" style="flex:1">
+          <button class="btn btn-pri" data-invite="1">Send invite</button>
+        </div>
+        <div class="sec-t" style="margin-top:var(--v4-space-6)">Or share your link</div>
+        <div class="row"><input class="inp inp-sm" value="${esc(url)}" readonly style="flex:1">
+          <button class="btn" data-copy="${esc(url)}">Copy link</button></div>
+        <div class="share-row" style="margin-top:var(--v4-space-3)">
+          <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${txt}">WhatsApp</a>
+          <a class="btn" target="_blank" rel="noopener" href="mailto:?subject=${encodeURIComponent('Join me on Vault22')}&body=${txt}">Email</a>
+          <a class="btn" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}">LinkedIn</a>
+        </div>
+      </div>
+      <div class="card card-p">
+        <div class="sec-t">QR code</div>
+        <div class="qr-center"><div class="qr" style="width:150px">
+          <canvas id="invQr" width="150" height="150"></canvas></div></div>
+        <p class="lede" style="text-align:center">A real, scannable code for your advisor
+          referral link.</p>
+      </div>
+    </div>
+    <div class="card mt6">
+      <div class="card-head"><h2>Invites sent</h2>
+        <span class="pill p-gray">${plural(inv.length,'invite')}</span></div>
+      ${inv.length ? `<div class="tbl-scroll"><table style="min-width:420px">
+        <thead><tr><th>Email</th><th>Sent</th><th>Status</th></tr></thead>
+        <tbody>${inv.map(i=>`<tr><td class="nm">${esc(i.email)}</td>
+          <td class="num">${i.sent}</td>
+          <td><span class="pill ${INV_PILL[i.status]||'p-gray'}">${i.status}</span></td></tr>`).join('')}</tbody>
+      </table></div>` : `<div class="empty"><div class="em">✉</div><h3>No invites yet</h3>
+        <p>Invite an advisor by email, or share your link.</p></div>`}
+    </div>`;
+}
+
+/* §11: the advisor sets the portfolio-move % and the withdrawal amount that
+   trigger a notification. Real inputs, not a stub. */
+function nprefsDrawer(){
+  const p = state.nprefs || NOTIF_PREFS;
+  return `
+    <div class="between" style="margin-bottom:var(--v4-space-2)">
+      <div><h2>Notification thresholds</h2>
+        <p class="lede">You decide when Vault22 tells you.</p></div>
+      <button class="x" data-close="1">×</button></div>
+    <div class="field" style="margin-top:var(--v4-space-5)">
+      <label>Tell me when a portfolio moves by more than</label>
+      <div class="row"><input class="inp inp-sm" id="npPct" type="number" min="1" max="50"
+        value="${p.pct}" style="max-width:120px"><span class="sub">% in a week</span></div>
+    </div>
+    <div class="field">
+      <label>Tell me about withdrawals above</label>
+      <div class="row"><span class="sub">R</span><input class="inp inp-sm" id="npAmt" type="number"
+        min="0" step="1000" value="${p.withdrawal}" style="max-width:160px"></div>
+    </div>
+    <div class="actions"><button class="obtn obtn-pri" data-nsave="1">Save thresholds</button></div>
+    <div class="legalnote">Applies to the "% change in portfolio value" and "Withdrawals above"
+      notifications. Mock data: existing notifications keep the numbers they were raised with.</div>`;
+}
+
+/* =====================================================================
    Render + events
    ===================================================================== */
 const VIEWS = {dashboard:vDashboard, leads:vLeads, customers:vCustomers, customer:vCustomer,
   risk:vRisk, portfolios:vPortfolios, analytics:vAnalytics, landing:vLanding,
-  profile:vProfile, audit:vAudit};
+  profile:vProfile, invites:vInvites, audit:vAudit};
 
 function render(){
   /* The client scenario is a different product: the main Vault22 app, not the
@@ -2619,6 +2865,7 @@ function render(){
   document.getElementById('whoName').textContent = a.name;
   document.getElementById('ava').textContent = a.initials;
   drawQR(document.getElementById('lpQr'), 'https://' + advisorUrl(a));
+  drawQR(document.getElementById('invQr'), 'https://vault22.com/advisor?ref=' + (a.code||''));
 }
 function toast(msg){
   const t = document.createElement('div');
@@ -2629,7 +2876,7 @@ function toast(msg){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-fee],[data-book],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-fee],[data-book],[data-bday],[data-bslot],[data-bconfirm],[data-invite],[data-nprefs],[data-nsave],[data-cnav],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
     '[data-notif],[data-readall],[data-audit],[data-dl]');
   const panel = document.getElementById('panel');
   if(!t){
@@ -2650,6 +2897,44 @@ document.addEventListener('click', e => {
     return render();
   }
   if(t.dataset.fee){ state.feePeriod = t.dataset.fee; return render(); }
+  if(t.dataset.nprefs) return openModal(nprefsDrawer());
+  if(t.dataset.nsave){
+    const pct = +(document.getElementById('npPct')||{}).value;
+    const amt = +(document.getElementById('npAmt')||{}).value;
+    if(!(pct>0) || !(amt>=0)) return toast('Enter a percentage and an amount');
+    state.nprefs = {pct, withdrawal:amt};
+    audit('Updated notification thresholds', pct + '% / R' + amt.toLocaleString('en-US'));
+    closeModal();
+    return toast('Thresholds saved: ' + pct + '% moves, withdrawals above R' + amt.toLocaleString('en-US'));
+  }
+  if(t.dataset.book){ state.bookFor=t.dataset.book; state.bookDay=null; state.bookSlot=null;
+    return openModal(bookDrawer(t.dataset.book)); }
+  if(t.dataset.bday){ state.bookDay = t.dataset.bday; return openModal(bookDrawer(state.bookFor||state.arg)); }
+  if(t.dataset.bslot){ state.bookSlot = t.dataset.bslot; return openModal(bookDrawer(state.bookFor||state.arg)); }
+  if(t.dataset.bconfirm){
+    const id = t.dataset.bconfirm;
+    const who = state.customers.concat(state.leads).find(x=>x.id===id);
+    const when = (state.bookDay || nextDays(1)[0].v) + ' at ' + state.bookSlot;
+    state.crm[id] = state.crm[id] || {notes:[],tags:[],tasks:[],follow:[],meets:[],files:[]};
+    state.crm[id].meets.unshift({d: state.bookDay || nextDays(1)[0].v, t:'Meeting ' + state.bookSlot});
+    audit('Booked a meeting and sent an invite', (who?who.name+' ':'') + '(' + id + ')');
+    closeModal();
+    return stubModal('Invite sent',
+      'A calendar invite for ' + when + ' has gone to ' + esc(who.email) +
+      ', and the meeting is logged against them under CRM · Meetings.',
+      'Prototype: no calendar service, so nothing leaves this page. In the real build this writes to your linked calendar.');
+  }
+  if(t.dataset.invite){
+    const f = document.getElementById('invEmail');
+    const v = (f && f.value || '').trim();
+    if(!EMAIL_RE.test(v)) return toast(v ? 'That does not look like an email address' : 'Enter an email address');
+    state.invites = state.invites || [];
+    state.invites.unshift({email:v, sent: localISO(new Date()).slice(0,10), status:'Sent'});
+    audit('Invited an advisor', v);
+    if(f) f.value='';
+    toast('Invite sent to ' + v);
+    return render();
+  }
   /* THE ROUND TRIP. The client's toggle and the advisor's locked tab are two
      views of state.consent. Flip it here, and the advisor's tab opens. */
   if(t.dataset.perm){
@@ -2662,6 +2947,15 @@ document.addEventListener('click', e => {
     toast(now === 'granted'
       ? sec.t + ' is no longer shared with your advisor'
       : sec.t + ' is now shared with your advisor');
+    return render();
+  }
+  if(t.dataset.poa){
+    state.poa = state.poa || {};
+    const now = !!state.poa[CLIENT_ID];
+    state.poa[CLIENT_ID] = !now;
+    auditShared(now ? 'Client revoked power of attorney' : 'Client granted power of attorney',
+                'Lerato Khumalo (' + CLIENT_ID + ')');
+    toast(now ? 'Power of attorney revoked' : 'Power of attorney granted');
     return render();
   }
   if(t.dataset.linkAdv){
