@@ -454,9 +454,46 @@ body:not(.onboarding) #onbRoot{display:none}
 .onb a.btn, .onb a{text-decoration:none}
 .link-a{color:var(--v4-info-dark);cursor:pointer;font-weight:600}
 
-/* prototype controls — internal demo tool, deliberately not product chrome.
-   Pinned bottom-left over the form column so it never covers the brand panel. */
-.protobar{position:fixed;left:var(--v4-space-4);bottom:var(--v4-space-4);z-index:70;
+/* Prototype settings — internal QA/review control. A gear, bottom-right, on
+   every screen; the scenario switcher lives inside it rather than eating a
+   bar's worth of space or posing as product chrome. */
+.proto-fab{position:fixed;right:var(--v4-space-5);bottom:var(--v4-space-5);z-index:80;
+  width:46px;height:46px;border-radius:var(--v4-radius-full);border:0;
+  background:var(--v4-navy-800);color:#fff;display:grid;place-items:center;
+  box-shadow:var(--v4-shadow-lg);opacity:.62;
+  transition:opacity var(--v4-duration-fast) var(--v4-easing-standard),
+             transform var(--v4-duration-fast) var(--v4-easing-standard)}
+.proto-fab:hover{opacity:1;transform:translateY(-1px)}
+.proto-fab svg{width:21px;height:21px}
+.proto-scrim{position:fixed;inset:0;background:rgba(10,25,41,.42);z-index:90;display:none}
+.proto-scrim.open{display:block}
+.proto-drawer{position:fixed;top:0;right:0;height:100vh;width:min(360px,94vw);z-index:91;
+  background:var(--surface);box-shadow:var(--v4-shadow-xl);display:none;flex-direction:column}
+.proto-drawer.open{display:flex}
+.pd-head{display:flex;align-items:center;gap:var(--v4-space-3);
+  padding:var(--v4-space-5);border-bottom:1px solid var(--line)}
+.pd-badge{width:34px;height:34px;border-radius:var(--v4-radius-sm);flex:none;
+  background:var(--v4-navy-800);color:#fff;display:grid;place-items:center;font-size:15px}
+.pd-title{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.pd-sub{font-size:11.5px;color:var(--muted);font-weight:500}
+.pd-close{margin-left:auto;width:32px;height:32px;border-radius:var(--v4-radius-sm);
+  background:var(--v4-navy-50);border:0;color:var(--muted);font-size:13px}
+.pd-close:hover{background:var(--v4-navy-100);color:var(--text)}
+.pd-body{padding:var(--v4-space-5);overflow-y:auto}
+.pd-sec{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--v4-navy-300);margin-bottom:var(--v4-space-3)}
+.pd-opt{display:flex;align-items:center;gap:var(--v4-space-3);text-align:left;width:100%;
+  background:var(--surface);border:1.6px solid var(--line);border-radius:var(--v4-radius-md);
+  padding:13px 14px;color:var(--text);
+  transition:all var(--v4-duration-fast) var(--v4-easing-standard)}
+.pd-opt:hover{border-color:var(--v4-navy-200)}
+.pd-opt.sel{border-color:var(--v4-teal-400);background:var(--v4-teal-50)}
+.pd-opt .opt-check{width:22px;height:22px;border-radius:var(--v4-radius-full);
+  border:2px solid var(--v4-navy-100);flex:none;display:grid;place-items:center;
+  color:transparent;font-size:11px;font-weight:700}
+.pd-opt.sel .opt-check{background:var(--v4-teal-400);border-color:var(--v4-teal-400);
+  color:var(--v4-teal-950)}
+.pd-note{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:var(--v4-space-4)}
   display:flex;align-items:center;gap:var(--v4-space-3);background:var(--v4-navy-800);color:#fff;
   border-radius:var(--v4-radius-full);padding:8px var(--v4-space-4);
   box-shadow:var(--v4-shadow-lg);font-size:12px}
@@ -484,16 +521,24 @@ body:not(.onboarding) #onbRoot{display:none}
 
 <div id="onbRoot"></div>
 
+<!-- Prototype settings: internal QA/review control, present on every screen.
+     Mirrors the investor onboarding prototype's .proto-fab + drawer pattern. -->
+<button class="proto-fab" id="protoFab" aria-label="Prototype settings" title="Prototype settings">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+</button>
+<div class="proto-scrim" id="protoScrim"></div>
+<aside class="proto-drawer" id="protoDrawer" role="dialog" aria-label="Prototype settings"></aside>
+
 <header class="topbar">
   <div class="logo">
     <img src="assets/img/vault22-logo.png" alt="Vault22">
     <span class="tag">Advisor</span>
   </div>
   <div class="tb-right">
-    <div class="seg" id="seg">
-      <button data-scen="new">New advisor</button>
-      <button data-scen="est">Established</button>
-    </div>
     <button class="icon-btn" id="bell" title="Notifications">&#9788;<span class="dot hidden" id="ndot">0</span></button>
     <span class="chip num">ZAR</span>
     <span class="who"><span class="ava" id="ava">AA</span><span id="whoName">Aishani Atri</span></span>
@@ -897,14 +942,31 @@ function slugCheck(v){
   return {ok:true, tone:'ok', msg:s + '.advisor.vault22.com is available'};
 }
 
-/* Internal demo tool — deliberately not product chrome. During onboarding the
-   scenario switcher lives here rather than in an app topbar the advisor
-   should not be able to see yet. */
-function protobar(note){
-  return `<div class="protobar">
-    <button data-scen="new" class="${state.scen==='new'?'on':''}">New advisor</button>
-    <button data-scen="est" class="${state.scen==='est'?'on':''}">Established</button>
-    <span class="pb-note">${note||''}</span></div>`;
+/* The scenario switcher lives in the Prototype settings drawer (the gear,
+   bottom-right) — one control on every screen, and never product chrome the
+   advisor could mistake for a feature. */
+function protoDrawer(){
+  const opt = (k, t, d) => `
+    <button class="pd-opt ${state.scen===k?'sel':''}" data-scen="${k}">
+      <span class="opt-body"><span class="opt-t">${t}</span><span class="opt-d">${d}</span></span>
+      <span class="opt-check">✓</span>
+    </button>`;
+  return `
+    <div class="pd-head">
+      <div class="pd-badge">⚙</div>
+      <div><div class="pd-title">Prototype settings</div>
+        <div class="pd-sub">Internal tool · not part of the product</div></div>
+      <button class="pd-close" data-protoclose="1" aria-label="Close">✕</button>
+    </div>
+    <div class="pd-body">
+      <div class="pd-sec">Scenario</div>
+      <div class="opt-list">
+        ${opt('new','New advisor','Onboarding from scratch — not signed in yet, no leads')}
+        ${opt('est','Established advisor','Aishani Atri · 8 leads, 5 customers, populated dashboard')}
+      </div>
+      <p class="pd-note">Switching reloads the scenario and returns you to its
+        starting screen. Nothing persists across a page reload.</p>
+    </div>`;
 }
 
 /* Split-screen shell: form left ~52%, brand panel right ~48%. */
@@ -946,7 +1008,7 @@ function onbShell({body, segs, back, urlbar, wide}){
         <div class="sh-row"><span>SC Ventures</span><span>Old Mutual</span><span>Franklin Templeton</span></div>
       </div>
     </div>
-  </div>${protobar('Onboarding — the advisor is not signed in yet')}`;
+  </div>`;
 }
 
 const ONB = {}, ONB_AFTER = {};
@@ -2010,8 +2072,6 @@ function render(){
   const a = state.advisor;
   document.getElementById('whoName').textContent = a.name;
   document.getElementById('ava').textContent = a.initials;
-  document.querySelectorAll('#seg button').forEach(b =>
-    b.classList.toggle('on', b.dataset.scen === state.scen));
   drawQR(document.getElementById('lpQr'), 'https://' + advisorUrl(a));
 }
 function toast(msg){
@@ -2023,7 +2083,7 @@ function toast(msg){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
     '[data-notif],[data-readall],[data-audit],[data-dl]');
   const panel = document.getElementById('panel');
   if(!t){
@@ -2049,7 +2109,8 @@ document.addEventListener('click', e => {
   }
   if(t.dataset.copy){ navigator.clipboard?.writeText(t.dataset.copy);
     audit('Copied landing page link', advisorUrl(state.advisor)); return toast('Link copied'); }
-  if(t.dataset.scen){ loadScenario(t.dataset.scen); return render(); }
+  if(t.dataset.protoclose) return closeProto();
+  if(t.dataset.scen){ loadScenario(t.dataset.scen); closeProto(); return render(); }
   /* Selecting a region updates in place — no re-render, so the screen doesn't
      flash and the advisor just carries on. */
   if(t.dataset.region){
@@ -2111,6 +2172,19 @@ document.addEventListener('click', e => {
 
 document.getElementById('bell').addEventListener('click', e => { e.stopPropagation(); togglePanel(); });
 
+/* Prototype settings drawer — available on every screen, onboarding included. */
+function openProto(){
+  document.getElementById('protoDrawer').innerHTML = protoDrawer();
+  document.getElementById('protoDrawer').classList.add('open');
+  document.getElementById('protoScrim').classList.add('open');
+}
+function closeProto(){
+  document.getElementById('protoDrawer').classList.remove('open');
+  document.getElementById('protoScrim').classList.remove('open');
+}
+document.getElementById('protoFab').addEventListener('click', e => { e.stopPropagation(); openProto(); });
+document.getElementById('protoScrim').addEventListener('click', closeProto);
+
 document.addEventListener('input', e => {
   if(e.target.id==='searchIn'){
     state.q = e.target.value;
@@ -2149,7 +2223,7 @@ document.addEventListener('change', e => {
     state.route==='customer' ? render() : openModal(leadModal(), true);
   }
 });
-document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal();
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal(); closeProto();
   document.getElementById('panel').classList.remove('open'); } });
 
 /* Boot into Scenario A. The advisor onboarding journey is the first thing the
