@@ -1388,7 +1388,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-17.8';
+const BUILD_VERSION = '2026-07-17.9';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -4361,6 +4361,39 @@ document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal(); 
    established advisor hid it behind the demo switcher entirely. */
 loadScenario('new');
 render();
+
+/* =====================================================================
+   Auto-updater. GitHub Pages serves this HTML with Cache-Control: max-age=600,
+   so a browser the link was already shared with can keep showing an old build
+   from its own cache. This checks the live version on load and, if the running
+   page is stale, reloads once to a cache-busted URL to pull the current build.
+   Guards against loops via sessionStorage; the ?v marker is stripped from the
+   address bar immediately so the shared link stays clean.
+   ===================================================================== */
+(function autoUpdate(){
+  try {
+    /* Clean any ?v= cache-buster out of the address bar (cosmetic; the fresh
+       content is already loaded). */
+    if(location.search.indexOf('v=') !== -1 && window.history && history.replaceState){
+      history.replaceState(null, '', location.pathname + location.hash);
+    }
+    /* Only over http(s): file:// cannot fetch, and there is nothing to update there. */
+    if(location.protocol !== 'http:' && location.protocol !== 'https:') return;
+    var path = location.pathname;
+    fetch(path + '?v=' + Date.now(), {cache: 'no-store'})
+      .then(function(r){ return r.ok ? r.text() : ''; })
+      .then(function(html){
+        var m = html.match(/BUILD_VERSION = '([^']+)'/);
+        var live = m && m[1];
+        if(!live || live === BUILD_VERSION) return;         // already current
+        var KEY = 'v22-autoupdate';
+        if(sessionStorage.getItem(KEY) === live) return;    // already tried this version -> avoid a loop
+        sessionStorage.setItem(KEY, live);
+        location.replace(path + '?v=' + encodeURIComponent(live));
+      })
+      .catch(function(){ /* offline or file:// — nothing to do */ });
+  } catch(e){ /* never let the updater break the app */ }
+})();
 </script>
 </body>
 </html>
