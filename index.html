@@ -1288,13 +1288,10 @@ const state = {
   regErr:null, backTo:null,
   q:'', filters:new Set(), sort:{k:'signup',d:-1}, tab:'notes',
   advisor:null, leads:[], customers:[], notifs:[], audit:[], crm:{}, consent:{}, tab8:'personal',
-  /* §1 verification. Real states, not decoration: email must be verified and both
-     policies accepted before onboarding can continue; the mobile OTP is optional. */
-  verify:{email:'pending', otp:'idle', terms:false, privacy:false, code:'', otpCode:'', emailErr:'', otpErr:''}
+  /* §1 verification. A real gate — email verified + both policies accepted moves the
+     advisor off "Pending Verification" — but one tap each, no code to type. */
+  verify:{email:'pending', otp:'idle', terms:false, privacy:false}
 };
-/* A demo code, fixed per run. There is no mail or SMS service, so the screen shows
-   the code it would have sent rather than claiming one arrived. */
-const newCode = () => String(100000 + Math.floor(Math.random()*900000));
 function loadScenario(s){
   state.scen = s;
   const est = s === 'est' || s === 'client';   /* client shares the est dataset */
@@ -1342,9 +1339,8 @@ function loadScenario(s){
   state.regErr = null;
   /* An established advisor is already verified; a new one starts unverified. */
   state.verify = est
-    ? {email:'verified', otp:'verified', terms:true, privacy:true, code:'', otpCode:'', emailErr:'', otpErr:''}
-    : {email:'pending', otp:'idle', terms:false, privacy:false,
-       code:newCode(), otpCode:'', emailErr:'', otpErr:''};
+    ? {email:'verified', otp:'verified', terms:true, privacy:true}
+    : {email:'pending', otp:'idle', terms:false, privacy:false};
   state.route = 'dashboard';
   state.q=''; state.filters.clear();
 }
@@ -1786,45 +1782,35 @@ ONB.region = () => {
 /* 3, Verify. Pending Verification -> Active. */
 ONB.verify = () => {
   const a = state.advisor, v = state.verify;
-  /* This screen used to render "Verified / Confirmed just now" before any email
-     existed, with no input and nothing that could transition — §1 asks for real
-     email verification, an optional mobile OTP, and T&C/Privacy acceptance. It is a
-     real state machine now. There is no mail service, so the prototype shows the
-     code it would have sent rather than pretending one arrived. */
+  /* One-click verification. A prototype must not make a presenter hunt for a code and
+     type it in front of a room: email verifies in a single tap (the magic-link
+     pattern), the mobile OTP is optional and also one tap, and the two policies are
+     quick checkboxes. Still a real gate off "Pending Verification", zero friction. */
   const row = (title, sub, pill, tone) => `
     <div class="list-row"><span><b>${title}</b><div class="sub">${sub}</div></span>
       <span class="pill ${tone}">${pill}</span></div>`;
-  const codeBox = (id, onData, label) => `
-    <div class="row" style="margin:var(--v4-space-2) 0 var(--v4-space-4)">
-      <input class="inp inp-sm" id="${id}" inputmode="numeric" maxlength="6"
-        placeholder="6-digit code" style="max-width:150px" autocomplete="off">
-      <button class="btn" ${onData}>${label}</button></div>`;
 
   return onbShell({
     segs:'verify', back:'region',
     body: `
       <h1 class="onb-title">Verify your account</h1>
-      <p class="onb-sub">We sent a code to <b>${esc(a.email)}</b>.</p>
+      <p class="onb-sub">Confirm your email, accept the terms, and you are in.</p>
       <div style="margin-top:var(--v4-space-5)">
         ${v.email === 'verified'
-          ? row('Email verification','Confirmed just now','Verified','p-green')
-          : `${row('Email verification', esc(a.email),'Pending','p-amber')}
-             ${codeBox('vEmail','data-vemail="1"','Verify email')}
-             <div class="onb-check ${v.emailErr?'bad':'idle'}" id="err_vemail">${
-               v.emailErr || 'Prototype: no mail service, so your code is ' + v.code}</div>`}
+          ? row('Email address', esc(a.email),'Verified','p-green')
+          : `<div class="list-row"><span><b>Email address</b>
+               <div class="sub">${esc(a.email)}</div></span>
+               <button class="btn btn-pri btn-sm" data-vemail="1">Verify</button></div>
+             <div class="onb-check idle" id="err_vemail">In the real build we email a secure link.
+               Here, one tap confirms it.</div>`}
 
         ${v.otp === 'verified'
-          ? row('Mobile OTP', esc(a.phoneFmt||'Mobile'),'Verified','p-green')
-          : v.otp === 'sent'
-            ? `${row('Mobile OTP','Code sent to ' + esc(a.phoneFmt||'your mobile'),'Sent','p-amber')}
-               ${codeBox('vOtp','data-votp="check"','Verify mobile')}
-               <div class="onb-check ${v.otpErr?'bad':'idle'}" id="err_votp">${
-                 v.otpErr || 'Prototype: your code is ' + v.otpCode}</div>`
-            : `<div class="list-row"><span><b>Mobile OTP</b>
-                 <div class="sub">Optional${a.phoneFmt ? ' · ' + esc(a.phoneFmt) : ''}</div></span>
-                 <span class="row" style="gap:var(--v4-space-2)">
-                   ${a.phoneFmt ? '<button class="btn btn-sm" data-votp="send">Send code</button>' : ''}
-                   <span class="pill p-gray">Skipped</span></span></div>`}
+          ? row('Mobile number', esc(a.phoneFmt||'Mobile'),'Verified','p-green')
+          : `<div class="list-row"><span><b>Mobile number</b>
+               <div class="sub">Optional${a.phoneFmt ? ' · ' + esc(a.phoneFmt) : ''}</div></span>
+               <span class="row" style="gap:var(--v4-space-2)">
+                 ${a.phoneFmt ? '<button class="btn btn-sm" data-votp="verify">Verify</button>' : ''}
+                 <span class="pill p-gray">Optional</span></span></div>`}
 
         <label class="list-row" style="cursor:pointer"><span><b>Terms &amp; Conditions</b>
           <div class="sub">Required</div></span>
@@ -4137,32 +4123,16 @@ document.addEventListener('click', e => {
     return toast(p.name.split(' ')[0] + ' moved from ' + was + ' to ' + type);
   }
   /* §1 verification handlers. */
+  /* One-tap verification: the prototype has no mail or SMS service, so a code round-trip
+     would be theatre that only slows the demo. */
   if(t.dataset.vemail){
-    const i = document.getElementById('vEmail');
-    const v = (i && i.value || '').trim();
-    if(v !== state.verify.code){
-      state.verify.emailErr = v ? 'That code is not right' : 'Enter the 6-digit code';
-      return render();
-    }
-    state.verify.email = 'verified'; state.verify.emailErr = '';
+    state.verify.email = 'verified';
     audit('Verified email address', state.advisor.email);
     render();
     return toast('Email verified');
   }
-  if(t.dataset.votp === 'send'){
-    state.verify.otp = 'sent';
-    state.verify.otpCode = newCode();
-    render();
-    return toast('Code sent to ' + state.advisor.phoneFmt);
-  }
-  if(t.dataset.votp === 'check'){
-    const i = document.getElementById('vOtp');
-    const v = (i && i.value || '').trim();
-    if(v !== state.verify.otpCode){
-      state.verify.otpErr = v ? 'That code is not right' : 'Enter the 6-digit code';
-      return render();
-    }
-    state.verify.otp = 'verified'; state.verify.otpErr = '';
+  if(t.dataset.votp === 'verify'){
+    state.verify.otp = 'verified';
     audit('Verified mobile number', state.advisor.phoneFmt);
     render();
     return toast('Mobile verified');
