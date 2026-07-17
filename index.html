@@ -1831,9 +1831,7 @@ ONB.verify = () => {
           ? row('Email address', esc(a.email),'Verified','p-green')
           : `<div class="list-row"><span><b>Email address</b>
                <div class="sub">${esc(a.email)}</div></span>
-               <button class="btn btn-pri btn-sm" data-vemail="1">Verify</button></div>
-             <div class="onb-check idle" id="err_vemail">We will send a 6-digit code to confirm
-               it is you.</div>`}
+               <button class="btn btn-sm" data-vemail="1">Verify</button></div>`}
 
         ${v.otp === 'verified'
           ? row('Mobile number', esc(a.phoneFmt||'Mobile'),'Verified','p-green')
