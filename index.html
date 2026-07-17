@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vault22 Advisor — Prototype</title>
+<title>Vault22 Advisor Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   Vault22 Advisor — prototype
+   Vault22 Advisor prototype
    Tokens below are verbatim from the live app's shipped CSS bundle
    (global-website.dev.vault22.com /_next/static/css/2344e4df61c424b4.css,
    extracted 17 Jul 2026 -> DESIGN-TOKENS.css).
@@ -19,18 +19,18 @@
    ============================================================ */
 :root{
   /* ---------------------------------------------------------------
-     LIVE APP CHROME — read off the live DOM at
+     LIVE APP CHROME, read off the live DOM at
      global-website.dev.vault22.com (computed styles + Tailwind classes).
      Cross-checked against Vault22-Insights-Todo-Prototype/styles.css,
      which was built the same way on 14 Jul 2026. These govern the shell:
      header, sidebar, page background, headings, buttons.
      --------------------------------------------------------------- */
   --page:        #F7F8FA;   /* app background */
-  --green:       #01C38D;   /* bg-[#01C38D] — primary action */
+  --green:       #01C38D;   /* bg-[#01C38D], primary action */
   --green-hover: #00A878;   /* hover:bg-[#00A878] */
   --green-05:    rgba(1,195,141,.05);
   --green-10:    rgba(1,195,141,.10);
-  --heading:     #1E3A5F;   /* text-[#1E3A5F] — every page heading */
+  --heading:     #1E3A5F;   /* text-[#1E3A5F], every page heading */
   --hero:        #12283F;   /* navy hero card */
   --blue:        #3B82F6;
   --nav-idle:    #4E5159;   /* text-[#4E5159] */
@@ -76,13 +76,26 @@
   --v4-font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 
   /* Shell aliases → LIVE APP values (not the v4-* ramps, which the bundle
-     defines but the live chrome does not use — the chrome is Tailwind). */
+     defines but the live chrome does not use, the chrome is Tailwind). */
   --surface:#ffffff;
-  --canvas:var(--page);      /* #F7F8FA — live app background */
-  --line:var(--g-200);       /* #E5E7EB — live border on pills/cards */
-  --text:var(--g-900);       /* #111827 — live body text */
-  --muted:var(--g-500);      /* #6B7280 — live secondary text */
+  --canvas:var(--page);      /* #F7F8FA, live app background */
+  --line:var(--g-200);       /* #E5E7EB, live border on pills/cards */
+  --text:var(--g-900);       /* #111827, live body text */
+  --muted:var(--g-500);      /* #6B7280, live secondary text */
   --sidebar-w:264px;
+  --dw:460px;          /* right-hand detail drawer */
+
+  /* Live app, read off the shipped register/login markup
+     (global-website.dev.vault22.com/register). These are the real values. */
+  --live-field:#F1F2F4;        /* input fill  bg-[#F1F2F4] */
+  --live-field-text:#22252B;   /* text-[#22252B] */
+  --live-placeholder:#D3D4D8;  /* placeholder-[#D3D4D8] */
+  --live-cta:#01C38D;          /* bg-[#01C38D] */
+  --live-cta-hover:#00B07D;    /* hover:bg-[#00B07D] */
+  --live-cta-text:#162B45;     /* text-[#162B45], dark on green, confirmed live */
+  --live-border:#E5E7EB;       /* border-[#E5E7EB] */
+  --live-ghost-hover:#F9FAFB;  /* hover:bg-[#F9FAFB] */
+  --live-sub:#6B7280;          /* text-[#6B7280] */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--v4-font-family);background:var(--canvas);color:var(--text);
@@ -108,7 +121,8 @@ a{color:var(--v4-info-dark)}
   border:1px solid var(--g-200);border-radius:9999px;background:var(--surface);
   font-size:14px;font-weight:600;color:var(--g-700);transition:box-shadow .2s}
 .chip:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.icon-btn{width:46px;height:46px;border-radius:9999px;border:1px solid var(--g-200);
+.icon-btn svg{width:19px;height:19px}
+.icon-btn{width:46px;height:46px;border-radius:9999px;border:1px solid var(--g-200);color:var(--text);
   background:var(--surface);display:grid;place-items:center;position:relative;font-size:15px;
   transition:box-shadow .2s}
 .icon-btn:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
@@ -173,6 +187,7 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--v4-space-4)}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
+
 .kpi{background:var(--surface);border-radius:var(--v4-radius-xl);padding:var(--v4-space-5);box-shadow:var(--v4-shadow-sm)}
 .kpi .k{font-size:12.5px;color:var(--muted);font-weight:500;margin-bottom:var(--v4-space-2)}
 .kpi .v{font-size:var(--v4-number-medium);font-weight:700;letter-spacing:-1.4px;line-height:1.1;font-variant-numeric:tabular-nums}
@@ -204,9 +219,17 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 .p-red{background:#fef2f2;color:var(--v4-danger-dark)}
 
 label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
-.inp{width:100%;padding:11px var(--v4-space-3);border:1px solid var(--line);border-radius:var(--v4-radius-md);
-  font-size:14px;color:var(--text);background:var(--surface)}
-.inp:focus{outline:2px solid var(--v4-teal-400);outline-offset:-1px;border-color:transparent}
+/* The live app's field: 56px, grey fill, NO border, 8px radius, green focus ring.
+   Applied prototype-wide, profile and landing used an invented white style. */
+.inp{width:100%;height:56px;padding:0 var(--v4-space-4);border:0;
+  border-radius:var(--v4-radius-sm);font-size:15px;color:var(--live-field-text);
+  background:var(--live-field);outline:none}
+.inp::placeholder{color:var(--live-placeholder)}
+.inp:focus{box-shadow:0 0 0 2px var(--live-cta)}
+textarea.inp{height:auto;padding:var(--v4-space-4);line-height:1.5}
+select.inp{appearance:none}
+/* compact variant for table toolbars, where 56px would dominate */
+.inp-sm{height:42px;font-size:14px}
 .field{margin-bottom:var(--v4-space-4)}
 .opt{color:var(--v4-navy-300);font-weight:500}
 
@@ -248,11 +271,18 @@ body.mask .pii{color:transparent!important;background:repeating-linear-gradient(
 .switch input{accent-color:var(--v4-warning);width:15px;height:15px;cursor:pointer}
 
 /* ---------- Modal / panel ---------- */
-.scrim{position:fixed;inset:0;background:rgba(10,25,41,.5);display:none;place-items:center;z-index:40;padding:var(--v4-space-6)}
-.scrim.open{display:grid}
-.modal{background:var(--surface);border-radius:var(--v4-radius-2xl);max-width:560px;width:100%;
-  padding:var(--v4-space-6);box-shadow:var(--v4-shadow-xl);max-height:88vh;overflow-y:auto}
-.modal.wide{max-width:720px}
+/* Stephen, twice: "this should open in layer from right hand side (not pop up)"
+   and "the main dashboard should not be cut off by the layer that opens on the
+   right it should adjust so you can see data in both windows". So: a right-hand
+   drawer, no dark scrim, and the shell shrinks to sit beside it. */
+.rdrawer{position:fixed;top:0;right:0;bottom:0;width:var(--dw);background:var(--surface);
+  box-shadow:var(--v4-shadow-xl);z-index:60;overflow-y:auto;padding:var(--v4-space-6);display:none}
+.rdrawer.open{display:block}
+body.dw-open .main{margin-right:var(--dw)}
+body.dw-open .foot{margin-right:var(--dw)}
+body.dw-open .topbar{right:var(--dw)}
+.main,.foot,.topbar{transition:margin-right var(--v4-duration-normal) var(--v4-easing-standard),
+  right var(--v4-duration-normal) var(--v4-easing-standard)}
 .x{border:0;background:none;font-size:22px;color:var(--muted);line-height:1;padding:4px}
 .panel{position:fixed;top:78px;right:var(--v4-space-6);width:380px;max-height:74vh;overflow-y:auto;
   background:var(--surface);border-radius:var(--v4-radius-xl);box-shadow:var(--v4-shadow-lg);z-index:50;display:none}
@@ -268,9 +298,12 @@ body.mask .pii{color:transparent!important;background:repeating-linear-gradient(
 .nt.unread:hover{background:var(--v4-teal-100)}
 
 /* ---------- Tabs ---------- */
-.tabs{display:flex;gap:var(--v4-space-1);border-bottom:1px solid var(--line);margin-bottom:var(--v4-space-5)}
+.tabs{display:flex;gap:var(--v4-space-1);border-bottom:1px solid var(--line);
+  margin-bottom:var(--v4-space-5);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
 .tab{border:0;background:none;padding:10px var(--v4-space-4);font-size:13.5px;font-weight:600;
-  color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+  color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;
+  white-space:nowrap;flex:none}
 .tab:hover{color:var(--text)}
 .tab.on{color:var(--v4-navy-900);border-bottom-color:var(--v4-teal-400)}
 
@@ -329,23 +362,23 @@ body.mask .pii{color:transparent!important;background:repeating-linear-gradient(
   font-size:13px;z-index:60;box-shadow:var(--v4-shadow-lg);max-width:540px;text-align:center;line-height:1.5}
 
 /* ============================================================
-   Onboarding — happens BEFORE the dashboard exists.
+   Onboarding, happens BEFORE the dashboard exists.
    Split-screen shell mirroring the live onboarding prototype
    (~/Downloads/Vault22-Onboarding-Prototype): form left ~52%,
    green brand panel right ~48%. While onboarding runs there is no
-   app shell at all — no topbar, no sidebar, no nav, no avatar.
+   app shell at all, no topbar, no sidebar, no nav, no avatar.
    ============================================================ */
 body.onboarding .topbar, body.onboarding .sidebar,
 body.onboarding .main, body.onboarding .foot{display:none}
 body:not(.onboarding) #onbRoot{display:none}
 
 .onb{display:flex;min-height:100vh;background:var(--surface)}
-.onb__form{flex:1 1 52%;display:flex;flex-direction:column;
+.onb__form{flex:1 1 41%;display:flex;flex-direction:column;
   padding:var(--v4-space-8) var(--v4-space-10) var(--v4-space-10);overflow-y:auto;max-height:100vh}
 .onb__formwrap{width:100%;max-width:428px;margin:0 auto;flex:1;
   display:flex;flex-direction:column;justify-content:center}
 .onb__top{display:flex;align-items:center;gap:var(--v4-space-3);min-height:34px}
-.onb__brand{flex:1 1 48%;margin:var(--v4-space-4) var(--v4-space-4) var(--v4-space-4) 0;
+.onb__brand{flex:1 1 59%;margin:var(--v4-space-4) var(--v4-space-4) var(--v4-space-4) 0;
   border-radius:var(--v4-radius-2xl);
   background:linear-gradient(158deg,var(--v4-teal-500) 0%,var(--v4-teal-600) 52%,var(--v4-teal-800) 100%);
   color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -370,7 +403,7 @@ body:not(.onboarding) #onbRoot{display:none}
 .progress .seg.done{background:linear-gradient(90deg,var(--v4-teal-400),var(--v4-teal-500))}
 .progress .label{font-size:11.5px;color:var(--muted);font-weight:600;
   white-space:nowrap;margin-left:var(--v4-space-2)}
-/* Breadcrumbs — name the current step; completed ones are clickable back-nav. */
+/* Breadcrumbs, name the current step; completed ones are clickable back-nav. */
 .crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:var(--v4-space-2)}
 .crumb-i{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .crumb{font-size:11.5px;font-weight:600;color:var(--v4-navy-200);
@@ -380,15 +413,38 @@ body:not(.onboarding) #onbRoot{display:none}
 .crumb.on{color:var(--text)}
 .crumb-sep{font-size:11px;color:var(--v4-navy-200)}
 
+/* Live register head: app icon, centred title, centred subtitle, mb-10. */
+.onb-head{display:flex;flex-direction:column;align-items:center;text-align:center;
+  margin-bottom:var(--v4-space-10)}
+.app-icon{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;
+  background:linear-gradient(150deg,var(--v4-teal-500),var(--v4-teal-700));margin-bottom:var(--v4-space-4)}
+.app-icon svg{width:34px;height:34px}
+.onb-h1{font-size:30px;font-weight:700;letter-spacing:-.7px;color:var(--live-field-text)}
+.onb-hsub{font-size:14px;color:var(--live-sub);line-height:1.5;margin-top:var(--v4-space-2);
+  max-width:42ch;padding:0 var(--v4-space-4)}
+.onb-form-h{font-size:20px;font-weight:700;text-align:center;margin-bottom:var(--v4-space-5);
+  letter-spacing:-.3px}
+.name-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--v4-space-3)}
+.pw-wrap{position:relative}
+.pw-wrap .inp{padding-right:64px}          /* live: pr-16 */
+.pw-eye{position:absolute;right:var(--v4-space-4);top:50%;transform:translateY(-50%);
+  border:0;background:none;color:var(--live-sub);padding:4px;display:grid;place-items:center}
+.pw-eye svg{width:20px;height:20px}
+.pw-eye:hover,.pw-eye.on{color:var(--live-field-text)}
+.or{display:flex;align-items:center;gap:var(--v4-space-3);margin:var(--v4-space-5) 0;
+  color:var(--live-sub);font-size:13px}
+.or::before,.or::after{content:'';flex:1;height:1px;background:var(--live-border)}
+.legalnote.center{text-align:center}
 .onb-title{font-size:26px;font-weight:700;letter-spacing:-.6px;margin-top:var(--v4-space-5)}
 .onb-sub{color:var(--muted);font-size:14px;line-height:1.6;margin-top:6px}
-.obtn{width:100%;border:1px solid transparent;border-radius:var(--v4-radius-md);padding:14px 18px;
-  font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;
-  gap:var(--v4-space-2);transition:all var(--v4-duration-fast) var(--v4-easing-standard)}
-.obtn-pri{background:var(--v4-teal-400);color:var(--v4-teal-950)}
-.obtn-pri:hover:not(:disabled){background:var(--v4-teal-500);box-shadow:var(--v4-glow-accent)}
-.obtn-ghost{background:var(--surface);border-color:var(--line);color:var(--text)}
-.obtn-ghost:hover{background:var(--v4-navy-50)}
+.obtn{width:100%;height:56px;border:1px solid transparent;border-radius:var(--v4-radius-sm);
+  padding:0 18px;font-size:15px;font-weight:600;display:flex;align-items:center;
+  justify-content:center;gap:var(--v4-space-3);
+  transition:background var(--v4-duration-fast) var(--v4-easing-standard)}
+.obtn-pri{background:var(--live-cta);color:var(--live-cta-text)}
+.obtn-pri:hover:not(:disabled){background:var(--live-cta-hover)}
+.obtn-ghost{background:var(--surface);border-color:var(--live-border);color:var(--live-field-text)}
+.obtn-ghost:hover{background:var(--live-ghost-hover)}
 .obtn:disabled{opacity:.4;cursor:not-allowed}
 .actions{margin-top:var(--v4-space-5);display:flex;flex-direction:column;gap:var(--v4-space-3)}
 .legalnote{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:var(--v4-space-3)}
@@ -400,8 +456,9 @@ body:not(.onboarding) #onbRoot{display:none}
   display:grid;place-items:center;font-size:19px;line-height:1;padding:0 2px 3px 0;
   transition:all var(--v4-duration-fast) var(--v4-easing-standard)}
 .back-i:hover{background:var(--v4-navy-50);color:var(--text);border-color:var(--v4-navy-200)}
-.back-btn{width:34px;height:34px;border-radius:var(--v4-radius-full);border:1px solid var(--line);
-  background:var(--surface);display:grid;place-items:center;font-size:15px;color:var(--muted)}
+/* live: `self-start mb-4 p-1 hover:bg-vault-gray-100 rounded-lg` */
+.back-btn{width:32px;height:32px;border-radius:var(--v4-radius-sm);border:0;background:none;
+  display:grid;place-items:center;font-size:20px;color:var(--live-field-text);line-height:1}
 .back-btn:hover{background:var(--v4-navy-50)}
 .urlpreview{font-size:17px;font-weight:700;letter-spacing:-.3px;word-break:break-all;
   padding:var(--v4-space-3) 0}
@@ -412,15 +469,18 @@ body:not(.onboarding) #onbRoot{display:none}
 .onb-check.bad{color:var(--v4-danger-dark)}
 .onb-check.idle{color:var(--v4-navy-300)}
 
-/* Entry screen — carries the value prop, so it gets the wide column. */
+/* Entry screen, carries the value prop, so it gets the wide column. */
 .onb__formwrap--wide{max-width:540px}
 .entry-mark{display:flex;align-items:center;gap:var(--v4-space-2);font-size:14px;
   color:var(--muted);font-weight:500;margin-bottom:var(--v4-space-5)}
 .entry-mark svg{width:30px;height:30px}
 .entry-mark b{color:var(--text);font-weight:700}
-.entry-title{font-size:clamp(24px,2.5vw,34px);font-weight:700;letter-spacing:-1.1px;
-  white-space:nowrap;line-height:1.15}
-.entry-list{margin:var(--v4-space-6) 0 var(--v4-space-2);display:flex;
+/* The live form column is 41% wide, which cannot hold a 38-character headline on
+   one line at any readable size. Live centres a short headline ("Welcome to
+   Vault22"); ours is long, so it wraps, centred, rather than being shrunk to fit. */
+.entry-title{font-size:clamp(22px,2.1vw,30px);font-weight:700;letter-spacing:-.8px;
+  line-height:1.2;text-align:center;max-width:22ch}
+.entry-list{margin:0 0 var(--v4-space-2);display:flex;
   flex-direction:column;gap:var(--v4-space-3)}
 .entry-li{display:flex;align-items:flex-start;gap:var(--v4-space-3);font-size:14px}
 .entry-li .tick{width:22px;height:22px;border-radius:var(--v4-radius-full);flex:none;
@@ -429,7 +489,7 @@ body:not(.onboarding) #onbRoot{display:none}
 .entry-li b{font-weight:600;display:block}
 .entry-li .d{color:var(--muted);font-size:13px}
 
-/* Region cards — mirrors the investor onboarding prototype's .opt pattern. */
+/* Region cards, mirrors the investor onboarding prototype's .opt pattern. */
 .opt-list{display:flex;flex-direction:column;gap:var(--v4-space-3)}
 .opt{display:flex;align-items:center;gap:var(--v4-space-3);text-align:left;width:100%;
   background:var(--surface);border:1.6px solid var(--line);border-radius:var(--v4-radius-md);
@@ -447,14 +507,15 @@ body:not(.onboarding) #onbRoot{display:none}
   flex:none;display:grid;place-items:center;color:transparent;font-size:11px;font-weight:700}
 .opt.sel .opt-check{background:var(--v4-teal-400);border-color:var(--v4-teal-400);color:var(--v4-teal-950)}
 
-/* Share screen — QR centred, targets on one line, no link underlines. */
+/* Share screen, QR centred, targets on one line, no link underlines. */
 .qr-center{display:flex;justify-content:center;margin:var(--v4-space-5) 0}
 .share-row{display:flex;gap:var(--v4-space-2)}
 .share-row .btn{flex:1;justify-content:center;padding-left:0;padding-right:0}
-.onb a.btn, .onb a{text-decoration:none}
+a.btn{text-decoration:none}
+.onb a{text-decoration:none}
 .link-a{color:var(--v4-info-dark);cursor:pointer;font-weight:600}
 
-/* Prototype settings — internal QA/review control. A gear, bottom-right, on
+/* Prototype settings, internal QA/review control. A gear, bottom-right, on
    every screen; the scenario switcher lives inside it rather than eating a
    bar's worth of space or posing as product chrome. */
 .proto-fab{position:fixed;right:var(--v4-space-5);bottom:var(--v4-space-5);z-index:80;
@@ -503,12 +564,63 @@ body:not(.onboarding) #onbRoot{display:none}
 .protobar button.on{background:var(--v4-teal-400);color:var(--v4-teal-950)}
 .protobar .pb-note{color:var(--v4-navy-300)}
 
-@media(max-width:900px){.onb__brand{display:none}.onb__form{flex:1 1 100%}}
+/* live: brand panel is `hidden lg:flex`, gone below 1024px */
+@media(max-width:1023px){.onb__brand{display:none}.onb__form{flex:1 1 100%}}
+
+/* ============================================================
+   Mobile. Patrick: "the dashboard keeps its desktop sidebar and gets cut
+   off. It needs to collapse the sidebar and stack the cards."
+   Stephen: "also remove the green section on the right for all mobile."
+   Target: scrollWidth === clientWidth at 390px on every route.
+   ============================================================ */
+.hamb{display:none;width:40px;height:40px;border:0;background:none;color:var(--text);
+  place-items:center;border-radius:var(--v4-radius-sm)}
+.hamb:hover{background:var(--v4-navy-50)}
+.hamb svg{width:22px;height:22px}
+.nav-scrim{display:none;position:fixed;inset:0;background:rgba(10,25,41,.42);z-index:94}
+body.nav-open .nav-scrim{display:block}
+/* anything that can exceed its column scrolls inside itself */
+.tbl-scroll{max-width:100%}
+.card,.kpi,.main,.page-head,.grid2>*{min-width:0}
+
+@media(max-width:1023px){
+  .hamb{display:grid}
+  .topbar{padding:0 var(--v4-space-4);gap:var(--v4-space-2)}
+  .topbar .chip{display:none}
+  .who span:not(.ava){display:none}
+  .who{padding:0;background:none}
+  .sidebar{left:0;top:72px;bottom:0;width:280px;border-radius:0;z-index:95;
+    transform:translateX(-110%);
+    transition:transform var(--v4-duration-normal) var(--v4-easing-standard)}
+  body.nav-open .sidebar{transform:none}
+  .main{margin-left:0;max-width:100%;
+    padding:calc(72px + var(--v4-space-5)) var(--v4-space-4) var(--v4-space-16)}
+  .foot{margin-left:0;padding:var(--v4-space-5) var(--v4-space-4)}
+  .kpis{grid-template-columns:1fr!important}
+  .grid2{grid-template-columns:1fr}
+  .row{flex-wrap:wrap}
+  h1,.page-head h1{font-size:24px}
+  .panel{right:var(--v4-space-3);left:var(--v4-space-3);width:auto}
+  .main .inp{width:100%!important}
+  .lp-b,.card-p{padding:var(--v4-space-4)}
+  /* the CRM tab row was pushing the customer profile 102px wide */
+  .tabs{overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;white-space:nowrap}
+  .crumbs{font-size:11px}
+  /* the drawer takes the screen on mobile; nothing to sit beside */
+  .rdrawer{width:100%}
+  body.dw-open .main,body.dw-open .foot{margin-right:0}
+  body.dw-open .topbar{right:0}
+}
+/* long unbroken strings (emails, URLs) must never widen the page */
+body,.card,.foot,.lede,.sub{overflow-wrap:anywhere}
+
 </style>
 </head>
 <body>
 
-<!-- Vault22 mark, white variant — same symbol the live onboarding prototype uses
+<!-- Vault22 mark, white variant, same symbol the live onboarding prototype uses
      on its green brand panel (the assets/img PNG logo is teal and would vanish on it). -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="v22mark-white" viewBox="0 0 64 64">
@@ -533,13 +645,23 @@ body:not(.onboarding) #onbRoot{display:none}
 <div class="proto-scrim" id="protoScrim"></div>
 <aside class="proto-drawer" id="protoDrawer" role="dialog" aria-label="Prototype settings"></aside>
 
+<div class="nav-scrim" id="navScrim"></div>
 <header class="topbar">
+  <button class="hamb" id="hamb" aria-label="Open menu" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
   <div class="logo">
     <img src="assets/img/vault22-logo.png" alt="Vault22">
     <span class="tag">Advisor</span>
   </div>
   <div class="tb-right">
-    <button class="icon-btn" id="bell" title="Notifications">&#9788;<span class="dot hidden" id="ndot">0</span></button>
+    <button class="icon-btn" id="bell" title="Notifications" aria-label="Notifications">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+    <span class="dot hidden" id="ndot">0</span></button>
     <span class="chip num">ZAR</span>
     <span class="who"><span class="ava" id="ava">AA</span><span id="whoName">Aishani Atri</span></span>
   </div>
@@ -548,18 +670,17 @@ body:not(.onboarding) #onbRoot{display:none}
 <nav class="sidebar">
   <div class="sb-h">Menu</div>
   <div class="nav" id="nav"></div>
-  <div class="sb-note" id="sbNote"></div>
 </nav>
 
 <main class="main" id="view"></main>
-<footer class="foot">Vault22 Advisor — internal prototype, mock data</footer>
+<footer class="foot">Vault22 Advisor</footer>
 
 <div class="panel" id="panel"></div>
-<div class="scrim" id="scrim"><div class="modal" id="modal"></div></div>
+<aside class="rdrawer" id="modal" role="dialog" aria-label="Details"></aside>
 
 <script>
 /* =====================================================================
-   QR encoder — byte mode, ECC level M, versions 1-10.
+   QR encoder, byte mode, ECC level M, versions 1-10.
    Verified byte-identical to Apple's CIQRCodeGenerator reference and
    decoded end-to-end by CIDetector across v2-v8 (see qr.js + PROTOTYPE-NOTES).
    ===================================================================== */
@@ -660,10 +781,11 @@ function drawQR(cv, text){
 }
 
 /* =====================================================================
-   Data — mock only. ZAR / en-ZA / SA names, per the brief.
+   Data, mock only. ZAR / en-ZA / SA names, per the brief.
    ===================================================================== */
 const NOW = new Date('2026-07-17T09:30:00');
-const money = n => 'R' + Math.round(n).toLocaleString('en-ZA');
+/* en-ZA groups with spaces (R2 450 000). Reviewers want commas. */
+const money = n => 'R' + Math.round(n).toLocaleString('en-US');
 const short = n => n>=1e6 ? 'R'+(n/1e6).toFixed(1)+'m' : n>=1e3 ? 'R'+Math.round(n/1e3)+'k' : money(n);
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const rel = iso => {
@@ -685,14 +807,14 @@ const QUAL = { nw:500000, sav:8000 };
 const isQual = l => (l.nw||0) >= QUAL.nw || (l.sav||0) >= QUAL.sav;
 
 const ADVISOR_EST = {
-  name:'Aishani Atri', initials:'AA', email:'aishani@vault22.io', phone:'+27825550142',
+  name:'Aishani Atri', initials:'AA', email:'aishani@vault22.com', phone:'+27825550142',
   phoneFmt:'+27 82 555 0142', company:'Vault22 Wealth', country:'South Africa',
   licence:'FSP 48219', idNum:'8203155041083', status:'Active', slug:'aishani', code:'AISHANI22',
   bio:'Certified financial planner helping South Africans build long-term wealth through low-cost, goal-based investing.',
   calendar:'cal.com/aishaniatri/30min', welcome:'Let’s build your financial future, together.',
   services:['Goal-based investing','Retirement planning','Tax-free savings','Portfolio reviews']
 };
-/* Scenario A starts genuinely empty — no prefills anywhere in onboarding.
+/* Scenario A starts genuinely empty, no prefills anywhere in onboarding.
    Whatever the advisor types drives the rest of the journey (verify email,
    dashboard greeting, avatar initials, referral code). */
 const ADVISOR_NEW = {
@@ -718,11 +840,11 @@ const LEADS_EST = [
   {id:'L1',name:'Thandiwe Mokoena',email:'thandiwe.m@gmail.com',phone:'+27821145567',signup:'2026-07-15',stage:'Ready to Invest',ffs:742,nw:1250000,sav:18000,cap:250000,port:'Growth',act:'2026-07-17T07:10:00'},
   {id:'L2',name:'Pieter van der Merwe',email:'pieter.vdm@outlook.com',phone:'+27832208891',signup:'2026-07-14',stage:'Risk Assessment Completed',ffs:688,nw:890000,sav:12500,cap:150000,port:'Balanced',act:'2026-07-16T14:22:00'},
   {id:'L3',name:'Aisha Patel',email:'aisha.patel@yahoo.com',phone:'+27719083345',signup:'2026-07-14',stage:'KYC Approved',ffs:615,nw:540000,sav:8000,cap:90000,port:'Balanced',act:'2026-07-16T09:05:00'},
-  {id:'L4',name:'Sipho Ndlovu',email:'sipho.ndlovu@gmail.com',phone:'+27845512210',signup:'2026-07-13',stage:'Risk Assessment Pending',ffs:590,nw:410000,sav:6200,cap:60000,port:'—',act:'2026-07-15T16:40:00'},
-  {id:'L5',name:'Nadia Fourie',email:'nadia.f@icloud.com',phone:'+27763307712',signup:'2026-07-12',stage:'KYC Submitted',ffs:534,nw:275000,sav:4500,cap:40000,port:'—',act:'2026-07-14T11:15:00'},
-  {id:'L6',name:'Kabelo Dlamini',email:'kabelo.d@gmail.com',phone:'+27827761108',signup:'2026-07-11',stage:'KYC Started',ffs:498,nw:180000,sav:3200,cap:25000,port:'—',act:'2026-07-13T08:30:00'},
-  {id:'L7',name:'Rachel Adams',email:'rachel.adams@gmail.com',phone:'+27794426690',signup:'2026-07-10',stage:'Email Verified',ffs:462,nw:120000,sav:2800,cap:18000,port:'—',act:'2026-07-11T19:02:00'},
-  {id:'L8',name:'Johan Botha',email:'johan.botha@webmail.co.za',phone:'+27816634402',signup:'2026-07-09',stage:'Registered',ffs:null,nw:null,sav:null,cap:null,port:'—',act:'2026-07-09T12:00:00'}
+  {id:'L4',name:'Sipho Ndlovu',email:'sipho.ndlovu@gmail.com',phone:'+27845512210',signup:'2026-07-13',stage:'Risk Assessment Pending',ffs:590,nw:410000,sav:6200,cap:60000,port:', ',act:'2026-07-15T16:40:00'},
+  {id:'L5',name:'Nadia Fourie',email:'nadia.f@icloud.com',phone:'+27763307712',signup:'2026-07-12',stage:'KYC Submitted',ffs:534,nw:275000,sav:4500,cap:40000,port:', ',act:'2026-07-14T11:15:00'},
+  {id:'L6',name:'Kabelo Dlamini',email:'kabelo.d@gmail.com',phone:'+27827761108',signup:'2026-07-11',stage:'KYC Started',ffs:498,nw:180000,sav:3200,cap:25000,port:', ',act:'2026-07-13T08:30:00'},
+  {id:'L7',name:'Rachel Adams',email:'rachel.adams@gmail.com',phone:'+27794426690',signup:'2026-07-10',stage:'Email Verified',ffs:462,nw:120000,sav:2800,cap:18000,port:', ',act:'2026-07-11T19:02:00'},
+  {id:'L8',name:'Johan Botha',email:'johan.botha@webmail.co.za',phone:'+27816634402',signup:'2026-07-09',stage:'Registered',ffs:null,nw:null,sav:null,cap:null,port:', ',act:'2026-07-09T12:00:00'}
 ];
 
 const CUSTOMERS_EST = [
@@ -763,18 +885,18 @@ const CUSTOMERS_EST = [
 
 const NOTIFS_EST = [
   {id:'N1',type:'New Lead',em:'👤',msg:'Thandiwe Mokoena signed up through your link',ts:'2026-07-17T07:10:00',go:['lead','L1'],unread:true},
-  {id:'N2',type:'Risk Assessment Completed',em:'📊',msg:'Pieter van der Merwe completed his risk assessment — Balanced',ts:'2026-07-16T14:22:00',go:['lead','L2'],unread:true},
+  {id:'N2',type:'Risk Assessment Completed',em:'📊',msg:'Pieter van der Merwe completed his risk assessment, Balanced',ts:'2026-07-16T14:22:00',go:['lead','L2'],unread:true},
   {id:'N3',type:'Large Investment',em:'💰',msg:'Fatima Ismail invested R120,000 in one transaction',ts:'2026-07-14T10:40:00',go:['customer','C5'],unread:true},
   {id:'N4',type:'KYC Completed',em:'✅',msg:'Aisha Patel’s KYC was approved',ts:'2026-07-16T09:05:00',go:['lead','L3'],unread:false},
-  {id:'N5',type:'First Investment',em:'🎉',msg:'Zanele Mthembu made her first investment — she is now a customer',ts:'2026-07-10T13:15:00',go:['customer','C3'],unread:false},
-  {id:'N6',type:'SIP Failed',em:'⚠️',msg:'Grant Willemse’s R3,000 recurring investment failed — insufficient funds',ts:'2026-07-12T06:00:00',go:['customer','C4'],unread:false},
+  {id:'N5',type:'First Investment',em:'🎉',msg:'Zanele Mthembu made her first investment, she is now a customer',ts:'2026-07-10T13:15:00',go:['customer','C3'],unread:false},
+  {id:'N6',type:'SIP Failed',em:'⚠️',msg:'Grant Willemse’s R3,000 recurring investment failed: insufficient funds',ts:'2026-07-12T06:00:00',go:['customer','C4'],unread:false},
   {id:'N7',type:'Birthday',em:'🎂',msg:'Lerato Khumalo’s birthday is today',ts:'2026-07-17T05:00:00',go:['customer','C1'],unread:false},
   {id:'N8',type:'Portfolio Review Due',em:'🔁',msg:'Marius Steyn’s annual portfolio review is due',ts:'2026-07-15T09:00:00',go:['customer','C2'],unread:false}
 ];
 
 const AUDIT_EST = [
   {ts:'2026-07-17T08:12:00',act:'Viewed customer profile',tgt:'Lerato Khumalo (C1)'},
-  {ts:'2026-07-17T08:10:00',act:'Signed in',tgt:'aishani@vault22.io'},
+  {ts:'2026-07-17T08:10:00',act:'Signed in',tgt:'aishani@vault22.com'},
   {ts:'2026-07-16T16:41:00',act:'Added note',tgt:'Pieter van der Merwe (L2)'},
   {ts:'2026-07-16T15:02:00',act:'Exported lead list',tgt:'8 leads'},
   {ts:'2026-07-16T09:20:00',act:'Viewed KYC document (read-only)',tgt:'Aisha Patel (L3)'},
@@ -803,16 +925,16 @@ function loadScenario(s){
     notes:[], tags:[], tasks:[], follow:[], meets:[], files:[]
   });
   if(est){
-    state.crm.L1.notes.push({t:'Called — wants to start with R250k lump sum plus R10k/month. Sending the Growth fact sheet.',by:'Aishani',ts:'2026-07-17T07:40:00'});
+    state.crm.L1.notes.push({t:'Called, wants to start with R250k lump sum plus R10k/month. Sending the Growth fact sheet.',by:'Aishani',ts:'2026-07-17T07:40:00'});
     state.crm.L1.tags.push('Hot','High net worth');
     state.crm.L1.tasks.push({t:'Send Growth portfolio fact sheet',done:false});
     state.crm.L1.follow.push({d:'2026-07-18',t:'Follow-up call'});
     state.crm.L2.notes.push({t:'Risk profile came out Balanced. Wants to discuss offshore exposure first.',by:'Aishani',ts:'2026-07-16T16:41:00'});
     state.crm.L2.tags.push('Warm');
-    state.crm.L2.meets.push({d:'2026-07-16',t:'Intro call — 20 min'});
+    state.crm.L2.meets.push({d:'2026-07-16',t:'Intro call, 20 min'});
     state.crm.C1.tags.push('VIP');
     state.crm.C1.meets.push({d:'2026-06-02',t:'Annual review'});
-    state.crm.C4.tasks.push({t:'Chase failed SIP — update debit order',done:false});
+    state.crm.C4.tasks.push({t:'Chase failed SIP, update debit order',done:false});
   }
   /* 'new' starts at onboarding screen 1 with no app shell; 'est' is fully
      onboarded and lands on the dashboard with aishani.advisor.vault22.com set. */
@@ -822,18 +944,25 @@ function loadScenario(s){
   state.route = 'dashboard';
   state.q=''; state.filters.clear();
 }
-/* The shareable link is {advisor-name}.advisor.vault22.com — note the `advisor`
+/* The shareable link is {advisor-name}.advisor.vault22.com, note the `advisor`
    segment. The name is mandatory (onboarding cannot complete without it), so
    there is deliberately no fallback: an absent slug is a bug, not a state. */
 const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
-const audit = (act,tgt) => state.audit.unshift({ts:new Date().toISOString(),act,tgt});
+/* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
+   Build the stamp from local parts instead. */
+const localISO = (d) => {
+  const z = n => String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+
+         'T'+z(d.getHours())+':'+z(d.getMinutes())+':'+z(d.getSeconds());
+};
+const audit = (act,tgt) => state.audit.unshift({ts:localISO(new Date()),act,tgt});
 
 /* =====================================================================
    Nav
    ===================================================================== */
-/* The live app's menu assets are the *investor* set — mixed colour fills and
+/* The live app's menu assets are the *investor* set, mixed colour fills and
    metaphors that don't map here (Leads was a coloured family circle, Risk
    Profiles a dumbbell). One monochrome line set instead, inheriting currentColor
    so the active/inactive nav states carry it. */
@@ -868,9 +997,6 @@ function renderNav(){
     ? `<div class="nav-sep">${n.sep}</div>`
     : `<button class="nav-item ${state.route===n.id?'on':''}" data-go="${n.id}">
          <span class="ic">${navIcon(n.ic)}</span>${n.label}</button>`).join('');
-  document.getElementById('sbNote').innerHTML = state.scen==='new'
-    ? 'Scenario A — just onboarded, no leads yet. Switch scenario to re-run onboarding.'
-    : 'Scenario B — an established advisor with 8 leads and 5 customers.';
 }
 /* Back is a function of HOW you got here, not which page you're on.
    state.backTo is set only by controls that drill in (Preview my Client
@@ -880,6 +1006,7 @@ const ROUTE_LABEL = {dashboard:'Dashboard', leads:'Leads', customers:'Customers'
   risk:'Risk Profiles', portfolios:'Portfolios', analytics:'Analytics',
   landing:'Landing Page', profile:'My Profile', audit:'Audit Log'};
 function go(id, arg, backTo){
+  document.body.classList.remove('nav-open');
   state.backTo = backTo || null;
   state.route=id; state.arg=arg||null; state.tab='notes'; window.scrollTo(0,0); render();
 }
@@ -898,29 +1025,29 @@ const backArrow = () => state.backTo
 const consent = () => `
   <div class="consent mt6">
     <span><b>Consent pending review.</b> Dotted values are client financial data whose advisor
-      visibility is still under privacy review (17 Jul stand-up — consent to be designed after this prototype).
-      Toggle to preview the portal without them.</span>
+      visibility is still under privacy review. Toggle to preview the portal without them.</span>
     <label class="switch"><input type="checkbox" id="maskTog" ${document.body.classList.contains('mask')?'checked':''}>
       Hide consent-pending data</label>
   </div>`;
 const pii = v => `<span class="pii" title="Pending consent review">${v}</span>`;
-const dash = '<span style="color:var(--v4-navy-200)">—</span>';
+const plural = (n, word) => n + ' ' + word + (n === 1 ? '' : 's');
+const dash = '<span style="color:var(--v4-navy-200)">n/a</span>';
 
 /* =====================================================================
-   Scenario A — onboarding, BEFORE the dashboard exists.
+   Scenario A, onboarding, BEFORE the dashboard exists.
 
    A screen router (ONB / ONB_AFTER), one function per screen, mirroring
    the live onboarding prototype's SCREENS[current] shape. This is not the
    dashboard rendering a different view: while state.onboarded is false the
    app shell is hidden entirely and only #onbRoot renders.
    ===================================================================== */
-/* 'link' is the merged link + QR + share screen — one place for everything the
+/* 'link' is the merged link + QR + share screen, one place for everything the
    advisor walks away with: QR, link, copy, share targets and referral code. */
 const ONB_ORDER = ['entry','register','region','verify','name','link'];
 const ONB_LABEL = {register:'Your details', region:'Your region', verify:'Verification',
   name:'Your advisor name', link:'Your link & QR'};
 
-/* Region is an account attribute, so it comes after register — where the advisor
+/* Region is an account attribute, so it comes after register, where the advisor
    commits. Presented as cards, mirroring the investor onboarding prototype. */
 const REGIONS = [
   {k:'South Africa',         f:'🇿🇦', d:'Rand (ZAR) · local banks and products'},
@@ -933,7 +1060,7 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const SLUG_TAKEN = ['admin','www','test','advisor','api','support','help','app','vault22'];
 function slugCheck(v){
   const s = (v||'').trim().toLowerCase();
-  if(!s)                      return {ok:false, tone:'idle', msg:'Choose a name to continue — this is how clients find you'};
+  if(!s)                      return {ok:false, tone:'idle', msg:'Choose a name to continue, this is how clients find you'};
   if(!/^[a-z0-9-]+$/.test(s)) return {ok:false, tone:'bad',  msg:'Lowercase letters, numbers and hyphens only'};
   if(s.startsWith('-') || s.endsWith('-')) return {ok:false, tone:'bad', msg:'Cannot start or end with a hyphen'};
   if(s.length < 3)            return {ok:false, tone:'bad',  msg:'At least 3 characters'};
@@ -943,7 +1070,7 @@ function slugCheck(v){
 }
 
 /* The scenario switcher lives in the Prototype settings drawer (the gear,
-   bottom-right) — one control on every screen, and never product chrome the
+   bottom-right), one control on every screen, and never product chrome the
    advisor could mistake for a feature. */
 function protoDrawer(){
   const opt = (k, t, d) => `
@@ -961,7 +1088,7 @@ function protoDrawer(){
     <div class="pd-body">
       <div class="pd-sec">Scenario</div>
       <div class="opt-list">
-        ${opt('new','New advisor','Onboarding from scratch — not signed in yet, no leads')}
+        ${opt('new','New advisor','Onboarding from scratch, not signed in yet, no leads')}
         ${opt('est','Established advisor','Aishani Atri · 8 leads, 5 customers, populated dashboard')}
       </div>
       <p class="pd-note">Switching reloads the scenario and returns you to its
@@ -974,7 +1101,7 @@ function onbShell({body, segs, back, urlbar, wide}){
   const done = segs ? ONB_ORDER.indexOf(segs) : -1;
   const steps = ONB_ORDER.slice(1);
   /* Segmented progress + breadcrumbs: the segments show how far along, the
-     crumbs name where you are. Completed crumbs are buttons — they double as
+     crumbs name where you are. Completed crumbs are buttons, they double as
      back navigation to any earlier step. */
   const progress = segs ? `<div class="progress">
       ${steps.map(s => `<div class="seg ${ONB_ORDER.indexOf(s) <= done ? 'done':''}"></div>`).join('')}
@@ -993,7 +1120,7 @@ function onbShell({body, segs, back, urlbar, wide}){
   return `<div class="onb">
     <div class="onb__form">
       <div class="onb__top">
-        ${back ? `<button class="back-btn" data-onb="${back}" aria-label="Go back">‹</button>` : ''}
+        ${back ? `<button class="back-btn" data-onb="${back}" aria-label="Go back">←</button>` : ''}
         <div class="urlbar">🔒 <b>${urlbar || DASH_URL}</b></div>
       </div>
       <div class="onb__formwrap ${wide?'onb__formwrap--wide':''}">${progress}${body}</div>
@@ -1011,20 +1138,52 @@ function onbShell({body, segs, back, urlbar, wide}){
   </div>`;
 }
 
+/* The live register page opens with a rounded-square app icon, a centred
+   "Welcome to Vault22" and a centred subtitle (text-sm #6B7280, mb-10). */
+const onbHead = (title, sub) => `
+  <div class="onb-head">
+    <span class="app-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-white"/></svg></span>
+    <h1 class="onb-h1">${title}</h1>
+    ${sub ? `<p class="onb-hsub">${sub}</p>` : ''}
+  </div>`;
+
+/* Live password field: grey fill, pr-16, eye toggle. No strength meter, 
+   the live app does not show one. */
+const pwField = (id, label) => `
+  <div class="field"><label>${label || 'Password'}</label>
+    <div class="pw-wrap">
+      <input class="inp pw" id="${id}" type="password" placeholder="Enter your password">
+      <button type="button" class="pw-eye" data-eye="${id}" aria-label="Show password">${EYE}</button>
+    </div></div>`;
+const EYE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+  stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+  <circle cx="12" cy="12" r="3"/></svg>`;
+
+const GOOGLE_G = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.76c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/>
+  <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z"/>
+  <path fill="#EA4335" d="M12 4.75c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 1.46 14.97.5 12 .5A11 11 0 0 0 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>`;
+
+/* The advisor-name placeholder follows whatever was typed on register:
+   "Stephen Ong" -> stephenong. Nothing typed -> janesmith, agreeing with the
+   register screen's own "Jane Smith" placeholder. Slugified the way
+   slugCheck() normalises: lowercase, strip non-alphanumerics. */
+const suggestSlug = () => (state.advisor.name || '').toLowerCase().replace(/[^a-z0-9]/g,'') || 'janesmith';
+
 const ONB = {}, ONB_AFTER = {};
 
-/* 1 — Entry. vault22.com/advisor is where the advisor dashboard lives;
+/* 1, Entry. vault22.com/advisor is where the advisor dashboard lives;
        onboarding is what happens on the way to it. */
 ONB.entry = () => onbShell({
   wide: true,
   body: `
-    <div class="entry-mark">
-      <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-teal"/></svg>
-      <span>Vault22 <b>Advisor</b></span>
+    <div class="onb-head" style="margin-bottom:var(--v4-space-8)">
+      <span class="app-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#v22mark-white"/></svg></span>
+      <h1 class="entry-title">Grow your advisory business on Vault22</h1>
+      <p class="onb-hsub">Acquire new clients, manage relationships, and earn recurring
+        revenue, all from one platform.</p>
     </div>
-    <h1 class="entry-title">Grow your advisory business on Vault22</h1>
-    <p class="onb-sub" style="font-size:15px;max-width:52ch">Acquire new clients, manage
-      relationships, and earn recurring revenue—all from one platform.</p>
     <div class="entry-list">
       ${[['Your own page','On {name}.advisor.vault22.com, branded to you'],
          ['A link and a QR code','Every signup through them is tagged to you'],
@@ -1040,40 +1199,43 @@ ONB.entry = () => onbShell({
     <div class="legalnote">Once you're set up, your dashboard lives at <b>${DASH_URL}</b>.</div>`
 });
 
-/* Sign in — a returning advisor. Mock (no backend), so it drops straight into
+/* Sign in, a returning advisor. Mock (no backend), so it drops straight into
    the established dashboard: the honest demo of "an advisor who already exists". */
 ONB.signin = () => onbShell({
   back:'entry',
   body: `
-    <h1 class="onb-title">Welcome back</h1>
-    <p class="onb-sub">Sign in to your advisor dashboard at <b>${DASH_URL}</b>.</p>
-    <div class="field" style="margin-top:var(--v4-space-5)"><label>Email address</label>
-      <input class="inp" type="email" placeholder="demo@gmail.com"></div>
-    <div class="field" style="margin-bottom:var(--v4-space-2)"><label>Password</label>
-      <input class="inp" type="password" placeholder="••••••••"></div>
+    ${onbHead('Welcome back','Sign in to your advisor dashboard at ' + DASH_URL)}
+    <div class="field"><label>Email</label>
+      <input class="inp" type="email" placeholder="Enter your email"></div>
+    ${pwField('si_pass')}
     <div style="text-align:right"><a class="link-a" data-stub="Reset your password|In the real build this emails a one-time reset link to your registered address and returns you here to sign in.|Prototype: no backend, so no email is sent.">Forgot password?</a></div>
     <div class="actions"><button class="obtn obtn-pri" data-onb="__signin">Sign in</button></div>
     <div class="center-link">New here? <a class="link-a" data-onb="register">Create an advisor account</a></div>
     <div class="legalnote">Prototype: any credentials sign you in as Aishani Atri, the established advisor.</div>`
 });
 
-/* 2 — Register. Uday named exactly four fields on the 17 Jul call:
+/* 2, Register. Uday named exactly four fields on the 17 Jul call:
        name, email, password, region. The doc's extras stay collapsed. */
 ONB.register = () => {
   const a = state.advisor;
   return onbShell({
     segs:'register', back:'entry',
     body: `
-      <h1 class="onb-title">Create your advisor account</h1>
-      <p class="onb-sub">Three details to get started. You can add the rest later.</p>
-      <div class="field" style="margin-top:var(--v4-space-5)"><label>Full name</label>
-        <input class="inp" id="r_name" value="${esc(a.name)}" placeholder="Jane Smith" autocomplete="off">
-        <div class="onb-check bad" id="err_name"></div></div>
-      <div class="field"><label>Email address</label>
-        <input class="inp" id="r_email" type="email" value="${esc(a.email)}" placeholder="demo@gmail.com" autocomplete="off">
+      ${onbHead('Welcome to Vault22','Your all-in-one smart finance app which is intelligent, simple, and personalised for you')}
+      <h2 class="onb-form-h">Register</h2>
+      <div class="field"><label>Email</label>
+        <input class="inp" id="r_email" type="email" value="${esc(a.email)}" placeholder="Enter your email" autocomplete="off">
         <div class="onb-check bad" id="err_email"></div></div>
-      <div class="field"><label>Password</label>
-        <input class="inp" type="password" placeholder="••••••••"></div>
+      <div class="name-row">
+        <div class="field"><label>First name</label>
+          <input class="inp" id="r_first" value="${esc(a.name.split(' ')[0]||'')}" placeholder="First name" autocomplete="off"></div>
+        <div class="field"><label>Last name</label>
+          <input class="inp" id="r_last" value="${esc(a.name.split(' ').slice(1).join(' '))}" placeholder="Last name" autocomplete="off"></div>
+      </div>
+      <div class="onb-check bad" id="err_name"></div>
+      ${pwField('r_pass')}
+      <div class="field"><label>Phone number</label>
+        <input class="inp" id="r_phone" placeholder="Enter your phone number" autocomplete="off"></div>
       <details style="margin-bottom:var(--v4-space-3)">
         <summary style="font-size:13px;color:var(--muted);cursor:pointer;font-weight:600">More details</summary>
         <div style="margin-top:var(--v4-space-4)">
@@ -1087,12 +1249,15 @@ ONB.register = () => {
             <input class="inp"></div>
         </div>
       </details>
-      <div class="actions"><button class="obtn obtn-pri" data-onb="region">Create account</button></div>
-      <div class="legalnote">By continuing you agree to our Terms &amp; Conditions and Privacy Policy.</div>`
+      <div class="actions"><button class="obtn obtn-pri" data-onb="region">Continue</button></div>
+      <div class="legalnote center">By clicking on continue you agree to our
+        <a class="link-a">Terms and conditions</a> and okay with our <a class="link-a">Privacy</a></div>
+      <div class="or"><span>or</span></div>
+      <button class="obtn obtn-ghost" data-stub="Continue with Google|In the real build this opens Google sign-in and creates your advisor account from that identity.|Prototype: no backend, so there is no OAuth round-trip.">${GOOGLE_G} Continue with Google</button>`
   });
 };
 
-/* Region — its own screen, selectable cards rather than a dropdown. */
+/* Region, its own screen, selectable cards rather than a dropdown. */
 ONB.region = () => {
   const sel = state.advisor.country;
   return onbShell({
@@ -1115,7 +1280,7 @@ ONB.region = () => {
   });
 };
 
-/* 3 — Verify. Pending Verification -> Active. */
+/* 3, Verify. Pending Verification -> Active. */
 ONB.verify = () => {
   const a = state.advisor;
   return onbShell({
@@ -1133,13 +1298,14 @@ ONB.verify = () => {
       </div>
       <div style="margin-top:var(--v4-space-5);display:flex;align-items:center;gap:var(--v4-space-2);font-size:13px">
         <span class="pill p-gray">Pending Verification</span> <span style="color:var(--v4-navy-300)">→</span>
-        <span class="pill p-green">Active</span>
+        <span class="pill p-green">Active</span> <span style="color:var(--v4-navy-300)">·</span>
+        <span class="pill p-red">Suspended</span>
       </div>
       <div class="actions"><button class="obtn obtn-pri" data-onb="name">Continue</button></div>`
   });
 };
 
-/* 4 — The mandatory step. No skip, no fallback: without a name there is no
+/* 4, The mandatory step. No skip, no fallback: without a name there is no
        shareable link, so Continue stays disabled until the name is valid. */
 ONB.name = () => {
   const v = state.advisor.slug || '';
@@ -1149,13 +1315,13 @@ ONB.name = () => {
     body: `
       <h1 class="onb-title">Choose your advisor name</h1>
       <p class="onb-sub">This becomes your web address and the link you share with prospects.
-        You need one to continue — it is how every signup is tagged back to you.</p>
+        You need one to continue, it is how every signup is tagged back to you.</p>
       <div class="field" style="margin-top:var(--v4-space-5)">
         <label>Advisor name</label>
-        <input class="inp" id="slugIn" value="${esc(v)}" placeholder="aishani" autocomplete="off" spellcheck="false">
+        <input class="inp" id="slugIn" value="${esc(v)}" placeholder="${esc(suggestSlug())}" autocomplete="off" spellcheck="false">
       </div>
       <div class="urlpreview" id="slugPrev">
-        <span class="${v?'s':'r'}">${esc(v || 'yourname')}</span><span class="r">.advisor.vault22.com</span>
+        <span class="${v?'s':'r'}">${esc(v || suggestSlug())}</span><span class="r">.advisor.vault22.com</span>
       </div>
       <div class="onb-check ${c.tone}" id="slugMsg">${c.ok?'✓ ':''}${esc(c.msg)}</div>
       <div class="actions">
@@ -1167,7 +1333,7 @@ ONB.name = () => {
 };
 ONB_AFTER.name = () => { const i = document.getElementById('slugIn'); if(i) i.focus(); };
 
-/* 5 — Link, QR and share: one screen. Everything the advisor walks away with —
+/* 5, Link, QR and share: one screen. Everything the advisor walks away with, 
    the code, the link, copy, share targets and the referral code. */
 ONB.link = () => {
   const a = state.advisor;
@@ -1175,7 +1341,7 @@ ONB.link = () => {
     segs:'link', back:'name',
     body: `
       <h1 class="onb-title">Your link and QR code</h1>
-      <p class="onb-sub">Both are live now. Share them — every signup through them is tagged to you.</p>
+      <p class="onb-sub">Both are live now. Share them, every signup through them is tagged to you.</p>
       <div class="qr-center"><div class="qr" style="width:150px">
         <canvas id="obQr" width="150" height="150"></canvas></div></div>
       <div class="field">
@@ -1194,31 +1360,33 @@ ONB.link = () => {
       <div class="actions">
         <button class="obtn obtn-pri" data-onb="__done">Go to my dashboard</button>
       </div>
-      <div class="legalnote">The QR is a real, scannable code — point a phone at it.
+      <div class="legalnote">The QR is a real, scannable code, point a phone at it.
         Your dashboard lives at <b>${DASH_URL}</b>.</div>`
   });
 };
 ONB_AFTER.link = () => drawQR(document.getElementById('obQr'), 'https://' + advisorUrl(state.advisor));
 
 function goOnb(id){
-  /* Sign in — mock: any credentials return the established advisor. */
+  /* Sign in, mock: any credentials return the established advisor. */
   if(id === '__signin'){ loadScenario('est'); return render(); }
 
   /* Leaving register: capture what was typed and derive everything downstream
-     from it. Empty fields block progress — never invent a value. */
+     from it. Empty fields block progress, never invent a value. */
   if(id === 'region'){
-    const n = document.getElementById('r_name'), em = document.getElementById('r_email');
-    if(n && em){
-      const nv = n.value.trim(), ev = em.value.trim();
+    const fn = document.getElementById('r_first'), ln = document.getElementById('r_last');
+    const em = document.getElementById('r_email');
+    if(fn && em){
+      const nv = [fn.value.trim(), (ln ? ln.value.trim() : '')].filter(Boolean).join(' ');
+      const ev = em.value.trim();
       state.advisor.name = nv; state.advisor.email = ev;   // keep what they typed
-      /* Inline validation updates only the error node — re-rendering the whole
+      /* Inline validation updates only the error node, re-rendering the whole
          screen here flashed and dropped the user's focus mid-form. */
       const setErr = (which, msg) => {
         const el = document.getElementById('err_' + which);
         if(el) el.textContent = msg || '';
       };
       setErr('name',''); setErr('email','');
-      if(!nv){ state.regErr='name'; setErr('name','Enter your full name'); n.focus(); return; }
+      if(!nv){ state.regErr='name'; setErr('name','Enter your first name'); fn.focus(); return; }
       if(!EMAIL_RE.test(ev)){
         state.regErr='email';
         setErr('email', ev ? 'That doesn’t look like an email address' : 'Enter your email address');
@@ -1303,8 +1471,8 @@ function vDashboard(){
     <div class="kpis mt6">
       ${kpi('Total Leads','0','Nothing yet',true)}
       ${kpi('Total Customers','0','Nothing yet',true)}
-      ${kpi('Conversion Rate','—','Needs at least one lead')}
-      ${kpi('Assets Under Advice','—','Needs at least one customer')}
+      ${kpi('Conversion Rate',', ','Needs at least one lead')}
+      ${kpi('Assets Under Advice',', ','Needs at least one customer')}
     </div>`;
 
   return `
@@ -1312,7 +1480,7 @@ function vDashboard(){
       <p class="lede">Share your Client Platform to keep engaging clients and capturing more leads.</p></div>
     <div class="card card-p between">
       <div><h2>${esc(advisorUrl(a))}</h2>
-        <p class="lede">Your landing page is live — every signup through it is tagged to you.</p></div>
+        <p class="lede">Your landing page is live, every signup through it is tagged to you.</p></div>
       <div class="row">
         <button class="btn" data-go="landing" data-backto="1">Preview my Client Platform</button>
         <button class="btn btn-pri" data-share="1">Share my Client Platform</button>
@@ -1323,7 +1491,7 @@ function vDashboard(){
       ${kpi('Total Leads', L.length, `${qual} qualified · ${L.length-qual} unqualified`, true)}
       ${kpi('Total Customers', C.length, 'Bought at least one product', true)}
       ${kpi('Conversion Rate', conv+'%', 'Leads → customers')}
-      ${kpi('Assets Under Advice', short(aua), `Across ${C.length} customers`)}
+      ${kpi('Assets Under Advice', short(aua), `Across ${plural(C.length,'customer')}`)}
     </div>
     <div class="kpis mt">
       ${kpi('Total Investments', short(inv), 'Contributed to date')}
@@ -1385,7 +1553,7 @@ function vLeads(){
     <td class="num">${l.nw?pii(money(l.nw)):dash}</td>
     <td class="num">${l.sav?pii(money(l.sav)):dash}</td>
     <td class="num">${l.cap?pii(money(l.cap)):dash}</td>
-    <td>${l.port==='—'?dash:`<span class="pill p-gray">${l.port}</span>`}</td>
+    <td>${l.port===', '?dash:`<span class="pill p-gray">${l.port}</span>`}</td>
     <td class="num sub">${rel(l.act)}</td>
     <td><button class="btn btn-sm" data-lead="${l.id}">Open ›</button></td>
   </tr>`).join('') : '';
@@ -1401,7 +1569,7 @@ function vLeads(){
         <span style="color:var(--muted)">Minimum net worth: <b class="num">${money(QUAL.nw)}</b>
           &nbsp;OR&nbsp; Minimum monthly savings: <b class="num">${money(QUAL.sav)}</b></span>
       </div>
-      <button class="btn btn-sm" data-stub="Qualified lead filtering|In the real build you set the thresholds that split qualified from unqualified leads — minimum net worth, minimum monthly savings — and the Leads list and dashboard counts update against your rule.|Prototype: the rule is shown so the split is legible, but the thresholds are fixed.">Edit settings</button>
+      <button class="btn btn-sm" data-stub="Qualified lead filtering|In the real build you set the thresholds that split qualified from unqualified leads, minimum net worth, minimum monthly savings, and the Leads list and dashboard counts update against your rule.|Prototype: the rule is shown so the split is legible, but the thresholds are fixed.">Edit settings</button>
     </div>
 
     <div class="card mt">
@@ -1559,7 +1727,7 @@ function vCustomer(){
   const gl = c.pv-c.inv;
   const holds = c.holdings.map(h=>`<tr>
     <td class="nm">${esc(h.p)}</td>
-    <td class="num">${h.u.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+    <td class="num">${h.u.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
     <td class="num">${money(h.mv)}</td>
     <td class="num" style="color:${h.r>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">${h.r>=0?'+':''}${h.r}%</td>
     <td class="num">${h.d}</td></tr>`).join('');
@@ -1569,10 +1737,10 @@ function vCustomer(){
   const tl = [
     ['Signed up via your landing page', c.since],
     ['Completed KYC', c.since],
-    [`Risk assessment completed — ${c.type} (score ${c.score})`, c.since],
-    [`First investment — ${money(c.onetime)}`, c.since],
-    [`Recurring investment started — ${money(c.sip)}/month`, c.since],
-    ['Last investment', c.lastInv]
+    [`Risk assessment completed: ${c.type} (score ${c.score})`, c.since],
+    [`First investment: ${money(c.onetime)}`, c.since],
+    [`Recurring investment started: ${money(c.sip)}/month`, c.since],
+    ['Portfolio review', c.lastInv]
   ].map(([t,d])=>`<div class="tl-i"><div class="tl-t">${t}</div><div class="tl-d">${d}</div></div>`).join('');
 
   return `
@@ -1677,7 +1845,7 @@ function vRisk(){
       : x.stage==='Risk Assessment Pending' ? '<span class="pill p-amber">Pending</span>'
       : '<span class="pill p-gray">Not started</span>'}</td>
     <td class="num">${x.score ? x.score+' / 100' : dash}</td>
-    <td>${x.type ? `<span class="pill p-teal">${x.type}</span>` : x.port && x.port!=='—' ? `<span class="pill p-gray">${x.port}</span>` : dash}</td>
+    <td>${x.type ? `<span class="pill p-teal">${x.type}</span>` : x.port && x.port!==', ' ? `<span class="pill p-gray">${x.port}</span>` : dash}</td>
   </tr>`).join('');
   return `
     <div class="page-head"><h1>Risk Profiles</h1>
@@ -1717,7 +1885,7 @@ function vPortfolios(){
           return `<tr><td class="nm">${p.t}</td><td>${p.n}</td>
             <td class="num">${p.r}%</td><td class="num">${p.v}%</td>
             <td class="num">${n||dash}</td>
-            <td><button class="btn btn-sm" data-stub="Edit portfolio|In the real build this opens the model portfolio: name, target allocation, expected return and volatility, and which risk profile it maps to.|Not specified in the advisor doc — shown for parity with the Astute POC, so it is deliberately not built.">Edit</button></td></tr>`;
+            <td><button class="btn btn-sm" data-stub="Edit portfolio|In the real build this opens the model portfolio: name, target allocation, expected return and volatility, and which risk profile it maps to.|Not specified in the advisor doc, shown for parity with the Astute POC, so it is deliberately not built.">Edit</button></td></tr>`;
         }).join('')}</tbody></table></div>
     </div>
     <div class="card card-p mt6">
@@ -1802,7 +1970,7 @@ function vAnalytics(){
         ${prodTop.map(([p,v])=>`<div class="arow"><span class="lb" style="width:180px">${esc(p)}</span>
           <span class="bar"><i style="width:${v/prodMax*100}%"></i></span>
           <span class="pc num" style="width:56px">${short(v)}</span></div>`).join('')}
-        <div class="sec-t" style="margin-top:var(--v4-space-6)">Monthly growth — new customers</div>
+        <div class="sec-t" style="margin-top:var(--v4-space-6)">Monthly growth, new customers</div>
         ${spark(growth)}
         <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
       </div>
@@ -1842,7 +2010,7 @@ function vLanding(){
             <div class="svc" style="margin-bottom:var(--v4-space-5)">
               ${a.services.map(s=>`<span class="pill p-teal">${esc(s)}</span>`).join('')}</div>
             <div class="between">
-              <button class="btn btn-teal" data-stub="Start Investing|This is the prospect's entry point. It starts the standard Vault22 onboarding — the same journey as today, with the advisor's link attached so the signup is tagged to them.|Per the 17 Jul stand-up the investor journey is unchanged, so it is deliberately not rebuilt here.">Start Investing</button>
+              <button class="btn btn-teal" data-stub="Start Investing|This is the prospect's entry point. It starts the standard Vault22 onboarding, the same journey as today, with the advisor's link attached so the signup is tagged to them.|Per the 17 Jul stand-up the investor journey is unchanged, so it is deliberately not rebuilt here.">Start Investing</button>
               <div class="sub">${esc(a.email)} · ${esc(a.phoneFmt)}</div>
             </div>
           </div>
@@ -1922,7 +2090,11 @@ function vProfile(){
         <div class="card card-p mt">
           <div class="sec-t">Account</div>
           <div class="list-row"><span>Status</span>
-            <span class="pill ${a.status==='Active'?'p-green':'p-amber'}">${a.status}</span></div>
+            <span class="pill ${a.status==='Active'?'p-green':a.status==='Suspended'?'p-red':'p-amber'}">${a.status}</span></div>
+          <div class="list-row"><span>Account states
+            <div class="sub">Suspended advisors keep their clients but lose portal access</div></span>
+            <span class="svc">${['Pending Verification','Active','Suspended'].map(s=>
+              `<span class="pill ${s===a.status?(s==='Active'?'p-green':s==='Suspended'?'p-red':'p-amber'):'p-gray'}">${s}</span>`).join('')}</span></div>
           <div class="list-row"><span>Identity number</span><span class="sub num">${maskId(a.idNum)}</span></div>
           <div class="list-row"><span>Licence</span><span class="sub">${esc(a.licence)||dash}</span></div>
         </div>
@@ -1949,7 +2121,7 @@ function vAudit(){
     </div>
     <div class="card mt6">
       <div class="card-p"><h2>Recent activity</h2>
-        <p class="lede">Live — actions you take in this prototype are appended here.</p></div>
+        <p class="lede">Live, actions you take in this prototype are appended here.</p></div>
       <div class="tbl-scroll"><table>
         <thead><tr><th>When</th><th>Action</th><th>Target</th></tr></thead>
         <tbody>${state.audit.map(a=>`<tr>
@@ -1984,14 +2156,14 @@ function shareModal(){
       <input class="inp" value="${esc(url)}" readonly>
       <button class="btn btn-pri" data-copy="https://${esc(url)}">Copy link</button></div>
     <div class="row" style="margin-bottom:var(--v4-space-5);flex-wrap:wrap">
-      <span class="sub" style="width:100%">Share via — these open the real share targets</span>
+      <span class="sub" style="width:100%">Share via, these open the real share targets</span>
       ${shareBtns(a)}</div>
     <div class="row" style="align-items:center;gap:var(--v4-space-4);padding:var(--v4-space-4);
       background:var(--canvas);border-radius:var(--v4-radius-lg)">
       <div class="qr" style="width:110px;flex:none"><canvas id="mQr" width="110" height="110"></canvas></div>
       <div style="font-size:13px;color:var(--muted);line-height:1.6">
         <b style="color:var(--text)">Referral code ${a.code}</b><br>Scan to open ${esc(url)}.
-        <div class="sub" style="margin-top:6px">Real code — try it with your phone.</div></div>
+        <div class="sub" style="margin-top:6px">Real code, try it with your phone.</div></div>
     </div>`;
 }
 function leadModal(){
@@ -2016,14 +2188,18 @@ function leadModal(){
     <div class="sec-t" style="margin-top:var(--v4-space-6)">CRM</div>
     ${crmTabs(l.id)}`;
 }
-function openModal(html, wide){
+function openModal(html){
   const m = document.getElementById('modal');
-  m.className = 'modal' + (wide?' wide':'');
   m.innerHTML = html;
-  document.getElementById('scrim').classList.add('open');
+  m.classList.add('open');
+  document.body.classList.add('dw-open');
+  m.scrollTop = 0;
   drawQR(document.getElementById('mQr'), 'https://'+advisorUrl(state.advisor));
 }
-const closeModal = () => document.getElementById('scrim').classList.remove('open');
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.body.classList.remove('dw-open');
+}
 
 /* =====================================================================
    Notifications panel (§11)
@@ -2087,7 +2263,6 @@ document.addEventListener('click', e => {
     '[data-notif],[data-readall],[data-audit],[data-dl]');
   const panel = document.getElementById('panel');
   if(!t){
-    if(e.target.id === 'scrim') closeModal();
     if(!e.target.closest('#panel') && !e.target.closest('#bell')) panel.classList.remove('open');
     return;
   }
@@ -2096,7 +2271,7 @@ document.addEventListener('click', e => {
   if(t.dataset.go)   return go(t.dataset.go, null, t.dataset.backto ? state.route : null);
   if(t.dataset.cust){ audit('Viewed customer profile', t.dataset.cust); return go('customer', t.dataset.cust, state.route); }
   if(t.dataset.lead){ state.arg=t.dataset.lead; state.tab='notes';
-    audit('Viewed lead', t.dataset.lead); return openModal(leadModal(), true); }
+    audit('Viewed lead', t.dataset.lead); return openModal(leadModal()); }
   if(t.dataset.share) return openModal(shareModal());
   if(t.dataset.close) return closeModal();
   if(t.dataset.dl){
@@ -2105,13 +2280,13 @@ document.addEventListener('click', e => {
     a2.download = state.advisor.slug + '-vault22-qr.png';
     a2.href = cv.toDataURL('image/png'); a2.click();
     audit('Downloaded QR code', advisorUrl(state.advisor));
-    return toast('QR downloaded — it is a real code, try scanning it');
+    return toast('QR downloaded, it is a real code, try scanning it');
   }
   if(t.dataset.copy){ navigator.clipboard?.writeText(t.dataset.copy);
     audit('Copied landing page link', advisorUrl(state.advisor)); return toast('Link copied'); }
   if(t.dataset.protoclose) return closeProto();
   if(t.dataset.scen){ loadScenario(t.dataset.scen); closeProto(); return render(); }
-  /* Selecting a region updates in place — no re-render, so the screen doesn't
+  /* Selecting a region updates in place, no re-render, so the screen doesn't
      flash and the advisor just carries on. */
   if(t.dataset.region){
     state.advisor.country = t.dataset.region;
@@ -2134,32 +2309,32 @@ document.addEventListener('click', e => {
     return render();
   }
   if(t.dataset.tab){ state.tab=t.dataset.tab;
-    return state.route==='customer' ? render() : openModal(leadModal(), true); }
+    return state.route==='customer' ? render() : openModal(leadModal()); }
   if(t.dataset.crm){
     const kind=t.dataset.crm, id=t.dataset.id, c=state.crm[id];
     const inp=document.getElementById('crmIn'), dt=document.getElementById('crmDate');
     if(kind==='files'){ c.files.push('client-document-'+(c.files.length+1)+'.pdf'); audit('Uploaded file', id); }
     else {
       const v=(inp?.value||'').trim(); if(!v) return toast('Type something first');
-      if(kind==='notes'){ c.notes.unshift({t:v,by:state.advisor.name.split(' ')[0],ts:new Date().toISOString()}); audit('Added note', id); }
+      if(kind==='notes'){ c.notes.unshift({t:v,by:state.advisor.name.split(' ')[0],ts:localISO(new Date())}); audit('Added note', id); }
       if(kind==='tags'){ if(!c.tags.includes(v)) c.tags.push(v); audit('Added tag', id); }
       if(kind==='tasks'){ c.tasks.push({t:v,done:false}); audit('Added task', id); }
       if(kind==='follow'){ c.follow.push({d:dt?.value||'2026-07-20',t:v}); audit('Set follow-up reminder', id); }
       if(kind==='meets'){ c.meets.push({d:dt?.value||'2026-07-17',t:v}); audit('Logged meeting', id); }
     }
-    return state.route==='customer' ? render() : openModal(leadModal(), true);
+    return state.route==='customer' ? render() : openModal(leadModal());
   }
   if(t.dataset.untag){
     const c=state.crm[t.dataset.id];
     c.tags = c.tags.filter(g=>g!==t.dataset.untag);
-    return state.route==='customer' ? render() : openModal(leadModal(), true);
+    return state.route==='customer' ? render() : openModal(leadModal());
   }
   if(t.dataset.notif){
     const n = state.notifs.find(x=>x.id===t.dataset.notif);
     n.unread=false; panel.classList.remove('open');
     const [kind,id]=n.go;
     if(kind==='customer'){ go('customer', id, state.route); }
-    else { state.arg=id; state.tab='notes'; render(); openModal(leadModal(), true); }
+    else { state.arg=id; state.tab='notes'; render(); openModal(leadModal()); }
     return renderBell();
   }
   if(t.dataset.readall){ state.notifs.forEach(n=>n.unread=false); renderBell(); return togglePanel(), togglePanel(); }
@@ -2172,7 +2347,7 @@ document.addEventListener('click', e => {
 
 document.getElementById('bell').addEventListener('click', e => { e.stopPropagation(); togglePanel(); });
 
-/* Prototype settings drawer — available on every screen, onboarding included. */
+/* Prototype settings drawer, available on every screen, onboarding included. */
 function openProto(){
   document.getElementById('protoDrawer').innerHTML = protoDrawer();
   document.getElementById('protoDrawer').classList.add('open');
@@ -2182,7 +2357,27 @@ function closeProto(){
   document.getElementById('protoDrawer').classList.remove('open');
   document.getElementById('protoScrim').classList.remove('open');
 }
+const closeNav = () => document.body.classList.remove('nav-open');
+document.getElementById('hamb').addEventListener('click', e => {
+  e.stopPropagation();
+  const open = document.body.classList.toggle('nav-open');
+  e.currentTarget.setAttribute('aria-expanded', String(open));
+});
+document.getElementById('navScrim').addEventListener('click', closeNav);
+
 document.getElementById('protoFab').addEventListener('click', e => { e.stopPropagation(); openProto(); });
+
+/* Password reveal, the live app's eye toggle, nothing more. */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-eye]');
+  if(!b) return;
+  const f = document.getElementById(b.dataset.eye);
+  if(!f) return;
+  const show = f.type === 'password';
+  f.type = show ? 'text' : 'password';
+  b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  b.classList.toggle('on', show);
+});
 document.getElementById('protoScrim').addEventListener('click', closeProto);
 
 document.addEventListener('input', e => {
@@ -2196,7 +2391,7 @@ document.addEventListener('input', e => {
   /* The mandatory advisor name: URL assembles live, Continue stays disabled
      until the name is valid and available. */
   if(e.target.id==='slugIn'){
-    /* Normalise case in the field itself rather than rejecting it — a subdomain is
+    /* Normalise case in the field itself rather than rejecting it, a subdomain is
        case-insensitive, so "Aishani" is a valid thing to type; it just resolves to
        "aishani". Keeps the field and the live preview showing the same string. */
     const pos = e.target.selectionStart;
@@ -2207,7 +2402,7 @@ document.addEventListener('input', e => {
     const prev = document.getElementById('slugPrev');
     const msg  = document.getElementById('slugMsg');
     const next = document.getElementById('slugNext');
-    if(prev) prev.innerHTML = `<span class="${v?'s':'r'}">${esc(v || 'yourname')}</span>` +
+    if(prev) prev.innerHTML = `<span class="${v?'s':'r'}">${esc(v || suggestSlug())}</span>` +
       `<span class="r">.advisor.vault22.com</span>`;
     if(msg){ msg.className = 'onb-check ' + c.tone; msg.textContent = (c.ok?'✓ ':'') + c.msg; }
     if(next) next.disabled = !c.ok;
@@ -2220,14 +2415,14 @@ document.addEventListener('change', e => {
     const c = state.crm[e.target.dataset.id];
     c.tasks[+e.target.dataset.task].done = e.target.checked;
     audit('Updated task', e.target.dataset.id);
-    state.route==='customer' ? render() : openModal(leadModal(), true);
+    state.route==='customer' ? render() : openModal(leadModal());
   }
 });
 document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal(); closeProto();
   document.getElementById('panel').classList.remove('open'); } });
 
 /* Boot into Scenario A. The advisor onboarding journey is the first thing the
-   demo walks through, so it must be what you land on — booting into the
+   demo walks through, so it must be what you land on, booting into the
    established advisor hid it behind the demo switcher entirely. */
 loadScenario('new');
 render();

@@ -1,17 +1,20 @@
-# Internal working material — stays local, never published.
-# (Matches the other prototype repos: only the runnable prototype ships.)
+# Publish rule: only the prototype and its references go public.
+# Prompts, audits and working material stay local.
 PROMPT.md
 PROMPT-ONBOARDING.md
 PROMPT-FIXES.md
+PROMPT-AUDIT.md
+PROMPT-FINAL.md
+AUDIT.md
+SPEC-AUDIT.md
 standup-transcript-17jul.txt
 live-app-tokens.css
 DESIGN-TOKENS.css
 qr.js
 .DS_Store
 
-# only the logo the prototype actually uses is published
+# only the logo the prototype actually uses
 assets/*
 !assets/img/
 assets/img/*
 !assets/img/vault22-logo.png
-PROMPT-AUDIT.md
