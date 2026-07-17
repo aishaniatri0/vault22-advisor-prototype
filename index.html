@@ -783,6 +783,37 @@ a.btn{text-decoration:none}
 /* live: brand panel is `hidden lg:flex`, gone below 1024px */
 @media(max-width:1023px){.onb__brand{display:none}.onb__form{flex:1 1 100%}}
 
+/* Centred email-verification pop-up. */
+.cmodal-scrim{position:fixed;inset:0;z-index:200;display:flex;align-items:center;
+  justify-content:center;padding:var(--v4-space-4);background:rgba(17,24,39,.45);
+  backdrop-filter:blur(2px);animation:cmfade .15s ease}
+@keyframes cmfade{from{opacity:0}to{opacity:1}}
+.cmodal{position:relative;width:100%;max-width:400px;background:var(--surface);
+  border-radius:20px;padding:var(--v4-space-8) var(--v4-space-6) var(--v4-space-6);
+  box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center;
+  animation:cmrise .18s cubic-bezier(.22,1,.36,1)}
+@keyframes cmrise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.cmodal-x{position:absolute;top:14px;right:14px;width:32px;height:32px;border:0;
+  background:var(--v4-navy-25);border-radius:50%;font-size:18px;color:var(--muted);
+  cursor:pointer;line-height:1}
+.cmodal-x:hover{background:var(--v4-navy-50)}
+.cmodal-badge{width:56px;height:56px;margin:0 auto var(--v4-space-4);border-radius:16px;
+  background:var(--v4-teal-50,#E6F9F2);display:flex;align-items:center;justify-content:center;
+  font-size:26px}
+.cmodal-h{font-size:22px;font-weight:600;color:var(--live-title);margin-bottom:6px}
+.cmodal-sub{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:var(--v4-space-5)}
+.cmodal-code{width:100%;text-align:center;font-size:26px;font-weight:600;letter-spacing:.4em;
+  padding:14px 12px;border:1px solid var(--line);border-radius:12px;
+  font-variant-numeric:tabular-nums;color:var(--live-head);margin-bottom:6px;
+  text-indent:.4em}
+.cmodal-code:focus{outline:none;border-color:var(--v4-teal-600,#01C38D);
+  box-shadow:0 0 0 3px var(--v4-teal-50,#E6F9F2)}
+.cmodal-err{min-height:18px;font-size:12.5px;color:var(--v4-danger-dark,#C0392B);
+  margin-bottom:var(--v4-space-3)}
+.cmodal-resend{margin-top:var(--v4-space-4);font-size:13px;color:var(--muted)}
+.cmodal-resend .link-a[disabled]{color:var(--v4-navy-300);cursor:default;font-weight:500}
+.cmodal-resend .link-a:not([disabled]){color:var(--v4-teal-700,#00805C);font-weight:600;cursor:pointer}
+
 /* ============================================================
    Mobile. Patrick: "the dashboard keeps its desktop sidebar and gets cut
    off. It needs to collapse the sidebar and stack the cards."
@@ -1801,8 +1832,8 @@ ONB.verify = () => {
           : `<div class="list-row"><span><b>Email address</b>
                <div class="sub">${esc(a.email)}</div></span>
                <button class="btn btn-pri btn-sm" data-vemail="1">Verify</button></div>
-             <div class="onb-check idle" id="err_vemail">In the real build we email a secure link.
-               Here, one tap confirms it.</div>`}
+             <div class="onb-check idle" id="err_vemail">We will send a 6-digit code to confirm
+               it is you.</div>`}
 
         ${v.otp === 'verified'
           ? row('Mobile number', esc(a.phoneFmt||'Mobile'),'Verified','p-green')
@@ -1819,17 +1850,75 @@ ONB.verify = () => {
           <div class="sub">Required</div></span>
           <input type="checkbox" data-vchk="privacy" ${v.privacy?'checked':''}></label>
       </div>
-      <div style="margin-top:var(--v4-space-5);display:flex;align-items:center;gap:var(--v4-space-2);font-size:13px">
-        <span class="pill ${a.status==='Pending Verification'?'p-amber':'p-gray'}">Pending Verification</span>
-        <span style="color:var(--v4-navy-300)">→</span>
-        <span class="pill ${a.status==='Active'?'p-green':'p-gray'}">Active</span>
-        <span style="color:var(--v4-navy-300)">·</span>
-        <span class="pill ${a.status==='Suspended'?'p-red':'p-gray'}">Suspended</span>
-      </div>
       <div class="onb-check bad" id="err_verify"></div>
-      <div class="actions"><button class="obtn obtn-pri" data-onb="name">Continue</button></div>`
+      <div class="actions"><button class="obtn obtn-pri" id="verifyNext" data-onb="name"
+        ${verifyReady() ? '' : 'disabled'}>Continue</button></div>`
   });
 };
+/* The Continue gate: email verified AND both policies accepted. Drives the button's
+   disabled state directly (see the vchk change handler) so it flips the instant a box
+   is ticked, without a re-render stealing focus. */
+const verifyReady = () => state.verify.email === 'verified'
+  && state.verify.terms && state.verify.privacy;
+
+/* Email verification modal: a centred pop-up with a 6-digit code entry and a Resend
+   that unlocks after a 20-second countdown. Self-contained (its own timers, not driven
+   by render()). Any 6-digit code verifies — the prototype has no mail service, so it
+   accepts what the user types rather than blocking on a value it cannot deliver. */
+function openEmailCodeModal(){
+  const email = state.advisor.email || 'your email';
+  document.querySelectorAll('.cmodal-scrim').forEach(x => x.remove());
+  const wrap = document.createElement('div');
+  wrap.className = 'cmodal-scrim';
+  wrap.innerHTML = `
+    <div class="cmodal" role="dialog" aria-modal="true" aria-label="Verify your email">
+      <button class="cmodal-x" aria-label="Close">×</button>
+      <div class="cmodal-badge">✉️</div>
+      <h2 class="cmodal-h">Check your email</h2>
+      <p class="cmodal-sub">Enter the 6-digit code we sent to <b>${esc(email)}</b>.</p>
+      <input class="cmodal-code" id="emCode" inputmode="numeric" maxlength="6"
+             placeholder="••••••" autocomplete="one-time-code" aria-label="6-digit code">
+      <div class="cmodal-err" id="emErr"></div>
+      <button class="obtn obtn-pri" id="emVerify" style="width:100%">Verify email</button>
+      <div class="cmodal-resend">Didn't get it?
+        <button class="link-a" id="emResend" disabled>Resend code (20s)</button></div>
+    </div>`;
+  document.body.appendChild(wrap);
+  const $ = s => wrap.querySelector(s);
+  const code = $('#emCode'), resend = $('#emResend'), err = $('#emErr');
+  setTimeout(() => code.focus(), 50);
+
+  let left, iv;
+  const startTimer = () => {
+    left = 20; resend.disabled = true;
+    resend.textContent = `Resend code (${left}s)`;
+    clearInterval(iv);
+    iv = setInterval(() => {
+      left--;
+      if(left <= 0){ clearInterval(iv); resend.disabled = false; resend.textContent = 'Resend code'; }
+      else resend.textContent = `Resend code (${left}s)`;
+    }, 1000);
+  };
+  startTimer();
+
+  const close = () => { clearInterval(iv); wrap.remove(); };
+  const verify = () => {
+    const v = (code.value || '').trim();
+    if(!/^\d{6}$/.test(v)){ err.textContent = 'Enter the 6-digit code'; code.focus(); return; }
+    state.verify.email = 'verified';
+    audit('Verified email address', state.advisor.email);
+    close();
+    toast('Email verified');
+    render();
+  };
+  code.addEventListener('input', () => { err.textContent = ''; });
+  code.addEventListener('keydown', e => { if(e.key === 'Enter') verify(); });
+  $('#emVerify').addEventListener('click', verify);
+  resend.addEventListener('click', () => { if(!resend.disabled){ startTimer(); toast('A new code is on its way'); } });
+  $('.cmodal-x').addEventListener('click', close);
+  wrap.addEventListener('click', e => { if(e.target === wrap) close(); });
+  wrap.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+}
 
 
 /* 4, The mandatory step. No skip, no fallback: without a name there is no
@@ -4123,14 +4212,10 @@ document.addEventListener('click', e => {
     return toast(p.name.split(' ')[0] + ' moved from ' + was + ' to ' + type);
   }
   /* §1 verification handlers. */
-  /* One-tap verification: the prototype has no mail or SMS service, so a code round-trip
-     would be theatre that only slows the demo. */
-  if(t.dataset.vemail){
-    state.verify.email = 'verified';
-    audit('Verified email address', state.advisor.email);
-    render();
-    return toast('Email verified');
-  }
+  /* Email verification opens a code modal. Any 6-digit code the user types verifies —
+     there is no mail service, so the prototype never blocks on a value it cannot send. */
+  if(t.dataset.vemail) return openEmailCodeModal();
+  /* Mobile is optional and verifies in one tap. */
   if(t.dataset.votp === 'verify'){
     state.verify.otp = 'verified';
     audit('Verified mobile number', state.advisor.phoneFmt);
@@ -4244,6 +4329,11 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   if(e.target.dataset && e.target.dataset.vchk){
     state.verify[e.target.dataset.vchk] = e.target.checked;
+    /* Toggle Continue directly: the button disables until email is verified and both
+       policies are ticked. Done in place, not via render(), so ticking a box does not
+       drop focus mid-form. */
+    const cont = document.getElementById('verifyNext');
+    if(cont) cont.disabled = !verifyReady();
     return;
   }
   if(e.target.id==='maskTog'){ document.body.classList.toggle('mask', e.target.checked);
