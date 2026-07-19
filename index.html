@@ -123,10 +123,9 @@
    ramp + green aliases) to navy; primary buttons and active chips were already
    navy. Applied via body.theme-navy; the client app never gets this class.
    ============================================================ */
-/* THREE advisor views (§2.1): Green (consumer look) · Mid navy (green chrome, navy accents,
-   the lighter option) · Navy (full navy chrome). Green is the default (no class).
-   Mid navy + Navy both remap the accent to navy; only Navy re-skins the chrome. */
-body.theme-navy, body.theme-midnavy{
+/* TWO advisor views (§2.1, Stephen round 2): Green (consumer look, default, no class) and
+   Navy (full navy chrome). Navy remaps the accent and re-skins the chrome. */
+body.theme-navy{
   --green:#2f6bb0; --green-hover:#25578f; --green-05:rgba(47,107,176,.06); --green-10:rgba(47,107,176,.12);
   --live-cta:#214872; --live-cta-hover:#1a3a5c; --live-cta-text:#ffffff;
   --v4-teal-50:#eaf0f8; --v4-teal-100:#d4e0f0; --v4-teal-200:#a8bfd9; --v4-teal-300:#7a95b8;
@@ -216,6 +215,23 @@ a{color:var(--v4-info-dark)}
 .logo .tag{font-size:11px;font-weight:600;color:var(--green-hover);background:var(--green-10);
   padding:3px 8px;border-radius:9999px;letter-spacing:.02em;white-space:nowrap;flex:none}
 .tb-right{display:flex;align-items:center;gap:12px}
+/* P1.3: global client search */
+.gsearch{position:relative;flex:1;max-width:420px;margin:0 var(--v4-space-4)}
+.gsearch .gs-ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted);pointer-events:none}
+#globalSearch{width:100%;height:42px;border:1px solid var(--line);border-radius:9999px;background:var(--surface);
+  padding:0 16px 0 40px;font-size:13.5px;color:var(--text)}
+#globalSearch:focus{outline:none;border-color:var(--v4-teal-400);box-shadow:0 0 0 3px var(--green-10)}
+.gs-results{position:absolute;top:48px;left:0;right:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--v4-radius-md);box-shadow:0 8px 28px rgba(0,0,0,.16);padding:6px;z-index:40;max-height:60vh;overflow:auto}
+.gs-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border:none;background:none;cursor:pointer;border-radius:var(--v4-radius-sm,8px)}
+.gs-row:hover{background:var(--v4-navy-50)}
+.gs-nm{display:block;font-weight:600;font-size:13.5px}
+.gs-sub{display:block;font-size:11.5px;color:var(--muted)}
+.gs-empty{padding:12px;font-size:13px;color:var(--muted);text-align:center}
+body.theme-navy #globalSearch{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.20);color:#eaf2fb}
+body.theme-navy #globalSearch::placeholder{color:#9db3d0}
+body.theme-navy .gsearch .gs-ic{color:#9db3d0}
+@media(max-width:760px){.gsearch{display:none}}
 /* Live app pill: 46px tall, white, 1px g-200, fully round, 14px/600 g-700. */
 .chip{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 16px;
   border:1px solid var(--g-200);border-radius:9999px;background:var(--surface);
@@ -1169,6 +1185,99 @@ body.client-app .proto-fab{right:auto;left:var(--v4-space-5)}
 .uni-sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
   color:var(--muted);padding:var(--v4-space-3) 0 4px;position:sticky;top:0;background:var(--card)}
 .uni-sec:first-child{padding-top:2px}
+/* P1.5: Tara strategy summary, before/after, advisor note */
+.tara-strat{border:1px solid var(--line);border-radius:var(--v4-radius-md);padding:var(--v4-space-4);margin-bottom:var(--v4-space-4);background:var(--v4-navy-50)}
+body.dark .tara-strat{background:rgba(255,255,255,.04)}
+.tara-strat-h{display:flex;align-items:center;justify-content:space-between;gap:var(--v4-space-3);margin-bottom:6px}
+.tara-strat-l{font-size:13.5px;line-height:1.55;color:var(--text);margin-bottom:var(--v4-space-3)}
+.tara-strat-m{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--v4-space-3)}
+.tara-strat-m>div{display:flex;flex-direction:column;gap:1px}
+.tara-strat-m .num{font-size:18px;font-weight:700;line-height:1.1}
+.tara-strat-m .sub{font-size:11px}
+.tara-strat-warn{font-size:12.5px;color:var(--v4-warning-dark);margin-top:var(--v4-space-3);line-height:1.5}
+.tara-goal{font-size:12.5px;color:var(--text);margin-top:var(--v4-space-3);line-height:1.55;
+  padding-top:var(--v4-space-3);border-top:1px solid var(--line)}
+@media(max-width:560px){.tara-strat-m{grid-template-columns:1fr}
+  .tara-info-g{grid-template-columns:1fr 1fr}
+  .tara-ba-t{font-size:12px}}
+.tara-ba{border:1px solid var(--line);border-radius:var(--v4-radius-md);padding:var(--v4-space-4);margin-bottom:var(--v4-space-4)}
+.tara-ba-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:var(--v4-space-2)}
+.tara-ba-t{width:100%;min-width:0;border-collapse:collapse;font-size:13px}
+.tara-ba-t th{text-align:left;font-size:11px;color:var(--muted);font-weight:600;padding:4px 6px;border-bottom:1px solid var(--line)}
+.tara-ba-t td{padding:5px 6px;border-bottom:1px solid var(--line)}
+.tara-ba-t .num{text-align:right;font-variant-numeric:tabular-nums}
+.tara-ba-f{display:flex;flex-wrap:wrap;gap:var(--v4-space-4);margin-top:var(--v4-space-3);font-size:12.5px;color:var(--muted)}
+.tara-ba-f b{color:var(--text)}
+.advnote{border-left:3px solid var(--v4-teal-400);background:var(--v4-teal-50);border-radius:0 var(--v4-radius-sm,6px) var(--v4-radius-sm,6px) 0;
+  padding:var(--v4-space-3) var(--v4-space-4);margin-bottom:var(--v4-space-3)}
+body.dark .advnote{background:rgba(1,195,141,.08)}
+.advnote-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--v4-teal-700)}
+.advnote p{font-size:13.5px;line-height:1.55;margin-top:3px}
+/* P3.18: record-of-advice stamp on a sent Tara suggestion */
+.roa{display:flex;flex-direction:column;gap:2px;border:1px dashed var(--line);border-radius:var(--v4-radius-sm,6px);padding:8px 10px;margin-bottom:var(--v4-space-3)}
+.roa-h{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+/* P2.15: membership fee-tier table */
+.feetier{border:1px solid var(--line);border-radius:var(--v4-radius-md);padding:var(--v4-space-3);margin:var(--v4-space-3) 0}
+.feetier-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.feetier-r{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:var(--v4-radius-sm,6px);font-size:13px}
+.feetier-r.on{background:var(--v4-teal-50);color:var(--v4-teal-800);font-weight:600}
+body.dark .feetier-r.on{background:rgba(1,195,141,.10)}
+.mtile-spark{margin:2px 0}
+.mtile-spark svg{display:block;width:110px;height:24px}
+/* P2.10: fees breakdown expander */
+.fee-exp{margin-top:4px;font-size:11.5px}
+.fee-exp summary{cursor:pointer;color:var(--v4-teal-600);font-weight:600;font-size:11px}
+.fee-exp-r{display:flex;justify-content:space-between;gap:8px;padding:3px 0}
+.fee-exp-r.sub{color:var(--muted)}
+/* P0.1: first-run setup checklist */
+.setup-list{display:flex;flex-direction:column;gap:8px}
+.setup-row{display:flex;align-items:center;gap:var(--v4-space-3);padding:var(--v4-space-3);border:1px solid var(--line);
+  border-radius:var(--v4-radius-md);cursor:pointer;transition:.12s}
+.setup-row:hover{border-color:var(--v4-navy-300);background:var(--v4-navy-25,rgba(0,0,0,.02))}
+.setup-row.done{opacity:.72}
+.setup-ck{width:26px;height:26px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:13px;border:1.5px solid var(--v4-navy-200);color:var(--muted)}
+.setup-row.done .setup-ck{background:var(--v4-teal-500,#01C38D);border-color:var(--v4-teal-500,#01C38D);color:#fff}
+.setup-t{display:block;font-weight:600;font-size:14px}
+.setup-d{display:block;font-size:12px;color:var(--muted)}
+/* P1.4: client Overview grid */
+.ov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--v4-space-3)}
+@media(max-width:900px){.ov-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.ov-grid{grid-template-columns:1fr 1fr}}
+.ov-c{background:var(--live-tile,#F1F2F4);border-radius:var(--v4-radius-md);padding:var(--v4-space-3);display:flex;flex-direction:column;gap:4px;min-height:64px}
+body.dark .ov-c{background:var(--v4-navy-50)}
+.ov-k{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.ov-v{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+/* P1.6: advisor directory grid */
+.dir-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--v4-space-4)}
+@media(max-width:900px){.dir-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.dir-grid{grid-template-columns:1fr}}
+.dir-card .svc{display:flex;flex-wrap:wrap;gap:6px}
+.dir-meta{display:flex;gap:var(--v4-space-4);font-size:12.5px;color:var(--muted);margin-top:var(--v4-space-3)}
+/* P3.20: co-branding on the public landing card */
+.cobrand{display:flex;align-items:center;gap:var(--v4-space-3);flex-wrap:wrap;margin-top:var(--v4-space-5);
+  padding-top:var(--v4-space-4);border-top:1px solid var(--line)}
+.cobrand-logo{height:26px;max-width:120px;object-fit:contain}
+.cobrand-firm{font-weight:700;font-size:13px}
+.cobrand-fsp{font-size:11.5px;color:var(--muted);flex:1;min-width:120px}
+.cobrand-v22{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.cobrand-v22 img{height:16px}
+.cfoot-fsp{font-size:11px;color:var(--muted);text-align:center;padding:var(--v4-space-3) var(--v4-space-4);line-height:1.5}
+/* P2.12: bulk-select on Registered Users */
+.selbox{width:20px;height:20px;border:1.5px solid var(--v4-navy-300);border-radius:5px;background:var(--surface);
+  cursor:pointer;font-size:12px;color:#fff;display:flex;align-items:center;justify-content:center;padding:0}
+.selbox.on{background:var(--v4-teal-500,#01C38D);border-color:var(--v4-teal-500,#01C38D)}
+.row-sel{background:var(--v4-teal-50)}
+body.dark .row-sel{background:rgba(1,195,141,.08)}
+.bulkbar{display:flex;align-items:center;justify-content:space-between;gap:var(--v4-space-3);
+  padding:var(--v4-space-3) var(--v4-space-4);margin:0 var(--v4-space-4) var(--v4-space-3);
+  background:var(--v4-teal-50);border:1px solid var(--v4-teal-400);border-radius:var(--v4-radius-md);font-size:13px}
+body.dark .bulkbar{background:rgba(1,195,141,.10)}
+/* P2.13: notification channel chips */
+.chan-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chan{border:1px solid var(--line);background:var(--surface);border-radius:var(--v4-radius-full);
+  padding:4px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:.12s}
+.chan.on{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff}
 </style>
 </head>
 <body>
@@ -1207,6 +1316,11 @@ body.client-app .proto-fab{right:auto;left:var(--v4-space-5)}
   <div class="logo">
     <img src="assets/img/vault22-logo.png" alt="Vault22">
     <span class="tag">Advisor</span>
+  </div>
+  <div class="gsearch">
+    <svg class="gs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="globalSearch" type="text" placeholder="Search clients by name, email or phone" autocomplete="off" aria-label="Search clients">
+    <div class="gs-results" id="gsResults" hidden></div>
   </div>
   <div class="tb-right">
     <!-- §2.1/§2.2: view theme + light/dark live in the Prototype settings gear (bottom-right). -->
@@ -1364,6 +1478,15 @@ const stagePill = s => { const i=STAGES.indexOf(s);
        : i>=2 ? 'p-blue'      /* KYC Started, KYC Submitted */
        : 'p-gray'; };
 const TYPES = ['Very Conservative','Conservative','Balanced','Growth','Aggressive'];
+/* P2.10: acquisition source, the channel a user came through. This is the point of the
+   advisor's landing page. An explicit x.source wins (e.g. a Get-in-touch enquiry); otherwise
+   a stable, varied source is derived from the id so the column reads like real seeded data. */
+const ACQ_SOURCES = ['Advisor link','QR code','Referral','LinkedIn','Directory','Advisor link','QR code'];
+const acqSource = x => x.source || ACQ_SOURCES[(parseInt(String(x.id||'0').replace(/\D/g,'')) || 0) % ACQ_SOURCES.length];
+/* P1.4: the last risk-assessment date is a SHARED fact both the advisor and the client see.
+   A fresh reassessment the client completes is stored in state.riskDates (survives a scenario
+   hop, like consent/docs) and overrides the seeded date on every surface. */
+const lastRiskDate = p => (state.riskDates && state.riskDates[p.id]) || p.riskDate || (p.risk==='Completed' ? p.since : null);
 
 /* §9.1 Qualification rule: four editable thresholds. A registered user qualifies if they
    clear any of them. The advisor edits these on the qualification settings page, and the
@@ -1603,12 +1726,21 @@ const DOC_TYPES = ['Identity','Agreement','Proof of Address','Statements','Other
    outstanding advisor ask the client fulfils. C1 (the client persona) carries a seeded
    outstanding request so the loop demos out of the box. */
 const DOCS_SEED = {
-  C1:[{did:'D1',name:'ID document.pdf',type:'Identity',date:'2025-08-19',status:'received'},
+  C1:[{did:'D1',name:'ID document.pdf',type:'Identity',date:'2025-08-19',expiry:'2031-08-19',status:'received'},
       {did:'D2',name:'Signed advisory agreement.pdf',type:'Agreement',date:'2025-09-04',status:'received'},
+      {did:'D6',name:'Proof of address.pdf',type:'Proof of Address',date:'2025-08-19',expiry:'2026-05-19',status:'received'},
       {did:'D3',name:'Latest payslip',type:'Statements',status:'requested'}],
-  C2:[{did:'D4',name:'Passport.pdf',type:'Identity',date:'2026-01-09',status:'received'},
+  C2:[{did:'D4',name:'Passport.pdf',type:'Identity',date:'2026-01-09',expiry:'2029-01-09',status:'received'},
       {did:'D5',name:'Advisory mandate.pdf',type:'Agreement',date:'2026-01-22',status:'received'}]
 };
+/* P1.5: proof-of-address / KYC docs expire. Flag expired or expiring-soon (within 60 days). */
+function docExpiryFlag(d){
+  if(!d.expiry) return '';
+  const days = Math.round((new Date(d.expiry) - NOW) / 86400000);
+  if(days < 0)  return '<span class="pill p-red" style="margin-left:6px">Expired</span>';
+  if(days < 60) return '<span class="pill p-amber" style="margin-left:6px">Expiring soon</span>';
+  return '';
+}
 const CLIENT_ID = 'C1';                 /* whose profile the client scenario shows */
 const consentOf = (id, k) => (state.consent[id] && state.consent[id][k]) || 'none';
 const CONSENT_LABEL = {granted:'Granted', pending:'Requested', none:'Not shared'};
@@ -1716,7 +1848,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-19.4';
+const BUILD_VERSION = '2026-07-19.5';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -1767,6 +1899,8 @@ const NAV = [
   {sep:'My platform'},
   {id:'landing',label:'Landing Page',ic:'landing'},
   {id:'profile',label:'My Profile',ic:'profile'},
+  {id:'directory',label:'Browse advisors',ic:'customers'},
+  {id:'team',label:'Firm team',ic:'leads'},
   {id:'invites',label:'Invite advisors',ic:'leads'},
   {sep:'Compliance'},
   {id:'permissions',label:'Permissions',ic:'permissions'},
@@ -1778,18 +1912,44 @@ function renderNav(){
     : `<button class="nav-item ${state.route===n.id?'on':''}" data-go="${n.id}">
          <span class="ic">${navIcon(n.ic)}</span>${n.label}</button>`).join('');
 }
+/* P1.3: global client search dropdown. Matches name/email/phone across customers and
+   registered users; each result jumps to the full profile. */
+function renderGlobalSearch(q){
+  const box = document.getElementById('gsResults'); if(!box) return;
+  const term = (q||'').trim().toLowerCase();
+  if(!term){ box.hidden = true; box.innerHTML = ''; return; }
+  const pool = [
+    ...state.customers.map(c=>({...c, kind:'Customer'})),
+    ...state.leads.map(l=>({...l, kind:l.stage==='Enquiry'?'Enquiry':'Registered'}))
+  ];
+  const hits = pool.filter(x => [x.name,x.email,x.phone].some(v => String(v||'').toLowerCase().includes(term))).slice(0,8);
+  box.hidden = false;
+  box.innerHTML = hits.length ? hits.map(x=>`
+    <button class="gs-row" data-${x.kind==='Customer'?'cust':'lead'}="${x.id}" data-gsjump="1">
+      <span class="ava" style="width:30px;height:30px;font-size:11px;flex:none">${initialsOf(x.name)}</span>
+      <span style="flex:1;min-width:0;text-align:left"><span class="gs-nm">${esc(x.name)}</span>
+        <span class="gs-sub">${esc(x.email)}</span></span>
+      <span class="pill ${x.kind==='Customer'?'p-teal':'p-gray'}" style="flex:none">${x.kind}</span>
+    </button>`).join('')
+    : `<div class="gs-empty">No clients match "${esc(q)}"</div>`;
+}
+function closeGlobalSearch(){
+  const box = document.getElementById('gsResults'), inp = document.getElementById('globalSearch');
+  if(box){ box.hidden = true; box.innerHTML = ''; } if(inp) inp.value = '';
+}
 /* Back is a function of HOW you got here, not which page you're on.
    state.backTo is set only by controls that drill in (Preview my Client
    Platform, opening a customer) and cleared by any sidebar nav click, so
    top-level destinations never show a Back they don't need. */
 const ROUTE_LABEL = {dashboard:'Dashboard', leads:'Registered Users', customers:'Customers',
   risk:'Risk Profiles', portfolios:'Portfolios', analytics:'Analytics',
-  landing:'Landing Page', profile:'My Profile', invites:'Invite advisors',
-  permissions:'Permissions', audit:'Audit Log',
+  landing:'Landing Page', profile:'My Profile', directory:'Browse advisors', team:'Firm team',
+  invites:'Invite advisors', permissions:'Permissions', audit:'Audit Log',
   qualSettings:'Qualified user filtering', notifSettings:'Notification settings'};
 function go(id, arg, backTo){
   document.body.classList.remove('nav-open');
-  if(arg && arg !== state.arg) state.tab8 = 'personal';
+  closeGlobalSearch();
+  if(arg && arg !== state.arg) state.tab8 = 'overview';
   state.backTo = backTo || null;
   state.tara = null;   /* navigating away from a full-screen Tara leaves it */
   state.q = '';        /* the shared list search does not carry between screens */
@@ -1909,6 +2069,10 @@ document.addEventListener('change', e => {
   /* Booking timezone selector (display-only). */
   const tz = e.target.closest('[data-btz]');
   if(tz){ state.bookTz = tz.value; return openModal(bookDrawer(state.bookFor||state.arg)); }
+  /* P1.6: advisor-directory city filter. */
+  if(e.target.dataset && e.target.dataset.dircity !== undefined && e.target.tagName==='SELECT'){
+    state.dirCity = e.target.value; return render();
+  }
   /* P2.14: same-firm choice as a real radio group. */
   const fr = e.target.closest('[data-firm-radio]');
   if(fr){
@@ -2029,12 +2193,13 @@ function protoDrawer(){
         <div class="pd-note" style="margin:0 0 6px">View theme (advisor portal)</div>
         <div class="view-seg" style="margin-bottom:var(--v4-space-3)">
           <button class="${state.viewTheme==='green'?'on':''}" data-setvtheme="green">Green</button>
-          <button class="${state.viewTheme==='midnavy'?'on':''}" data-setvtheme="midnavy">Mid navy</button>
           <button class="${state.viewTheme==='navy'?'on':''}" data-setvtheme="navy">Navy</button>
         </div>` : ''}
       <button class="btn" style="width:100%;justify-content:center" data-mode="1">${state.mode==='dark'?'☀ Light mode':'☾ Dark mode'}</button>
-      <p class="pd-note">Switching reloads the scenario and returns you to its
-        starting screen. Nothing persists across a page reload.</p>
+      <div class="pd-sec" style="margin-top:var(--v4-space-5)">Demo</div>
+      <button class="btn" style="width:100%;justify-content:center" data-resetdemo="1">↺ Reset demo</button>
+      <p class="pd-note">Reset clears everything you changed this session (docs, notes, Tara drafts,
+        consent, meetings) and reloads the current scenario clean. Use it between meetings.</p>
       <p class="pd-note" style="opacity:.7">Build ${BUILD_VERSION}. If two tabs differ,
         one is a cached copy: hard-refresh (⌘⇧R) to load this build.</p>
     </div>`;
@@ -2508,7 +2673,10 @@ function shareBtns(a, copy){
 function vDashboard(){
   const a = state.advisor, L = state.leads, C = state.customers;
   const aua = C.reduce((s,c)=>s+c.pv,0), inv = C.reduce((s,c)=>s+c.inv,0);
-  const pkyc = L.filter(l=>STAGES.indexOf(l.stage)<4).length;
+  /* KYC-pending = registered users still inside the onboarding stages. Enquiries (stage
+     'Enquiry', not in STAGES) are leads but not yet in KYC, so they are excluded. */
+  const inKyc = l => { const i = STAGES.indexOf(l.stage); return i >= 0 && i < 4; };
+  const pkyc = L.filter(inKyc).length;
   const prisk = L.filter(l=>l.stage==='Risk Assessment Pending').length;
   const conv = (L.length+C.length) ? (C.length/(L.length+C.length)*100).toFixed(1) : '0.0';
   /* Derived, not invented: registered users whose signup falls in the current month. */
@@ -2520,7 +2688,7 @@ function vDashboard(){
   const nameList = arr => arr.length <= 2
     ? arr.map(x=>x.name.split(' ')[0]).join(' and ')
     : arr.slice(0,2).map(x=>x.name.split(' ')[0]).join(', ') + ' and ' + (arr.length-2) + ' others';
-  const kycNames  = nameList(L.filter(l=>STAGES.indexOf(l.stage)<4));
+  const kycNames  = nameList(L.filter(inKyc));
   const riskNames = nameList(L.filter(l=>l.stage==='Risk Assessment Pending'));
   /* These three were hardcoded: cutting the book to one customer moved every other KPI
      and left these frozen. All three are derivable from the book. */
@@ -2541,9 +2709,41 @@ function vDashboard(){
   const kpi=(k,v,d,hero)=>`<div class="kpi ${hero?'hero':''}"><div class="k">${k}</div>
     <div class="v">${v}</div>${d?`<div class="d">${d}</div>`:''}</div>`;
 
+  /* P0.1: first-run setup checklist. Shown for a brand-new advisor until all four steps
+     are done, then it collapses and the normal dashboard shows. Ticks persist in state.setup. */
+  const setup = state.setup || {};
+  const steps = [
+    {k:'profile', t:'Set up your profile',        d:'Add your FSP licence and firm details',   done: !!a.licence,     go:'profile'},
+    {k:'landing', t:'Customise your landing page',d:'Your photo, bio and services',            done: !!setup.landing, go:'landing'},
+    {k:'share',   t:'Invite your first client',   d:'Share your personal signup link',         done: !!setup.share,   act:'share'},
+    {k:'qr',      t:'Share your QR code',          d:'Download your QR for print or WhatsApp',  done: !!setup.qr,      act:'share'}
+  ];
+  const doneN = steps.filter(s=>s.done).length;
+  if(!L.length && !C.length && doneN < 4) return `
+    <div class="page-head"><h1>Welcome to Vault22, ${esc(a.name.split(' ')[0])}</h1>
+      <p class="lede">A few steps to get your advisor page ready. This takes about five minutes.</p></div>
+    <div class="card card-p">
+      <div class="between" style="margin-bottom:var(--v4-space-3)">
+        <div class="sec-t" style="margin:0">Set up your advisor page</div>
+        <span class="pill ${doneN===4?'p-green':'p-amber'}">${doneN} of 4 done</span>
+      </div>
+      <div class="track" style="margin-bottom:var(--v4-space-4)"><i style="width:${doneN/4*100}%"></i></div>
+      <div class="setup-list">${steps.map((s,i)=>`
+        <div class="setup-row ${s.done?'done':''}" ${s.go?`data-go="${s.go}" data-backto="1"`:`data-${s.act}="1"`} data-setupstep="${s.k}">
+          <span class="setup-ck">${s.done?'✓':i+1}</span>
+          <span style="flex:1;min-width:0"><span class="setup-t">${s.t}</span><span class="setup-d">${s.d}</span></span>
+          ${s.done?'<span class="pill p-green">Done</span>':'<span class="chev">›</span>'}
+        </div>`).join('')}</div>
+    </div>
+    <div class="card card-p between mt6">
+      <div><h2>${esc(advisorUrl(a))}</h2>
+        <p class="lede">Every signup through this link is tagged to you.</p></div>
+      <div class="row"><button class="btn" data-go="landing" data-backto="1">Preview my Client Platform</button>
+        <button class="btn btn-pri" data-share="1">Share my Client Platform</button></div>
+    </div>`;
   if(!L.length && !C.length) return `
     <div class="page-head"><h1>Welcome to Vault22, ${esc(a.name.split(' ')[0])}</h1>
-      <p class="lede">Your landing page is live. Share it to start bringing in leads.</p></div>
+      <p class="lede">Your page is set up. Share it to start bringing in leads.</p></div>
     <div class="card card-p between">
       <div><h2>${esc(advisorUrl(a))}</h2>
         <p class="lede">Every signup through this link is tagged to you.</p></div>
@@ -2639,7 +2839,16 @@ function vDashboard(){
             ${mTile('New registered users', mnu, 'Signed up through your link')}
             ${mTile('New customers', mnc, 'Made a first investment')}
             ${mTile('Invested', short(mia), 'Recurring plus one-off')}
-            ${mTile('Revenue / commission', money(rev), 'Estimated, on your book')}
+            <!-- P2.16: renamed from Revenue/commission; the advisory fees you earn, same
+                 feesFor() basis as the client Financial tab, with a 6-month trend sparkline. -->
+            <div class="mtile"><span class="mtile-l">Estimated fees this month</span>
+              <span class="mtile-v">${money(rev)}</span>
+              <div class="mtile-spark">${spark([0.80,0.85,0.88,0.92,0.96,1].map(f=>Math.round(rev*f)),110,24)}</div>
+              <details class="fee-exp"><summary>Breakdown</summary>
+                <div class="fee-exp-r"><span>Advisory fees earned</span><b class="num">${money(rev)}</b></div>
+                <div class="fee-exp-r"><span>Vault22 subscription (you pay)</span><b class="num">${usd(subFee(C.length))}</b></div>
+                <div class="fee-exp-r sub"><span>AUM 25bps on non-Vault22</span><span>billed to clients</span></div>
+              </details></div>
           </div>
           <div class="hr"></div>
           <div class="between">
@@ -2745,7 +2954,8 @@ const mTile = (label, value, sub) => `
 const LEAD_FILTERS = [
   {k:'qual', t:'Qualified', f:l=>isQual(l)},
   {k:'unqual', t:'Unqualified', f:l=>!isQual(l)},
-  {k:'kyc', t:'KYC Pending', f:l=>STAGES.indexOf(l.stage)<4},
+  {k:'kyc', t:'KYC Pending', f:l=>{const i=STAGES.indexOf(l.stage); return i>=0 && i<4;}},
+  {k:'enquiry', t:'Enquiries', f:l=>l.stage==='Enquiry'},
   {k:'risk', t:'Risk Pending', f:l=>l.stage==='Risk Assessment Pending'},
   {k:'hnw', t:'High Net Worth', f:l=>(l.nw||0)>=1000000},
   {k:'ffs', t:'Fitness ≥ 600', f:l=>(l.ffs||0)>=600},
@@ -2780,9 +2990,12 @@ function vLeads(){
   /* Trimmed from twelve columns to the six an advisor scans by. At 1440px the old set
      overflowed and clipped the rightmost columns; net worth, savings, capacity and
      portfolio all live on the client's detail view, one click away. */
-  const body = rows.length ? rows.map(l=>`<tr class="row-go" data-lead="${l.id}">
+  const sel = state.leadSel || new Set();
+  const body = rows.length ? rows.map(l=>`<tr class="row-go ${sel.has(l.id)?'row-sel':''}" data-lead="${l.id}">
+    <td><button class="selbox ${sel.has(l.id)?'on':''}" data-selrow="${l.id}" aria-label="Select ${esc(l.name)}">${sel.has(l.id)?'✓':''}</button></td>
     <td><div class="nm">${esc(l.name)}</div><div class="sub">${esc(l.email)}</div></td>
     <td><span class="pill ${stagePill(l.stage)}">${l.stage}</span></td>
+    <td><span class="sub">${esc(acqSource(l))}</span></td>
     <td>${isQual(l)?'<span class="pill p-teal">Qualified</span>':'<span class="pill p-gray">Unqualified</span>'}</td>
     <td class="num">${l.ffs?pii(l.ffs):dash}</td>
     <td class="num">${l.nw?pii(money(l.nw)):dash}</td>
@@ -2822,9 +3035,17 @@ function vLeads(){
           ${state.filters.size?`<button class="fchip" data-filter="__clear">Clear all ✕</button>`:''}
         </div>
       </div>
+      ${sel.size ? `<div class="bulkbar">
+        <span><b>${sel.size}</b> selected</span>
+        <span class="row" style="gap:var(--v4-space-2)">
+          <button class="btn btn-sm btn-pri" data-bulkemail="1">Email</button>
+          <button class="btn btn-sm" data-bulkexport="1">Export CSV</button>
+          <button class="btn btn-sm" data-selclear="1">Clear</button>
+        </span></div>` : ''}
       ${rows.length ? `<div class="tbl-scroll"><table>
         <thead><tr>
-          ${th('name','Name')}${th('stage','Status')}<th>Qualified</th>${th('ffs','Fitness')}
+          <th><button class="selbox ${sel.size&&sel.size===rows.length?'on':''}" data-selall="1" aria-label="Select all">${sel.size&&sel.size===rows.length?'✓':''}</button></th>
+          ${th('name','Name')}${th('stage','Status')}<th>Source</th><th>Qualified</th>${th('ffs','Fitness')}
           ${th('nw','Net Worth')}${th('act','Last Activity')}<th></th>
         </tr></thead><tbody>${body}</tbody></table></div>`
       : `<div class="empty"><div class="em">◎</div><h3>No registered users match</h3>
@@ -2855,8 +3076,10 @@ function applyCust(){
     !q || [c.name,c.email,c.phone].some(v=>String(v).toLowerCase().includes(q)));
   CUST_FILTERS.forEach(f=>{ if(state.filters.has(f.k)) r = r.filter(f.f); });
   const {k,d} = state.sort;
+  /* P2.12: 'fee' is a computed column (advisory fees YTD), so sort it via feesFor. */
+  const keyOf = c => k==='fee' ? feesFor(c,'Year to date') : c[k];
   return r.sort((a,b)=>{
-    const x=a[k], y=b[k];
+    const x=keyOf(a), y=keyOf(b);
     if(x==null) return 1; if(y==null) return -1;
     return (typeof x==='number' ? x-y : String(x).localeCompare(String(y))) * d;
   });
@@ -2877,7 +3100,7 @@ function vCustomers(){
   /* §(2nd email): a date by each customer for their last risk assessment, so the advisor
      can scan the list for who is approaching or past their annual review (not buried in a tab). */
   const riskCell = c => {
-    const d = c.riskDate; if(!d) return '<span class="sub">Not done</span>';
+    const d = lastRiskDate(c); if(!d) return '<span class="sub">Not done</span>';
     const days = Math.round((NOW - new Date(d)) / 86400000);
     const tag = days > 365 ? '<span class="pill p-red" style="margin-left:6px">Overdue</span>'
               : days > 305 ? '<span class="pill p-amber" style="margin-left:6px">Due soon</span>' : '';
@@ -2888,12 +3111,15 @@ function vCustomers(){
     return `<tr class="row-go" data-cust="${c.id}">
     <td><div class="nm">${esc(c.name)}</div><div class="sub">${esc(c.email)}</div></td>
     <td><span class="pill p-teal">${c.type}</span></td>
+    <td><span class="sub">${esc(acqSource(c))}</span></td>
     <td class="num">${money(c.nw)}</td>
     <td class="num"><b>${money(c.pv)}</b></td>
     <td class="num" style="color:${gl>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">
       ${gl>=0?'+':''}${money(gl)}</td>
     <td class="num" style="color:${ch>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">
       ${ch>=0?'+':''}${ch.toFixed(1)}%</td>
+    <td class="num">${money(feesFor(c,'Year to date'))}</td>
+    <td class="num sub">${lastContacted(c.id) || rel(c.lastLogin)}</td>
     <td>${riskCell(c)}</td>
     <td><button class="btn btn-sm" data-cust="${c.id}">Profile ›</button></td>
   </tr>`;}).join('');
@@ -2920,8 +3146,9 @@ function vCustomers(){
         </div>
       </div>
       ${rows.length?`<div class="tbl-scroll"><table>
-        <thead><tr>${th('name','Name')}<th>Risk Profile</th>${th('nw','Net Worth')}
+        <thead><tr>${th('name','Name')}<th>Risk Profile</th><th>Source</th>${th('nw','Net Worth')}
           ${th('pv','Portfolio Value')}<th>Profit/Loss</th><th>% change</th>
+          ${th('fee','Fees (YTD)')}<th>Last contacted</th>
           <th>Last risk review</th><th></th></tr></thead>
         <tbody>${body}</tbody></table></div>`
       :`<div class="empty"><div class="em">◍</div><h3>No customers match</h3>
@@ -2939,6 +3166,7 @@ function vCustomers(){
    by the consent object; Personal, Documents and Activity are not.
    ===================================================================== */
 const TABS8 = [
+  {k:'overview',   t:'Overview'},
   {k:'personal',   t:'Personal'},
   {k:'financial',  t:'Financial',  gated:true},
   {k:'investment', t:'Investment', gated:true},
@@ -2948,6 +3176,46 @@ const TABS8 = [
   {k:'crm',        t:'CRM'},
   {k:'audit',      t:'Audit'}
 ];
+/* P1.4 / P2.12: last contact = the most recent CRM meeting, note, task or follow-up for
+   this client; falls back to last login. Drives the Overview and the Customers table. */
+function lastContacted(id){
+  const c = state.crm[id] || {};
+  const ts = [];
+  (c.meets||[]).forEach(m => ts.push(m.day || m.d));
+  (c.notes||[]).forEach(n => ts.push((n.ts||'').slice(0,10)));
+  (c.tasks||[]).forEach(k => ts.push((k.ts||'').slice(0,10)));
+  (c.follow||[]).forEach(f => ts.push(f.on || (f.ts||'').slice(0,10)));
+  const valid = ts.filter(Boolean).sort();
+  return valid.length ? valid[valid.length-1] : null;
+}
+/* P1.4: the Overview tab, the at-a-glance strip so the advisor does not hunt across tabs. */
+function tab8Overview(p){
+  const isCust = !!p.pv;
+  const lc = lastContacted(p.id);
+  const fees = isCust ? feesFor(p, 'Year to date') : 0;
+  const cards = [
+    ['Stage', isCust ? '<span class="pill p-teal">Customer</span>' : `<span class="pill ${stagePill(p.stage)}">${esc(p.stage)}</span>`],
+    ['Risk profile', p.type ? `<span class="pill p-teal">${esc(p.type)}</span>${p.score!=null?' <span class="sub num">'+p.score+'/100</span>':''}` : (p.port && p.port!=='n/a' ? esc(p.port) : '<span class="sub">Not assessed</span>')],
+    ['Net worth', p.nw!=null ? money(p.nw) : dash],
+    ['Portfolio value', isCust ? money(p.pv) : dash],
+    ['Fees earned (YTD)', isCust ? money(fees) : dash],
+    ['Last contact', lc ? lc : (p.lastLogin ? rel(p.lastLogin) : dash)],
+    ['Last risk assessment', lastRiskDate(p) || 'Not completed'],
+    ['Acquisition source', esc(acqSource(p))]
+  ];
+  return `<div class="card card-p">
+    <div class="sec-t">Overview</div>
+    <p class="lede" style="margin-bottom:var(--v4-space-4)">${esc(p.name)} at a glance.</p>
+    <div class="ov-grid">${cards.map(([k,v])=>`<div class="ov-c">
+      <span class="ov-k">${k}</span><span class="ov-v">${v}</span></div>`).join('')}</div>
+    <div class="row" style="margin-top:var(--v4-space-4);flex-wrap:wrap;gap:var(--v4-space-2)">
+      <button class="btn btn-sm" data-book="${p.id}">Book meeting</button>
+      <button class="btn btn-sm" data-reqrisk="${p.id}">Request risk assessment</button>
+      ${CONSENT_SECTIONS.some(s=>consentOf(p.id,s.k)!=='granted') ? `<button class="btn btn-sm" data-reqallconsent="${p.id}">Request all data access</button>` : ''}
+      ${isCust ? `<button class="btn btn-sm btn-pri" data-tara="${p.id}">Personalise portfolio</button>` : ''}
+    </div>
+  </div>`;
+}
 /* A Detail | Value table. The advisor's §8 tabs used to render this same label/value
    data as a stacked two-column grid while the client side got a real table, so the same
    information wore two different treatments. One helper, one treatment, everywhere. */
@@ -2997,6 +3265,7 @@ function tab8Personal(p){
       ['Home owner / tenant', p.housing || dash],
       ['Signup date', p.signup || p.since],
       ['Registration date', p.signup || p.since],
+      ['Acquisition source', esc(acqSource(p))],
       /* P2.11: onboarding-stage pill lives on the header + Activity tab; not duplicated here. */
       ['KYC status', p.kyc ? `<span class="pill p-green">${p.kyc}</span>`
                            : (STAGES.indexOf(p.stage)>=4 ? '<span class="pill p-green">Approved</span>'
@@ -3088,6 +3357,20 @@ function membershipInvoices(n){
    them). Reuses the buildICS/downloadICS Blob-download pattern. */
 /* A minimal, valid single-page PDF built by hand from a list of text lines (no external
    libraries: CSP blocks them). Shared by the membership invoice and the financial report. */
+/* P1.8/P2.15: a generic client-side text/CSV/blob download, same pattern as downloadICS. */
+function downloadText(text, filename, mime){
+  const blob = new Blob([text], {type: (mime||'text/plain') + ';charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const el = document.createElement('a');
+  el.href = url; el.download = filename;
+  document.body.appendChild(el); el.click(); el.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+/* Build a CSV from a header array + row arrays, escaping quotes/commas. */
+function toCSV(header, rows){
+  const cell = v => { const s = String(v==null?'':v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+  return [header.map(cell).join(','), ...rows.map(r=>r.map(cell).join(','))].join('\r\n');
+}
 function downloadPdf(lines, filename){
   const esc = s => String(s).replace(/[\\()]/g, c => '\\' + c);
   let stream = 'BT /F1 11 Tf 14 TL 56 780 Td\n';
@@ -3266,7 +3549,7 @@ function tab8Risk(p){
   const type = p.type || (p.port && p.port!=='n/a' ? p.port : null);
   /* §16: users normally redo the risk assessment once a year. Show the last date and
      let the advisor request a fresh one, which notifies the client. */
-  const last = p.riskDate || (p.risk==='Completed' ? p.since : null);
+  const last = lastRiskDate(p);
   return `<div class="card card-p">
     <div class="between">
       <div class="sec-t" style="margin:0">Risk</div>
@@ -3307,9 +3590,10 @@ function docSection(scope, id){
           : `<span class="pill p-amber">Awaiting client</span>`}</div>`).join('')}
       <div class="hr"></div>` : ''}
     ${received.length ? `<div class="ptbl-wrap" style="margin-bottom:var(--v4-space-4)"><table class="ptbl">
-      <thead><tr><th>Document</th><th>Type</th><th>Date</th></tr></thead>
-      <tbody>${received.map(d=>`<tr><td>📎 ${esc(d.name)}</td><td>${esc(d.type)}</td>
-        <td class="num">${d.date||''}</td></tr>`).join('')}</tbody></table></div>`
+      <thead><tr><th>Document</th><th>Type</th><th>Date</th><th>Expiry</th><th></th></tr></thead>
+      <tbody>${received.map(d=>`<tr><td>📎 ${esc(d.name)}${docExpiryFlag(d)}</td><td>${esc(d.type)}</td>
+        <td class="num">${d.date||''}</td><td class="num sub">${d.expiry||'No expiry'}</td>
+        <td><button class="btn btn-sm" data-docview="${esc(d.name)}|${esc(d.type)}|${d.date||''}|${d.expiry||''}">Open</button></td></tr>`).join('')}</tbody></table></div>`
       : (requested.length ? '' : '<p class="lede" style="margin-bottom:var(--v4-space-4)">No documents yet.</p>')}
     ${draft ? `
       <div style="border:1px solid var(--line);border-radius:var(--live-radius);padding:var(--v4-space-4)">
@@ -3320,6 +3604,8 @@ function docSection(scope, id){
           <select class="inp inp-sm" id="docType" data-doctype="draft">
             <option value="" ${!draft.type?'selected':''} disabled>Select type…</option>
             ${DOC_TYPES.map(t=>`<option ${draft.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
+        <div class="field"><label>Expiry date (optional, for ID and proof of address)</label>
+          <input class="inp inp-sm" id="docExpiry" type="date" value="${esc(draft.expiry||'')}"></div>
         <div class="row"><button class="btn btn-pri btn-sm" data-docsave="${dz}" ${draft.type?'':'disabled'}>Add document</button>
           <button class="btn btn-sm" data-doccancel="1">Cancel</button></div>
       </div>`
@@ -3364,7 +3650,7 @@ function tab8Activity(p){
   const items = [
     ['First investment', p.onetime ? p.since : null],
     ['SIP started', p.sip ? (p.sipStart || null) : null],
-    ['Risk assessment last completed', p.riskDate || (p.risk==='Completed' ? p.since : null)],
+    ['Risk assessment last completed', lastRiskDate(p)],
     ['Portfolio review last completed', p.review || null]
   ];
   const crm = state.crm[p.id] || {notes:[],meets:[]};
@@ -3413,8 +3699,8 @@ const crmWho = id => {
 };
 
 function tabs8(p){
-  let cur = state.tab8 || 'personal';
-  const body = {personal:tab8Personal, financial:tab8Financial, investment:tab8Investment,
+  let cur = state.tab8 || 'overview';
+  const body = {overview:tab8Overview, personal:tab8Personal, financial:tab8Financial, investment:tab8Investment,
                 risk:tab8Risk, documents:tab8Documents,
                 activity:tab8Activity, crm:tab8Crm, audit:tab8Audit};
   /* P0.4: the Onboarding tab was merged into Activity; a stale route lands on Activity. */
@@ -3503,7 +3789,7 @@ function vCustomer(){
   /* P0.1: the annual risk reassessment is independent of financial-data view consent,
      so the trigger and the last-assessment date live on the header and are reachable
      for every client (even C3 pending / C4 no consent), not only inside the gated Risk tab. */
-  const lastRisk = c.riskDate || (c.risk==='Completed' ? c.since : null);
+  const lastRisk = lastRiskDate(c);
   return `
     <div class="page-head between">
       <div><h1>${esc(c.name)}</h1>
@@ -3515,6 +3801,7 @@ function vCustomer(){
         <a class="btn btn-sm" target="_blank" rel="noopener" href="${wa}" data-audit="WhatsApped ${c.id}">WhatsApp</a>
         <button class="btn btn-sm" data-book="${c.id}">Book</button>
         <button class="btn btn-sm" data-reqrisk="${c.id}">Request risk assessment</button>
+        <button class="btn btn-sm" data-reqkyc="${c.id}">Request KYC refresh</button>
         ${isCust ? `<button class="btn btn-sm btn-pri" data-tara="${c.id}">Personalise portfolio</button>` : ''}
         <span class="pill ${isCust?'p-teal':stagePill(c.stage)}">${isCust?'Customer':c.stage}</span>
       </div>
@@ -3659,22 +3946,27 @@ function vPortfolios(){
     </div>
 
     <div class="card mt6">
-      <div class="card-head"><div class="row"><h2>Add a portfolio</h2></div>
+      <div class="card-head"><div class="row"><h2>Add a portfolio</h2>
+        ${sub.filter(s=>s.status!=='Approved').length?`<span class="pill p-amber">${sub.filter(s=>s.status!=='Approved').length} in moderation</span>`:''}</div>
         <button class="btn btn-pri btn-sm" data-addport="1">Add portfolio</button></div>
       <div class="card-p" style="padding-top:0">
         <p class="lede">Submit a portfolio your clients are invested in. Vault22 moderates every
           submission; it only appears in the list above once approved.</p>
-        ${sub.length ? `<div class="ptbl-wrap mt"><table class="ptbl">
+        ${sub.length ? `<div class="sec-t mt" style="font-size:14px">Vault22 moderation queue</div>
+        <div class="ptbl-wrap mt"><table class="ptbl">
           <thead><tr><th>Portfolio</th><th>Risk profile</th><th>Status</th><th></th></tr></thead>
           <tbody>${sub.map((s,i)=>`<tr><td>${esc(s.name)} <span class="sub">${esc(s.ticker)}</span></td>
             <td>${esc(s.risk)}</td>
-            <td><span class="pill ${s.status==='Approved'?'p-green':'p-amber'}">${s.status}</span></td>
+            <td><span class="pill ${s.status==='Approved'?'p-green':s.status==='Rejected'?'p-red':'p-amber'}">${s.status}</span></td>
             <td>${s.status==='Approved'
               ? '<span class="sub">Live in the list above</span>'
-              : `<button class="btn btn-sm" data-approveport="${i}" title="Prototype: the Vault22 moderation step">Approve (Vault22 review)</button>`}</td></tr>`).join('')}</tbody>
+              : s.status==='Rejected'
+              ? '<span class="sub">Not approved</span>'
+              : `<span class="row" style="gap:var(--v4-space-2)"><button class="btn btn-sm" data-approveport="${i}" title="Prototype: the Vault22 moderation step">Approve</button>
+                 <button class="btn btn-sm" data-modq="${i}">Reject</button></span>`}</td></tr>`).join('')}</tbody>
         </table></div>
-        <div class="sub" style="margin-top:var(--v4-space-3)">The Approve action stands in for Vault22's
-          moderation team, so the presenter can show a submission going live.</div>` : '<p class="lede mt">You have not submitted any portfolios yet.</p>'}
+        <div class="sub" style="margin-top:var(--v4-space-3)">Approve and Reject stand in for Vault22's
+          moderation team, so the presenter can show a submission going live or being turned back.</div>` : '<p class="lede mt">You have not submitted any portfolios yet.</p>'}
       </div>
     </div>`;
 }
@@ -3703,7 +3995,7 @@ function portDrawer(p){
     ${Object.entries(p.a).map(([k,v])=>`<div class="arow">
       <span class="lb">${k}</span><span class="bar"><i style="width:${v}%"></i></span>
       <span class="pc num">${v}%</span></div>`).join('')}
-    <div class="mt"><button class="btn btn-sm" data-stub="Fact sheet|In the real build this opens the fund's fact sheet PDF, with fees, mandate and full historic performance.|Prototype: no document service.">Open fact sheet</button></div>`;
+    <div class="mt"><button class="btn btn-sm" data-factsheet="${esc(p.n)}|${esc(p.tk)}|${p.t}|${p.r}|${p.v}">Open fact sheet</button></div>`;
 }
 /* §14.2: the add-portfolio form, same fields as the internal add-portfolio flow. */
 function addPortDrawer(){
@@ -3943,12 +4235,37 @@ function vAnalytics(){
   const usersSeries = SERIES.users, custSeries = SERIES.custs;
   const aumSeries = SERIES.aum, invSeries = SERIES.inv;
 
+  /* P2.9: acquisition by source, for everyone who signed up within the window. Reuses the
+     inWin() window test already defined above for the KPI tiles. */
+  const winPeople = [...L.filter(l=>inWin(l.signup)), ...C.filter(c=>inWin(c.signup||c.since))];
+  const srcCount = {};
+  winPeople.forEach(x => { const s = acqSource(x); srcCount[s] = (srcCount[s]||0)+1; });
+  const srcTot = Object.values(srcCount).reduce((s,n)=>s+n,0) || 1;
+  const anSourceRows = Object.entries(srcCount).map(([src,n])=>({src, n, pct: Math.round(n/srcTot*100)}))
+    .sort((a,b)=>b.n-a.n);
+  /* P2.15: product breakdown from every customer's holdings. */
+  const prodMv = {};
+  C.forEach(c => (c.holdings||[]).forEach(h => { prodMv[h.p] = (prodMv[h.p]||0) + h.mv; }));
+  const prodTot = Object.values(prodMv).reduce((s,n)=>s+n,0) || 1;
+  const anProductRows = Object.entries(prodMv).map(([name,mv])=>({name, mv, pct: Math.round(mv/prodTot*100)}))
+    .sort((a,b)=>b.mv-a.mv).slice(0,8);
+  /* P2.15: portfolio-type breakdown across the book. */
+  const portAgg = {};
+  C.forEach(c => { const k = c.type || 'Unassigned'; (portAgg[k] = portAgg[k] || {n:0,pv:0}); portAgg[k].n++; portAgg[k].pv += c.pv; });
+  const portTot = Object.values(portAgg).reduce((s,x)=>s+x.pv,0) || 1;
+  const anPortRows = Object.entries(portAgg).map(([name,x])=>({name, n:x.n, pv:x.pv, pct: Math.round(x.pv/portTot*100)}))
+    .sort((a,b)=>b.pv-a.pv);
+
   return `
     <div class="page-head between">
       <div><h1>Analytics</h1>
         <p class="lede">How your funnel is converting and where the book is growing.
           Every figure below is for <b>${win.label}</b>.</p></div>
       <div style="text-align:right">
+        <div class="row" style="justify-content:flex-end;gap:var(--v4-space-2);margin-bottom:var(--v4-space-2)">
+          <button class="btn btn-sm" data-anexport="csv">Export CSV</button>
+          <button class="btn btn-sm" data-anexport="pdf">Download report</button>
+        </div>
         <div class="chips" style="justify-content:flex-end">${AN_PERIODS.map(p=>`
           <button class="fchip ${period===p?'on':''}" data-period="${esc(p)}">${p}</button>`).join('')}</div>
         ${period==='Custom' ? `<div class="row" style="justify-content:flex-end;margin-top:var(--v4-space-3)">
@@ -3993,6 +4310,36 @@ function vAnalytics(){
         ${mTile('New customers', newCust, 'First investment in ' + win.label)}
         ${mTile('Invested', short(investedWin), 'In ' + win.label)}
         ${mTile('Assets under advice', short(aua), 'As at period end')}
+      </div>
+    </div>
+
+    <!-- P2.9: acquisition by source, over the selected period. -->
+    <div class="card card-p mt6">
+      <div class="sec-t">Acquisition by source</div>
+      <p class="lede" style="margin-bottom:var(--v4-space-4)">Where the ${plural(anSourceRows.reduce((s,r)=>s+r.n,0),'signup')} in ${win.label} came from.</p>
+      ${anSourceRows.length ? anSourceRows.map(r=>`
+        <div class="arow"><span class="lb">${esc(r.src)}</span>
+          <span class="bar"><i style="width:${r.pct}%"></i></span>
+          <span class="pc num">${r.n} · ${r.pct}%</span></div>`).join('')
+        : '<p class="lede">No signups in this period.</p>'}
+    </div>
+
+    <!-- P2.15: breakdown by product and by portfolio. -->
+    <div class="grid2 mt6">
+      <div class="card card-p">
+        <div class="sec-t">By product</div>
+        ${anProductRows.length ? anProductRows.map(r=>`
+          <div class="arow"><span class="lb">${esc(r.name)}</span>
+            <span class="bar"><i style="width:${r.pct}%"></i></span>
+            <span class="pc num">${short(r.mv)}</span></div>`).join('')
+          : '<p class="lede">No holdings yet.</p>'}
+      </div>
+      <div class="card card-p">
+        <div class="sec-t">By portfolio type</div>
+        ${anPortRows.map(r=>`
+          <div class="arow"><span class="lb">${esc(r.name)}</span>
+            <span class="bar"><i style="width:${r.pct}%"></i></span>
+            <span class="pc num">${r.n} · ${short(r.pv)}</span></div>`).join('')}
       </div>
     </div>
 
@@ -4101,6 +4448,13 @@ function vLanding(){
         <div class="row">
           <button class="btn btn-teal" data-startinvest="1">Start Investing</button>
           <button class="btn" data-getintouch="1">Get in touch</button>
+        </div>
+        <!-- P3.20 co-branding + P3.18 FSP prominence -->
+        <div class="cobrand">
+          ${a.logo ? `<img src="${a.logo}" alt="${esc(a.company||firm.name)} logo" class="cobrand-logo">`
+            : `<span class="cobrand-firm">${esc(a.company || firm.name)}</span>`}
+          <span class="cobrand-fsp">Authorised financial services provider${a.licence?' · '+esc(a.licence):''}</span>
+          <span class="cobrand-v22">powered by <img src="assets/img/vault22-logo.png" alt="Vault22"></span>
         </div>
       </div>
       <div class="card" style="overflow:hidden;min-height:460px;${img
@@ -4319,6 +4673,17 @@ const TARA_TARGETS = {
   'Growth':           {Equity:70,Bonds:14,Cash:6,Property:10},
   'Aggressive':       {Equity:85,Bonds:5,Cash:5,Property:5}
 };
+/* P3.19: SA tax-free savings account allowance, and each client's stated goals so Tara can
+   frame a suggestion against the goals timeline, not just the risk profile. */
+const TFSA_ANNUAL = 36000, TFSA_LIFETIME = 500000;
+const GOALS = {
+  C1:{goal:'Retirement at 60', horizon:22, tfsaUsed:180000},
+  C2:{goal:'Buy a second property', horizon:8,  tfsaUsed:96000},
+  C3:{goal:'Financial independence', horizon:18, tfsaUsed:54000},
+  C4:{goal:'Children\'s education', horizon:12, tfsaUsed:120000},
+  C5:{goal:'Grow long-term wealth', horizon:20, tfsaUsed:72000}
+};
+const goalOf = c => GOALS[c.id] || {goal:'Long-term growth', horizon:15, tfsaUsed:0};
 const ageOf = dob => { const d=new Date(dob); let a=NOW.getFullYear()-d.getFullYear();
   if(NOW.getMonth()<d.getMonth() || (NOW.getMonth()===d.getMonth()&&NOW.getDate()<d.getDate())) a--; return a; };
 function taraTargets(c){
@@ -4363,6 +4728,30 @@ function taraBuild(c, ccy){
   return merged;
 }
 const taraTotalWeight = () => (state.tara ? state.tara.lines.reduce((s,l)=>s+l.weight,0) : 0);
+/* P1.5: illustrative long-run return / volatility / annual fee per asset class, so Tara can
+   show the suggested portfolio's expected return and risk and check it against the client's
+   profile. Clearly illustrative, not advice. */
+const CLASS_RV  = {Equity:[12.5,15.5], Property:[9.0,12.0], Bonds:[7.5,6.0], Cash:[5.0,1.0]};
+const CLASS_FEE = {Equity:0.35, Property:0.45, Bonds:0.25, Cash:0.15};
+/* Sum line weights by asset class. */
+function taraClassWeights(lines){
+  const w = {Equity:0, Bonds:0, Property:0, Cash:0};
+  (lines||[]).forEach(l => { const a = ASSETS.find(x=>x.ticker===l.ticker); if(a && w[a.cls]!=null) w[a.cls] += l.weight; });
+  return w;
+}
+/* The suggested portfolio's expected return, volatility, growth weight, blended fee, and how
+   it sits against the client's risk band. */
+function taraStrategy(c, lines){
+  const cw = taraClassWeights(lines);
+  const ret = Object.keys(cw).reduce((s,k)=> s + (cw[k]/100) * CLASS_RV[k][0], 0);
+  const vol = Object.keys(cw).reduce((s,k)=> s + (cw[k]/100) * CLASS_RV[k][1], 0);
+  const fee = Object.keys(cw).reduce((s,k)=> s + (cw[k]/100) * CLASS_FEE[k], 0);
+  const growth = cw.Equity + cw.Property;
+  const band = RISK_RV[c.type] || [9,9];
+  /* within profile if the portfolio's volatility does not run meaningfully above the band */
+  const fit = vol <= band[1] * 1.12 ? 'within' : 'above';
+  return {cw, ret, vol, fee, growth, band, fit};
+}
 /* R49: the reason explains the asset's ROLE for THIS client, from its class and its weight
    relative to the client's risk profile, so it never contradicts (no "suited to your
    Conservative profile" on an equity growth sleeve). The asset's own `reason` (unique per
@@ -4455,12 +4844,18 @@ function taraScreen(){
   const chosen = new Set(state.tara.lines.map(l=>l.ticker));
   const universe = ASSETS.filter(a=>a.ccy===ccy && !chosen.has(a.ticker) &&
     (!q || (a.name+' '+a.ticker).toLowerCase().includes(q)));
+  const goal = goalOf(c);
+  const tfsaLeft = Math.max(0, TFSA_LIFETIME - goal.tfsaUsed);
   const info = [
     ['Age', ageOf(c.dob)], ['Dependents', c.dependents],
     ['Monthly income', money(c.income)], ['Monthly savings', money(c.sav)],
     ['Net worth', money(c.nw)], ['Emergency fund', money(c.ef)],
+    ['Primary goal', esc(goal.goal)], ['Goal horizon', goal.horizon + ' years'],
     ['Total savings', money(c.totalSav)], ['Risk profile', c.type + ' (' + c.score + '/100)']
   ];
+  /* P1.5: expected return + risk, growth weight, blended fee, and profile fit. */
+  const strat = taraStrategy(c, state.tara.lines);
+  const CLS_ORDER = ['Equity','Property','Bonds','Cash'];
   return `
   <div class="tara-app">
     <header class="tara-top">
@@ -4480,11 +4875,45 @@ function taraScreen(){
           <div class="sec-t" style="margin:0">Suggested portfolio</div>
           <span class="pill ${tw===100?'p-green':'p-amber'}">Total ${tw}%${tw===100?'':' · must be 100%'}</span>
         </div>
+        <!-- P1.5: strategy summary at the top, with expected return + risk and a profile-fit check. -->
+        <div class="tara-strat">
+          <div class="tara-strat-h">
+            <b>Recommended strategy</b>
+            <span class="pill ${strat.fit==='within'?'p-green':'p-amber'}">${strat.fit==='within'?'Within '+esc(c.type)+' profile':'Above profile risk'}</span>
+          </div>
+          <p class="tara-strat-l">A ${strat.growth>=70?'growth-led':strat.growth>=45?'balanced':'defensive, income-led'} portfolio for a
+            ${esc(c.type.toLowerCase())} investor: ${strat.growth}% in growth assets, ${100-strat.growth}% in bonds and cash.</p>
+          <div class="tara-strat-m">
+            <div><span class="sub">Expected return</span><b class="num">${strat.ret.toFixed(1)}%</b><span class="sub">a year</span></div>
+            <div><span class="sub">Expected volatility</span><b class="num">${strat.vol.toFixed(1)}%</b><span class="sub">vs ${strat.band[1]}% for profile</span></div>
+            <div><span class="sub">Blended fee</span><b class="num">${strat.fee.toFixed(2)}%</b><span class="sub">a year</span></div>
+          </div>
+          ${strat.fit==='above' ? `<p class="tara-strat-warn">This mix carries more risk than a typical ${esc(c.type.toLowerCase())} profile. Reduce equity, or confirm the client accepts the higher risk.</p>` : ''}
+          <p class="tara-goal">🎯 Fits <b>${esc(goal.goal)}</b> over ${goal.horizon} years:
+            a ${goal.horizon>=15?'long':goal.horizon>=7?'medium':'short'} horizon ${goal.horizon>=15?'supports the growth tilt':goal.horizon>=7?'suits this balance':'argues for keeping it defensive'}.
+            Uses ${money(Math.min(state.tara.total, tfsaLeft))} of the ${money(tfsaLeft)} tax-free allowance still available (TFSA lifetime ${money(TFSA_LIFETIME)}).</p>
+        </div>
         <!-- Part A.5: Tara's overall reasoning, derived from the client's real numbers. -->
         <div class="allclear" style="align-items:flex-start;margin-bottom:var(--v4-space-4)">
           <span class="allclear-i" style="background:none;width:28px;height:28px;padding:0">
             <img src="assets/img/tara-advisor.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover"></span>
           <span><b>Tara's thinking.</b> ${taraRationale(c, ccy, state.tara.lines)}</span>
+        </div>
+        <!-- P1.5: before/after against the client's current portfolio. -->
+        <div class="tara-ba">
+          <div class="tara-ba-h">Before and after</div>
+          <table class="tara-ba-t"><thead><tr><th>Asset class</th><th class="num">Now</th><th class="num">Suggested</th><th class="num">Change</th></tr></thead>
+            <tbody>${CLS_ORDER.map(k=>{
+              const now = (c.alloc||{})[k] || 0, next = Math.round(strat.cw[k]||0), diff = next - now;
+              if(!now && !next) return '';
+              return `<tr><td>${k}</td><td class="num">${now}%</td><td class="num">${next}%</td>
+                <td class="num" style="color:${diff>0?'var(--v4-success-dark)':diff<0?'var(--v4-danger-dark)':'var(--muted)'}">${diff>0?'+':''}${diff}%</td></tr>`;
+            }).join('')}</tbody></table>
+          <div class="tara-ba-f">
+            <span>Currently invested <b class="num">${money(c.inv)}</b></span>
+            <span>New total <b class="num">${money(state.tara.total)}</b></span>
+            <span>Est. annual fee <b class="num">${money(Math.round(state.tara.total * strat.fee/100))}</b></span>
+          </div>
         </div>
         <div class="row" style="flex-wrap:wrap;gap:var(--v4-space-3);margin-bottom:var(--v4-space-4)">
           <div class="field" style="margin:0"><label>Total invested</label>
@@ -4501,12 +4930,16 @@ function taraScreen(){
           ${state.tara.lines.length ? state.tara.lines.map(l=>taraLineRow(c,l,'tara')).join('')
             : '<p class="lede">No holdings. Add assets from the list below.</p>'}
         </div>
-        <div class="actions" style="margin-top:var(--v4-space-4)">
+        <div class="field" style="margin-top:var(--v4-space-4)"><label>Note to ${esc(c.name.split(' ')[0])} (sent with the suggestion)</label>
+          <textarea class="inp" rows="3" id="taraNote" placeholder="e.g. Based on our chat, I have tilted this a little more defensive. Happy to walk you through it."
+            data-tarabind="note">${esc(state.tara.note || '')}</textarea></div>
+        <div class="actions" style="margin-top:var(--v4-space-3)">
           <button class="btn" data-tarasave="1">Save draft</button>
           <button class="btn btn-pri" data-tarasuggest="1" ${tw===100?'':'aria-disabled="true" disabled'}>Suggest to client</button>
         </div>
-        <div class="legalnote">This is a prototype. Suggesting sends the portfolio to ${esc(c.name.split(' ')[0])}
-          in the client app; no real order is placed.</div>
+        <div class="legalnote"><b>Compliance.</b> This is a suggestion, not a guaranteed outcome. Returns and volatility
+          are illustrative estimates, not advice. ${esc(c.name.split(' ')[0])} chooses whether to accept, tweak or decline,
+          and can withdraw at any time. This prototype places no real order.</div>
       </section>
       <section class="tara-uni">
         <div class="sec-t" style="margin:0 0 var(--v4-space-2)">Add from the ${ccy} universe</div>
@@ -4531,6 +4964,32 @@ function openTara(custId){
 }
 /* §1.2: the advisor's Membership plan card, with the current monthly fee and the last
    few invoices, each viewable and downloadable as a real PDF. */
+/* P2.16: advisor availability settings, working hours + buffer + meeting-type presets.
+   Two-way bound to state.advisor.availability; the booking surface notes it as fixed for the
+   prototype and syncing live with Google/Outlook in the real build. */
+function availabilityCard(){
+  const av = state.advisor.availability || {start:'09:00', end:'17:00', buffer:15, types:['30 min video','60 min video','30 min call','In person']};
+  state.advisor.availability = av;
+  return `
+    <div class="card card-p mt">
+      <div class="sec-t">Availability</div>
+      <p class="lede" style="margin-bottom:var(--v4-space-3)">Your working hours and the gap between meetings.
+        Bookings offer slots inside these hours.</p>
+      <div class="row" style="flex-wrap:wrap;gap:var(--v4-space-3)">
+        <div class="field" style="margin:0"><label>Start</label>
+          <input class="inp inp-sm" type="time" ${bind('advisor.availability.start')} style="max-width:130px"></div>
+        <div class="field" style="margin:0"><label>End</label>
+          <input class="inp inp-sm" type="time" ${bind('advisor.availability.end')} style="max-width:130px"></div>
+        <div class="field" style="margin:0"><label>Buffer between meetings</label>
+          <select class="inp inp-sm" ${bind('advisor.availability.buffer')} style="max-width:130px">
+            ${[0,5,10,15,30].map(m=>`<option value="${m}" ${av.buffer==m?'selected':''}>${m} min</option>`).join('')}</select></div>
+      </div>
+      <div class="sec-t mt" style="font-size:14px">Meeting types</div>
+      <div class="svc">${av.types.map(x=>`<span class="pill p-teal">${esc(x)}</span>`).join('')}</div>
+      <div class="legalnote" style="margin-top:var(--v4-space-3)">In the full build these sync live with your Google
+        or Outlook calendar. In the prototype the booking calendar uses a fixed weekday schedule.</div>
+    </div>`;
+}
 function membershipCard(){
   const a = state.advisor;
   const count = state.customers.length;
@@ -4543,6 +5002,18 @@ function membershipCard(){
       <div class="list-row"><span>Current monthly fee
         <div class="sub">${plural(count,'customer')}, ${subTier(count)}</div></span>
         <b class="num" style="font-size:16px">${usd(subFee(count))}</b></div>
+      ${(() => {
+        /* P2.15: the fee-tier table, with the advisor's current tier highlighted and the
+           next tier's cost so they can see what growth costs. */
+        const tiers = [[1,10,'1 to 10',10],[11,50,'11 to 50',25],[51,Infinity,'51 or more',40]];
+        const curIdx = count<=10?0:count<=50?1:2;
+        return `<div class="feetier">
+          <div class="feetier-h">Fee tiers</div>
+          ${tiers.map(([lo,hi,label,fee],i)=>`<div class="feetier-r ${i===curIdx?'on':''}">
+            <span>${label} customer${hi===1?'':'s'}${i===curIdx?' · you are here':i===curIdx+1?' · next tier':''}</span>
+            <b class="num">${usd(fee)}/mo</b></div>`).join('')}
+        </div>`;
+      })()}
       ${thisInv ? `<div class="list-row"><span>This month's invoice
         <div class="sub">${esc(thisInv.label)} · ${plural(thisInv.count,'customer')} · AUM ${short(thisInv.aum)}</div></span>
         <button class="btn btn-sm" data-invoice="${thisInv.key}">View</button></div>` : ''}
@@ -4552,8 +5023,8 @@ function membershipCard(){
         <span class="row" style="gap:var(--v4-space-2);flex:none"><b class="num">${usd(inv.sub)}</b>
           <button class="btn btn-sm" data-invoice="${inv.key}">View</button>
           <button class="btn btn-sm" data-invoicedl="${inv.key}">Download PDF</button></span></div>`).join('')}
-      <div class="legalnote" style="margin-top:var(--v4-space-3)">Subscription pricing shown in USD and to
-        be confirmed. The 25 bps AUM fee on non-Vault22 assets is paid by the customer, to be confirmed with Greg.</div>
+      <div class="legalnote" style="margin-top:var(--v4-space-3)">Subscription pricing is shown in USD. A separate
+        25 bps p.a. AUM fee on the client's non-Vault22 assets is billed to the client, not to you.</div>
     </div>`;
 }
 function vProfile(){
@@ -4582,6 +5053,7 @@ function vProfile(){
           <div class="list-row"><span>Licence</span><span class="sub">${esc(a.licence)||dash}</span></div>
           <div class="list-row"><span>Calendar booking link</span><span class="sub">${esc(a.calendar)||dash}</span></div>
         </div>
+        ${availabilityCard()}
         ${membershipCard()}
         <div class="card card-p mt">
           <div class="sec-t">Company logo</div>
@@ -4621,11 +5093,17 @@ function vPermissions(){
         like consent rather than an advisor setting.</p>
       ${state.customers.map(c=>{
         const poa = (state.poa||{})[c.id];
+        const req = (state.poaReq||{})[c.id];
         return `<div class="list-row"><span>${esc(c.name)}
           <div class="sub">${poa ? 'You may change this portfolio, with the change logged'
+                                 : req ? 'Request sent, awaiting the client\'s approval'
                                  : 'You may not change this portfolio'}</div></span>
-          <span class="pill ${poa?'p-amber':'p-gray'}">${poa?'Power of attorney':'Not granted'}</span></div>`;
+          <span class="row" style="gap:var(--v4-space-2)">
+            <span class="pill ${poa?'p-amber':req?'p-blue':'p-gray'}">${poa?'Power of attorney':req?'Requested':'Not granted'}</span>
+            ${!poa && !req ? `<button class="btn btn-sm" data-reqpoa="${c.id}">Request</button>` : ''}</span></div>`;
       }).join('')}
+      <p class="legalnote" style="margin-top:var(--v4-space-3)">Requesting sends the client a POPIA-style
+        authorisation they approve in their own app. You can act only once they grant it.</p>
     </div>`;
 }
 /* §12.2: the Audit Log keeps only Recent activity, filterable by user, action and date. */
@@ -4648,7 +5126,8 @@ function vAudit(){
         here live. Permissions in force and power of attorney are under Permissions.</p></div>
     <div class="card">
       <div class="card-head"><div class="row"><h2>Recent activity</h2>
-        <span class="pill p-gray">${plural(rows.length,'event')}</span></div></div>
+        <span class="pill p-gray">${plural(rows.length,'event')}</span></div>
+        <button class="btn btn-sm" data-auditexport="1">Export CSV</button></div>
       <div class="card-p" style="padding-top:0;padding-bottom:var(--v4-space-4)">
         <div class="row" style="flex-wrap:wrap;gap:var(--v4-space-3)">
           ${sel('who', af.who, people, 'All users')}
@@ -4779,11 +5258,92 @@ const CLIENT_NAV = [
 ];
 /* A small mock directory so "search advisors, then link" actually searches. */
 const ADVISOR_DIR = [
-  {id:'A1', name:'Aishani Atri',   firm:'Vault22 Wealth',   licence:'FSP 48219', city:'Johannesburg', email:'aishani@vault22.com'},
-  {id:'A2', name:'Thabo Molefe',   firm:'Molefe Financial', licence:'FSP 51204', city:'Pretoria', email:'thabo@molefefinancial.co.za'},
-  {id:'A3', name:'Sarah Delport',  firm:'Delport Advisory', licence:'FSP 44911', city:'Cape Town', email:'sarah@delportadvisory.co.za'},
-  {id:'A4', name:'Rajesh Naidoo',  firm:'Naidoo & Partners',licence:'FSP 39880', city:'Durban', email:'r.naidoo@naidoopartners.co.za'}
+  {id:'A1', name:'Aishani Atri',   firm:'Vault22 Wealth',   licence:'FSP 48219', city:'Johannesburg', email:'aishani@vault22.com',   services:['Retirement','Investments','Tax-free savings'], clients:5,  aum:2194000},
+  {id:'A2', name:'Thabo Molefe',   firm:'Molefe Financial', licence:'FSP 51204', city:'Pretoria', email:'thabo@molefefinancial.co.za', services:['Estate planning','Investments'], clients:12, aum:5400000},
+  {id:'A3', name:'Sarah Delport',  firm:'Delport Advisory', licence:'FSP 44911', city:'Cape Town', email:'sarah@delportadvisory.co.za', services:['Offshore','Retirement','Insurance'], clients:8, aum:3120000},
+  {id:'A4', name:'Rajesh Naidoo',  firm:'Naidoo & Partners',licence:'FSP 39880', city:'Durban', email:'r.naidoo@naidoopartners.co.za', services:['Investments','Tax-free savings'], clients:6, aum:2760000}
 ];
+/* P1.6: browsable advisor directory (advisor portal). Seeded cards from ADVISOR_DIR with
+   name/firm/FSP/services/city and a search + city filter. */
+function vDirectory(){
+  const q = (state.dirQ||'').trim().toLowerCase();
+  const city = state.dirCity || '';
+  const cities = [...new Set(ADVISOR_DIR.map(a=>a.city))].sort();
+  const list = ADVISOR_DIR.filter(a =>
+    (!city || a.city===city) &&
+    (!q || (a.name+' '+a.firm+' '+a.services.join(' ')+' '+a.city).toLowerCase().includes(q)));
+  return `
+    <div class="page-head"><h1>Browse advisors</h1>
+      <p class="lede">The Vault22 advisor network. Clients discover and appoint advisors from a directory like this.</p></div>
+    <div class="card card-p" style="padding:var(--v4-space-4)">
+      <div class="row" style="flex-wrap:wrap;gap:var(--v4-space-3)">
+        <input class="inp inp-sm" id="dirSearch" placeholder="Search name, firm, service or city" value="${esc(state.dirQ||'')}" style="flex:1;min-width:220px">
+        <select class="inp inp-sm" data-dircity style="max-width:200px">
+          <option value="">All cities</option>
+          ${cities.map(c=>`<option ${city===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="dir-grid mt6" id="dirResults">
+      ${list.length ? list.map(a=>`
+        <div class="card card-p dir-card">
+          <div class="row" style="align-items:flex-start;gap:var(--v4-space-3)">
+            <span class="ava" style="width:48px;height:48px;font-size:16px;flex:none">${initialsOf(a.name)}</span>
+            <div style="flex:1;min-width:0">
+              <b style="font-size:15px">${esc(a.name)}</b>
+              <div class="sub">${esc(a.firm)}</div>
+              <div class="sub">${esc(a.city)} · ${esc(a.licence)}</div>
+            </div>
+          </div>
+          <div class="svc mt">${a.services.map(s=>`<span class="pill p-gray">${esc(s)}</span>`).join('')}</div>
+          <div class="dir-meta">
+            <span>${plural(a.clients,'client')}</span><span>AUA ${short(a.aum)}</span>
+          </div>
+          <div class="row mt" style="gap:var(--v4-space-2)">
+            <a class="btn btn-sm" href="mailto:${a.email}" data-audit="Emailed advisor ${esc(a.name)}">Email</a>
+            <button class="btn btn-sm" data-stub="Advisor profile|${esc(a.name)} of ${esc(a.firm)}, ${esc(a.city)}, ${esc(a.licence)}. Services: ${esc(a.services.join(', '))}.|In the live build this opens their full public profile, the same page a client sees before appointing them.">View profile</button>
+          </div>
+        </div>`).join('')
+      : `<div class="empty"><div class="em">◎</div><h3>No advisors match</h3><p>Try another search or city.</p></div>`}
+    </div>`;
+}
+
+/* P2.11: the firm Team view. Advisors at the advisor's own firm, with combined AUM and
+   client count. Shell depth: a roster + firm totals. Admin can see everyone; a Member sees
+   the same roster read-only. */
+const FIRM_TEAM = [
+  {name:'Aishani Atri',   role:'Admin',  licence:'FSP 48219', clients:5,  aum:2194000, self:true},
+  {name:'Nomsa Dube',     role:'Admin',  licence:'FSP 50771', clients:9,  aum:4120000},
+  {name:'Kabelo Sithole', role:'Member', licence:'FSP 52033', clients:7,  aum:2980000},
+  {name:'Lindiwe Mbeki',  role:'Member', licence:'FSP 53114', clients:4,  aum:1560000}
+];
+function vTeam(){
+  const firm = (state.firm && state.firm.name) || 'Vault22 Wealth';
+  const totClients = FIRM_TEAM.reduce((s,a)=>s+a.clients,0);
+  const totAum = FIRM_TEAM.reduce((s,a)=>s+a.aum,0);
+  const isAdmin = state.advisor.role === 'Admin';
+  return `
+    <div class="page-head"><h1>${esc(firm)} team</h1>
+      <p class="lede">Advisors at your firm and the firm's combined book. ${isAdmin?'As an admin you can see everyone.':'You have Member access, this roster is read-only.'}</p></div>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi"><div class="k">Advisors</div><div class="v">${FIRM_TEAM.length}</div></div>
+      <div class="kpi"><div class="k">Combined clients</div><div class="v">${totClients}</div></div>
+      <div class="kpi"><div class="k">Combined AUA</div><div class="v">${short(totAum)}</div></div>
+    </div>
+    <div class="card mt6">
+      <div class="card-head"><div class="row"><h2>Advisors</h2></div>
+        ${isAdmin?`<button class="btn btn-sm" data-go="invites" data-backto="1">Invite advisor</button>`:''}</div>
+      <div class="tbl-scroll"><table>
+        <thead><tr><th>Advisor</th><th>Role</th><th>Licence</th><th class="num">Clients</th><th class="num">AUA</th></tr></thead>
+        <tbody>${FIRM_TEAM.map(a=>`<tr>
+          <td><div class="nm">${esc(a.name)}${a.self?' <span class="pill p-gray">You</span>':''}</div></td>
+          <td><span class="pill ${a.role==='Admin'?'p-teal':'p-gray'}">${a.role}</span></td>
+          <td class="sub">${esc(a.licence)}</td>
+          <td class="num">${a.clients}</td>
+          <td class="num">${short(a.aum)}</td></tr>`).join('')}</tbody>
+      </table></div>
+      <div class="legalnote" style="margin:var(--v4-space-3) var(--v4-space-4)">Deeper firm rollup, per-advisor drill-down and shared reporting come in the full build.</div>
+    </div>`;
+}
 
 /* The client's own notifications. Derived from the consent state, so they say
    what has actually happened rather than being decoration. */
@@ -4865,6 +5425,7 @@ function clientShell(body){
         <span class="cfoot-mid">✉ <a class="link-a" data-stub="Contact support|In the real build this opens support chat.|Prototype: no support service.">Need Help? Contact support</a></span>
         <span class="cfoot-soc">${['in','X','f','◎','▶'].map(s=>`<span class="soc">${s}</span>`).join('')}</span>
       </footer>
+      ${state.linkedAdvisor ? `<div class="cfoot-fsp">Advised by ${esc(state.linkedAdvisor.name)}, ${esc(state.linkedAdvisor.firm)} · ${esc(state.linkedAdvisor.licence)}, an authorised financial services provider. Your advice is your advisor's, not Vault22's.</div>` : ''}
     </main>
     </div>
   </div>
@@ -4899,7 +5460,7 @@ function clientPreview(sec, c, st){
       ['Fees earned', money(feesFor(c,'Year to date'))]
     ],
     risk: [
-      ['Risk Assessment Completed', c.riskDate || 'Completed'],
+      ['Risk Assessment Completed', lastRiskDate(c) || 'Completed'],
       ['Risk Score', c.score + ' / 100'],
       ['Risk profile', c.type]
     ]
@@ -5015,13 +5576,23 @@ function vClientProfile(){
       <span class="eyebrow teal">From your advisor</span>
       <div class="between"><div class="sec-t" style="margin:0">Your advisor suggested a portfolio</div>
         <span class="pill ${sug.invested?'p-green':'p-amber'}">${sug.invested?'Invested':'Total '+sugWeight+'%'}</span></div>
-      <p class="lede" style="margin:var(--v4-space-2) 0 var(--v4-space-4)">${sug.invested
+      <p class="lede" style="margin:var(--v4-space-2) 0 var(--v4-space-3)">${sug.invested
         ? 'You invested in this portfolio. Your advisor can see it in their portal.'
         : (esc((linked&&linked.name.split(' ')[0])||'Your advisor')) + ' built this for you. Adjust the weightings if you like, then invest. Total invested ' + money(sug.total) + '.'}</p>
+      ${sug.note ? `<div class="advnote"><span class="advnote-h">Note from ${esc((linked&&linked.name.split(' ')[0])||'your advisor')}</span>
+        <p>${esc(sug.note)}</p></div>` : ''}
+      <div class="roa"><span class="roa-h">Record of advice</span>
+        <span class="sub">${esc((linked&&linked.name)||'Your advisor')}${linked&&linked.licence?' · '+esc(linked.licence):''} · ${sug.ts ? sug.ts.slice(0,10) : TODAY_STR} · logged</span></div>
+      ${sug.strat ? `<div class="row" style="gap:var(--v4-space-2);margin-bottom:var(--v4-space-3);flex-wrap:wrap">
+        <span class="pill p-gray">Expected return ~${sug.strat.ret.toFixed(1)}%</span>
+        <span class="pill p-gray">Volatility ~${sug.strat.vol.toFixed(1)}%</span>
+        <span class="pill ${sug.strat.fit==='within'?'p-green':'p-amber'}">${sug.strat.fit==='within'?'Within your '+esc(sug.strat.type)+' profile':'Above your usual risk'}</span></div>` : ''}
       <div class="tara-lines">${sug.lines.map(l=>taraLineRow(c,l,'client')).join('')}</div>
       ${sug.invested ? '' : `<div class="actions" style="margin-top:var(--v4-space-4)">
         <button class="btn btn-pri" data-clientinvest="1" ${sugWeight===100?'':'aria-disabled="true" disabled'}>Invest ${money(sug.total)}</button></div>
-        <div class="legalnote">Weights must total 100% to invest. This is a prototype, so no real order is placed.</div>`}
+        <div class="legalnote"><b>Before you invest.</b> This advice is your advisor's, not Vault22's. It is a recommendation,
+          not a guarantee, and the return and volatility shown are illustrative estimates. You can tweak the weightings, invest,
+          or leave it. Weights must total 100% to invest. This is a prototype, so no real order is placed.</div>`}
     </div>` : '';
   /* Part A.1: the client's side of the shared meeting object. Invited meetings get
      Accept/Decline; the rest show their status. */
@@ -5045,8 +5616,32 @@ function vClientProfile(){
       }).join('') : '<p class="lede">No meetings yet. Use Request meeting above to ask for one.</p>'}
     </div>` : '';
 
-  const advisorPanel = suggestionCard + `
-    <div class="card card-p ${sug?'mt':''}">
+  /* P1.4/P1.7/P1.8: advisor-initiated requests the client acts on. Each pending request
+     renders an "Action needed" card; completing it updates the advisor's view + notifies. */
+  const advFirst = (linked||{}).name ? linked.name.split(' ')[0] : 'Your advisor';
+  const actionDefs = [
+    (state.riskReq&&state.riskReq[CLIENT_ID]) && {em:'🧭', t:'Redo your risk assessment',
+      d:advFirst + ' asked you to update your risk profile. It takes about five minutes and investors do it once a year.',
+      btn:'Complete risk assessment', act:'redorisk'},
+    (state.kycReq&&state.kycReq[CLIENT_ID]) && {em:'🪪', t:'Refresh your KYC',
+      d:advFirst + ' asked you to re-confirm your ID and proof of address so your account stays compliant.',
+      btn:'Refresh KYC', act:'dokyc'},
+    (state.poaReq&&state.poaReq[CLIENT_ID]) && {em:'✍️', t:'Grant power of attorney',
+      d:advFirst + ' would like to change your portfolio on your behalf. Every change is logged and you can withdraw this at any time.',
+      btn:'Grant power of attorney', act:'grantpoa'}
+  ].filter(Boolean);
+  const actionCards = actionDefs.map((x,i)=>`
+    <div class="card card-p ${(sug||i)?'mt':''}" style="border:1px solid var(--v4-warning,#f0b429)">
+      <div class="between" style="align-items:flex-start">
+        <div><span class="eyebrow" style="color:var(--v4-warning-dark)">Action needed</span>
+          <div class="sec-t" style="margin-top:2px">${x.t}</div>
+          <p class="lede" style="margin-top:4px">${esc(x.d)}</p></div>
+        <span style="font-size:26px">${x.em}</span>
+      </div>
+      <button class="btn btn-pri mt" data-${x.act}="1">${x.btn}</button>
+    </div>`).join('');
+  const advisorPanel = suggestionCard + actionCards + `
+    <div class="card card-p ${sug||actionCards?'mt':''}">
       <span class="eyebrow teal">Your advisor</span><div class="sec-t">Financial Advisor</div>
       <div class="between" style="margin-bottom:var(--v4-space-4)">
         <span class="sub">${linked ? '' : 'Request a meeting with any advisor, even before you appoint one.'}</span>
@@ -5067,8 +5662,8 @@ function vClientProfile(){
 
     <div class="card card-p mt">
       <div class="sec-t">${linked?'Change advisor':'Appoint an advisor'}</div>
-      <!-- Unlinking used to be one-way: the advisor vanished and the only route back was
-           to remember their name and search for it. Offer them directly. -->
+      <!-- Removing an advisor used to be one-way: they vanished and the only route back was
+           to remember their name and search for it. Offer them directly to appoint again. -->
       ${!linked && state.prevAdvisor ? `
         <div class="relink">
           <span><b>${esc(state.prevAdvisor.name)}</b>
@@ -5092,12 +5687,24 @@ function vClientProfile(){
       </div>
     </div>
 
+    ${linked && CONSENT_SECTIONS.filter(s=>consentOf(CLIENT_ID,s.k)==='pending').length >= 2 ? `
+    <div class="card card-p mt" style="border:1px solid var(--v4-teal-400)">
+      <span class="eyebrow teal">Consent request (POPIA)</span>
+      <div class="sec-t" style="margin-top:2px">${esc(advFirst)} requested access to your data</div>
+      <p class="lede" style="margin:var(--v4-space-2) 0 var(--v4-space-3)">They have asked to see your
+        ${CONSENT_SECTIONS.filter(s=>consentOf(CLIENT_ID,s.k)==='pending').map(s=>s.t).join(', ')} information.
+        Under POPIA this is your personal data. Sharing is your choice, it is explicit, and you can withdraw it at any time.</p>
+      <div class="row" style="gap:var(--v4-space-2)">
+        <button class="btn btn-pri" data-permall="1">Allow all</button>
+        <span class="sub" style="align-self:center">or turn on only what you want below</span>
+      </div>
+    </div>` : ''}
     ${linked ? `
     <div class="card card-p mt">
       <div class="sec-t">What your advisor can access</div>
-      <p class="lede" style="margin-bottom:var(--v4-space-5)">Your advisor can only access what you
-        choose to share. Turn a section on to grant access, off to remove it. You can change this at
-        any time, without notice.</p>
+      <p class="lede" style="margin-bottom:var(--v4-space-5)">Under POPIA, this is your personal data and
+        sharing is your explicit choice. Your advisor can only access what you turn on here, and you can
+        withdraw any grant at any time, without notice.</p>
       ${CONSENT_SECTIONS.map(sec=>{
         const st = consentOf(CLIENT_ID, sec.k);
         return `
@@ -5349,9 +5956,10 @@ function bookDrawer(id){
         ${day&&slot ? (confirming ? 'Confirm and send' : 'Send invite') : 'Pick a day and time'}</button>
     </div>
     <div class="legalnote">Logs a ${dur}-minute ${esc(loc.toLowerCase())} against ${esc(who.name.split(' ')[0])} and gives you a
-      real calendar invite to download. In the real build it is also emailed to
-      ${esc(who.email)} and written to your linked calendar
-      (${esc(state.advisor.calendar || 'set a link in My Profile')}).</div>
+      real calendar invite to download. Availability shown here is a fixed prototype schedule
+      (weekdays, 09:00 to 17:00 SAST). In the real build it syncs live with your Google or Outlook
+      calendar (working hours, buffers and existing events), emails the invite to ${esc(who.email)},
+      and writes it to your linked calendar.</div>
     ${booked.length ? `<div class="sec-t" style="margin-top:var(--v4-space-6)">Already booked with ${esc(who.name.split(' ')[0])}</div>
       ${booked.map(m=>`<div class="list-row"><span>${esc(m.t || 'Meeting')}
         ${m.status?`<span class="pill ${MEET_PILL[m.status]||'p-gray'}" style="margin-left:6px">${MEET_LABEL[m.status]||m.status}</span>`:''}</span>
@@ -5620,11 +6228,13 @@ function vNotifSettings(){
       <input class="inp inp-sm" id="${id}" type="number" min="0" ${s.amt==='pct'?'max="50"':'step="1000"'}
         value="${val}" style="max-width:150px">${s.suffix?`<span class="sub">${s.suffix} in a week</span>`:''}</div>`;
   };
+  const CHANNELS = ['Email','Push','WhatsApp','Telegram'];
+  const chans = p.channels || {};
   return `
     <div class="page-head"><h1>Notification settings</h1>
-      <p class="lede">Choose which notifications you want, and set the amounts that trigger them.
+      <p class="lede">Choose which notifications you want, how they reach you, and the amounts that trigger them.
         ${plural(notifShown().length,'notification')} currently meet your settings.</p></div>
-    <div class="card card-p" style="max-width:620px">
+    <div class="card card-p" style="max-width:640px">
       ${NOTIF_SETTINGS.map(s=>{
         const isOn = on[s.t] !== false;
         return `<div class="perm" style="padding:var(--v4-space-3) 0">
@@ -5633,11 +6243,22 @@ function vNotifSettings(){
             <button class="tog ${isOn?'on':''}" role="switch" aria-checked="${isOn}"
               aria-label="${s.label}" data-notype="${esc(s.t)}"><span></span></button>
           </div>
+          ${isOn ? `<div class="chan-row">${CHANNELS.map(ch=>{
+            const active = (chans[s.t] ? chans[s.t].includes(ch) : ch==='Email');
+            return `<button class="chan ${active?'on':''}" data-nochan="${esc(s.t)}|${ch}">${ch}</button>`;
+          }).join('')}</div>` : ''}
           ${s.amt && isOn ? amtInput(s) : ''}
         </div>`;
       }).join('')}
+      <div class="perm" style="padding:var(--v4-space-3) 0">
+        <div class="perm-h">
+          <div><b>Daily digest</b><div class="sub">One summary email a day instead of live alerts</div></div>
+          <button class="tog ${p.digest?'on':''}" role="switch" aria-checked="${!!p.digest}"
+            aria-label="Daily digest" data-nodigest="1"><span></span></button>
+        </div>
+      </div>
       <button class="btn btn-pri mt" data-nsave="1">Save settings</button>
-      <div class="legalnote">More notification types can be added later.</div>
+      <div class="legalnote">Channels are per notification type. Telegram and WhatsApp delivery are wired in the full build.</div>
     </div>`;
 }
 
@@ -5646,7 +6267,7 @@ function vNotifSettings(){
    ===================================================================== */
 const VIEWS = {dashboard:vDashboard, leads:vLeads, customers:vCustomers, customer:vCustomer,
   risk:vRisk, portfolios:vPortfolios, analytics:vAnalytics, landing:vLanding,
-  profile:vProfile, invites:vInvites, permissions:vPermissions, audit:vAudit,
+  profile:vProfile, directory:vDirectory, team:vTeam, invites:vInvites, permissions:vPermissions, audit:vAudit,
   qualSettings:vQualSettings, notifSettings:vNotifSettings};
 
 /* P3.20: persist the whole demo to sessionStorage so an accidental refresh mid-demo keeps
@@ -5673,10 +6294,12 @@ function render(){
   /* §2.1/§2.2 themes, applied before any early return so every branch honours them.
      Navy accent is advisor-only; the client app always stays green. */
   saveSession();
+  /* P3.23: themes simplified to Green (consumer) vs Navy (advisor). A persisted
+     'midnavy' from an older session is coerced to navy. */
+  if(state.viewTheme === 'midnavy') state.viewTheme = 'navy';
   document.body.classList.toggle('dark', state.mode === 'dark');
   const advTheme = state.scen !== 'client' ? state.viewTheme : 'green';
   document.body.classList.toggle('theme-navy', advTheme === 'navy');
-  document.body.classList.toggle('theme-midnavy', advTheme === 'midnavy');
   /* Defect 4: drop a lingering toast only when the SCREEN changes (real navigation), so
      same-screen feedback (add note, save, toggle) still shows but nothing bleeds across. */
   const screenKey = [state.scen, state.onboarded, state.onb, state.route, state.arg,
@@ -5754,11 +6377,11 @@ function liveRegion(regionId, build){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-setvtheme],[data-mode],[data-vtheme],[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-cbell],[data-fee],[data-book],[data-bslot],[data-bconfirm],[data-bcalmonth],[data-bcalday],[data-bdur],[data-bloc],[data-b12h],[data-invite],[data-nprefs],[data-nsave],[data-cnav],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-close],[data-scen],[data-protoclose],[data-resetdemo],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-cbell],[data-fee],[data-book],[data-bslot],[data-bconfirm],[data-bcalmonth],[data-bcalday],[data-bdur],[data-bloc],[data-b12h],[data-invite],[data-nprefs],[data-nsave],[data-nochan],[data-nodigest],[data-cnav],[data-perm],[data-permall],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],[data-selrow],[data-selall],[data-selclear],[data-bulkemail],[data-bulkexport],[data-dircity],'+
     '[data-notif],[data-readall],[data-audit],[data-dl],[data-save],[data-status],[data-slug],[data-ics],[data-unfile],[data-vemail],[data-votp],[data-switch],[data-sconfirm],[data-prefilter],'+
-    '[data-auditf],[data-docsave],[data-doccancel],[data-pview],[data-psearch],[data-addport],[data-portsub],[data-portcancel],[data-ctab],[data-reqrisk],[data-period],[data-notype],[data-nsave2],[data-qualedit],[data-qualsave],[data-editland],[data-firm],[data-appt],[data-custom],[data-portfield],[data-csend],[data-reqmeet],[data-custompd],'+
+    '[data-auditf],[data-docsave],[data-doccancel],[data-pview],[data-psearch],[data-addport],[data-portsub],[data-portcancel],[data-ctab],[data-reqrisk],[data-redorisk],[data-reqkyc],[data-dokyc],[data-reqpoa],[data-grantpoa],[data-auditexport],[data-anexport],[data-reqall],[data-gsjump],[data-period],[data-notype],[data-nsave2],[data-qualedit],[data-qualsave],[data-editland],[data-firm],[data-appt],[data-custom],[data-portfield],[data-csend],[data-reqmeet],[data-custompd],'+
     '[data-invoice],[data-invoicedl],[data-tara],[data-taraback],[data-taraccy],[data-taraweight],[data-taraadd],[data-tararm],[data-tarasave],[data-tarasuggest],[data-clientinvest],[data-clienttweak],[data-tarasrch],'+
-    '[data-meetconfirm],[data-meetaccept],[data-meetdecline],[data-meetgo],[data-docreq],[data-docreqsave],[data-docfulfil],[data-firmedit],[data-firmsave],[data-roleview],[data-approveport],[data-getintouch],[data-sendenquiry],[data-reportdl],[data-startinvest],[data-register]');
+    '[data-meetconfirm],[data-meetaccept],[data-meetdecline],[data-meetgo],[data-docreq],[data-docreqsave],[data-docfulfil],[data-docview],[data-firmedit],[data-firmsave],[data-roleview],[data-approveport],[data-getintouch],[data-sendenquiry],[data-reportdl],[data-startinvest],[data-register],[data-reqallconsent],[data-modq],[data-factsheet],[data-availset],[data-avail]');
   const panel = document.getElementById('panel');
   if(!t){
     if(!e.target.closest('#panel') && !e.target.closest('#bell')) panel.classList.remove('open');
@@ -5769,8 +6392,24 @@ document.addEventListener('click', e => {
      theme, the button toggles light/dark; the drawer stays open, refreshed in place. */
   if(t.dataset.setvtheme){ state.viewTheme = t.dataset.setvtheme; render(); return reopenProtoIfOpen(); }
   if(t.dataset.mode){ state.mode = state.mode==='dark' ? 'light' : 'dark'; render(); return reopenProtoIfOpen(); }
-  if(t.dataset.vtheme){ const order=['green','midnavy','navy'];
+  if(t.dataset.vtheme){ const order=['green','navy'];
     state.viewTheme = order[(order.indexOf(state.viewTheme)+1)%order.length]; render(); return reopenProtoIfOpen(); }
+  /* P0.2: the escape hatch between meetings. Clear the saved snapshot and reload the
+     current scenario clean, after a confirm so it is never an accidental wipe. */
+  if(t.dataset.resetdemo){
+    if(!confirm('Reset the demo? This clears everything you changed this session (documents, notes, Tara drafts, consent grants, meetings) and reloads the current scenario clean.')) return;
+    try{ sessionStorage.removeItem(SESSION_KEY()); }catch(_){}
+    const scen = state.scen;
+    /* wipe the cross-scenario stores so nothing leaks across the reset */
+    state.consent = null; state.poa = null; state.docs = null;
+    state.crm = {}; state.clientReminders = []; state.taraSuggestion = {}; state.taraDraft = {};
+    state.riskReq = {}; state.riskDates = {}; state.setup = {}; state.poaReq = {}; state.kycReq = {};
+    state.filters = new Set(); state.leadSel = new Set();
+    loadScenario(scen);
+    closeProto(); closeModal();
+    render();
+    return toast('Demo reset. Clean ' + (scen==='new'?'new advisor':scen==='client'?'client view':'established advisor') + ' loaded.');
+  }
   /* §8 tabs */
   if(t.dataset.tab8){ state.tab8 = t.dataset.tab8; return render(); }
   /* Consent: the advisor asks; the client decides. Writes to the audit log. */
@@ -5781,6 +6420,28 @@ document.addEventListener('click', e => {
     const who = (state.customers.concat(state.leads)).find(x=>x.id===id);
     auditShared('Requested ' + sec + ' access', who ? who.name : id, id);
     toast('Access requested. ' + (who?who.name.split(' ')[0]:'They') + ' will be asked to approve it.');
+    return render();
+  }
+  /* P2.14: request Financial + Investment + Risk access in one action; the client sees a
+     single POPIA-style consent screen. */
+  if(t.dataset.reqallconsent){
+    const id = t.dataset.reqallconsent;
+    state.consent[id] = state.consent[id] || {};
+    CONSENT_SECTIONS.forEach(s => { if(state.consent[id][s.k] !== 'granted') state.consent[id][s.k] = 'pending'; });
+    const who = state.customers.concat(state.leads).find(x=>x.id===id);
+    auditShared('Requested all data access', who ? who.name : id, id);
+    if(id === CLIENT_ID){ state.clientReminders = state.clientReminders || [];
+      state.clientReminders.unshift({em:'🔐', t:(state.advisor.name.split(' ')[0]) + ' requested access to your data',
+        m:'They asked for your Financial, Investment and Risk information. Review and choose under Your Advisor.', unread:true}); }
+    render();
+    return toast('Requested all data access from ' + (who?who.name.split(' ')[0]:'the client') + '.');
+  }
+  /* P2.14 client side: grant every pending section at once. */
+  if(t.dataset.permall){
+    state.consent[CLIENT_ID] = state.consent[CLIENT_ID] || {};
+    CONSENT_SECTIONS.forEach(s => { if(state.consent[CLIENT_ID][s.k] === 'pending') state.consent[CLIENT_ID][s.k] = 'granted'; });
+    auditShared('Granted all requested data access', 'Lerato Khumalo (' + CLIENT_ID + ')', CLIENT_ID);
+    toast('You are now sharing the requested data. You can withdraw it any time.');
     return render();
   }
   if(t.dataset.fee){ state.feePeriod = t.dataset.fee; return render(); }
@@ -5808,6 +6469,23 @@ document.addEventListener('click', e => {
     syncNprefAmounts();
     state.nprefs.on[t.dataset.notype] = state.nprefs.on[t.dataset.notype] === false;
     renderBell();
+    return render();
+  }
+  /* P2.13: per-notification delivery channel (Email / Push / WhatsApp / Telegram). */
+  if(t.dataset.nochan){
+    const [type, ch] = t.dataset.nochan.split('|');
+    state.nprefs = state.nprefs || JSON.parse(JSON.stringify(NOTIF_PREFS));
+    state.nprefs.channels = state.nprefs.channels || {};
+    syncNprefAmounts();
+    const cur = new Set(state.nprefs.channels[type] || ['Email']);
+    cur.has(ch) ? cur.delete(ch) : cur.add(ch);
+    state.nprefs.channels[type] = [...cur];
+    return render();
+  }
+  if(t.dataset.nodigest){
+    state.nprefs = state.nprefs || JSON.parse(JSON.stringify(NOTIF_PREFS));
+    syncNprefAmounts();
+    state.nprefs.digest = !state.nprefs.digest;
     return render();
   }
   if(t.dataset.nsave){
@@ -5937,19 +6615,121 @@ document.addEventListener('click', e => {
   if(t.dataset.ctab){ state.ctab = t.dataset.ctab; return render(); }
   /* §14 portfolios: fund detail + add flow. */
   if(t.dataset.period){ state.anPeriod = t.dataset.period; return render(); }
+  /* P2.15: export the analytics book snapshot as CSV or a one-page PDF report. */
+  if(t.dataset.anexport){
+    const C = state.customers, L = state.leads;
+    const aua = C.reduce((s,c)=>s+c.pv,0), inv = C.reduce((s,c)=>s+c.inv,0);
+    const conv = (L.length+C.length) ? (C.length/(L.length+C.length)*100).toFixed(1) : '0.0';
+    const bySource = {}; [...L,...C].forEach(x=>{ const s=acqSource(x); bySource[s]=(bySource[s]||0)+1; });
+    if(t.dataset.anexport === 'csv'){
+      const rows = [
+        ['Metric','Value'],
+        ['Registered users', L.length], ['Customers', C.length], ['Conversion %', conv],
+        ['Assets under advice (R)', aua], ['Total invested (R)', inv],
+        ['', ''], ['Source','Signups'],
+        ...Object.entries(bySource).map(([s,n])=>[s,n])
+      ];
+      downloadText(toCSV(rows[0], rows.slice(1)), 'vault22-analytics-' + TODAY_STR + '.csv', 'text/csv');
+    } else {
+      downloadPdf([
+        'VAULT22 ADVISOR', 'Analytics report', state.advisor.name + (state.advisor.licence?'   '+state.advisor.licence:''),
+        'Generated ' + TODAY_STR, '',
+        'Registered users: ' + L.length, 'Customers: ' + C.length, 'Conversion: ' + conv + '%',
+        'Assets under advice: R' + aua.toLocaleString('en-US'), 'Total invested: R' + inv.toLocaleString('en-US'), '',
+        'Acquisition by source:', ...Object.entries(bySource).map(([s,n])=>'  ' + s + ': ' + n)
+      ], 'vault22-analytics-' + TODAY_STR + '.pdf');
+    }
+    audit('Exported analytics report', t.dataset.anexport.toUpperCase());
+    return toast('Analytics ' + (t.dataset.anexport==='csv'?'CSV':'report') + ' downloaded');
+  }
   /* §16: request a fresh risk assessment. Notifies the client on their platform,
      logs an audit entry, and confirms with a toast. */
   if(t.dataset.reqrisk){
     const id = t.dataset.reqrisk;
     const who = state.customers.concat(state.leads).find(x=>x.id===id);
     audit('Requested risk assessment', who ? who.name : id, id);
+    /* P1.4: mark a shared pending request so the client sees an actionable prompt in their
+       app, and can complete it, closing the loop back to the advisor. */
+    state.riskReq = state.riskReq || {}; state.riskReq[id] = true;
     if(id === CLIENT_ID){
       state.clientReminders = state.clientReminders || [];
       state.clientReminders.unshift({em:'🧭',
         t:'Your advisor asked you to redo your risk assessment',
         m:'It takes about five minutes. Investors update this once a year.', unread:true});
     }
+    render();
     return toast('Risk assessment request sent to ' + (who ? who.name.split(' ')[0] : 'the client'));
+  }
+  /* P1.4: the client completes the requested reassessment. The shared last-assessment date
+     updates (advisor sees it), the request clears, and the advisor is notified. */
+  if(t.dataset.redorisk){
+    const now = localISO(new Date());
+    state.riskDates = state.riskDates || {};
+    state.riskDates[CLIENT_ID] = now.slice(0,10);
+    state.riskReq = state.riskReq || {}; delete state.riskReq[CLIENT_ID];
+    /* keep the working customer record consistent so the advisor's Risk tab reads Completed */
+    const cc = state.customers.find(x=>x.id===CLIENT_ID); if(cc){ cc.risk = 'Completed'; cc.riskDate = now.slice(0,10); }
+    auditShared('Completed risk assessment', 'Lerato Khumalo (' + CLIENT_ID + ')', CLIENT_ID);
+    state.notifs.unshift({id:'RISK'+(++_mseq), type:'Risk updated', em:'🧭',
+      msg: 'Lerato Khumalo completed her risk assessment', ts: now, go:['customer', CLIENT_ID], unread:true});
+    renderBell(); render();
+    return toast('Risk assessment updated. Your advisor can see the new date.');
+  }
+  /* P1.7: advisor requests a KYC refresh; the client sees it and completes it. */
+  if(t.dataset.reqkyc){
+    const id = t.dataset.reqkyc;
+    const who = state.customers.concat(state.leads).find(x=>x.id===id);
+    audit('Requested KYC refresh', who ? who.name : id, id);
+    state.kycReq = state.kycReq || {}; state.kycReq[id] = true;
+    if(id === CLIENT_ID){ state.clientReminders = state.clientReminders || [];
+      state.clientReminders.unshift({em:'🪪', t:'Your advisor asked you to refresh your KYC',
+        m:'Re-confirm your ID and address so your account stays compliant.', unread:true}); }
+    render();
+    return toast('KYC refresh requested from ' + (who ? who.name.split(' ')[0] : 'the client'));
+  }
+  if(t.dataset.dokyc){
+    const now = localISO(new Date());
+    state.kycReq = state.kycReq || {}; delete state.kycReq[CLIENT_ID];
+    const cc = state.customers.find(x=>x.id===CLIENT_ID); if(cc){ cc.kyc = 'Approved'; cc.kycDate = now.slice(0,10); }
+    auditShared('Refreshed KYC', 'Lerato Khumalo (' + CLIENT_ID + ')', CLIENT_ID);
+    state.notifs.unshift({id:'KYC'+(++_mseq), type:'KYC Completed', em:'🪪',
+      msg: 'Lerato Khumalo refreshed her KYC', ts: now, go:['customer', CLIENT_ID], unread:true});
+    renderBell(); render();
+    return toast('KYC refreshed. Your advisor can see it.');
+  }
+  /* P1.8: advisor requests power of attorney; the client approves it, unlocking the
+     portfolio-change action (which stays logged). */
+  if(t.dataset.reqpoa){
+    const id = t.dataset.reqpoa;
+    const who = state.customers.find(x=>x.id===id);
+    audit('Requested power of attorney', who ? who.name : id, id);
+    state.poaReq = state.poaReq || {}; state.poaReq[id] = true;
+    if(id === CLIENT_ID){ state.clientReminders = state.clientReminders || [];
+      state.clientReminders.unshift({em:'✍️', t:'Your advisor requested power of attorney',
+        m:'This lets them change your portfolio on your behalf. Every change is logged. You can withdraw it any time.', unread:true}); }
+    render();
+    return toast('Power of attorney requested from ' + (who ? who.name.split(' ')[0] : 'the client'));
+  }
+  if(t.dataset.grantpoa){
+    state.poa = state.poa || {}; state.poa[CLIENT_ID] = true;
+    state.poaReq = state.poaReq || {}; delete state.poaReq[CLIENT_ID];
+    auditShared('Granted power of attorney', 'Lerato Khumalo (' + CLIENT_ID + ')', CLIENT_ID);
+    state.notifs.unshift({id:'POA'+(++_mseq), type:'POA granted', em:'✍️',
+      msg: 'Lerato Khumalo granted you power of attorney', ts: localISO(new Date()), go:['customer', CLIENT_ID], unread:true});
+    renderBell(); render();
+    return toast('Power of attorney granted. Your advisor can now change your portfolio, and it is logged.');
+  }
+  /* P1.8: export the (filtered) audit log as CSV. */
+  if(t.dataset.auditexport){
+    const af = state.auditFilter || {who:'',act:'',date:''};
+    const rows = state.audit.filter(a =>
+      (!af.who || auditWho(a) === af.who) && (!af.act || a.act === af.act) &&
+      (!af.date || (a.ts||'').slice(0,10) === af.date));
+    const csv = toCSV(['When','Action','Target','Client'],
+      rows.map(a => [a.ts, a.act, a.tgt || '', a.who ? crmWho(a.who) : '']));
+    downloadText(csv, 'vault22-audit-log-' + TODAY_STR + '.csv', 'text/csv');
+    audit('Exported audit log', plural(rows.length,'event'));
+    return toast('Audit log exported as CSV (' + rows.length + ' events)');
   }
   if(t.dataset.custompd){ return openModal(customiseDrawer()); }
   /* Part A.3: shared firm page + role. */
@@ -5989,10 +6769,19 @@ document.addEventListener('click', e => {
     const name = val('gtName'), email = val('gtEmail'), msg = val('gtMsg');
     if(!name) return toast('Add your name');
     if(!EMAIL_RE.test(email)) return toast('Add a valid email');
+    /* P1.6: an enquiry becomes a REAL lead the advisor can act on, tagged to the advisor
+       with its acquisition source, the message kept as the first CRM note, and a
+       notification that opens the new person's profile. Not just a dead toast. */
+    const id = 'L' + (++_mseq), now = localISO(new Date());
+    state.leads.unshift({id, name, email, phone:'', signup: now.slice(0,10),
+      stage:'Enquiry', source:'Get in touch', ffs:null, nw:null, sav:null, cap:null, income:null, port:null,
+      dob:null, nationality:null, dependents:null, housing:null, lastLogin: now, act: now});
+    state.crm[id] = {notes:[], tags:[], tasks:[], follow:[], meets:[], files:[]};
+    if(msg) state.crm[id].notes.unshift({t:'Enquiry via landing page: ' + msg, by: name, ts: now});
     state.notifs.unshift({id:'ENQ'+(++_mseq), type:'New enquiry', em:'✉',
       msg: name + ' enquired through your landing page' + (msg ? ': ' + msg.slice(0,60) : ''),
-      ts: localISO(new Date()), go:['dashboard'], unread:true});
-    audit('Received landing-page enquiry', name + ' (' + email + ')');
+      ts: now, go:['customer', id], unread:true});
+    audit('Received landing-page enquiry', name + ' (' + email + ')', id);
     closeModal(); renderBell(); render();
     return toast('Thanks, ' + esc(state.advisor.name.split(' ')[0]) + ' will be in touch.');
   }
@@ -6039,17 +6828,26 @@ document.addEventListener('click', e => {
   }
   if(t.dataset.tarasave){
     const id = state.tara.custId, c = state.customers.find(x=>x.id===id);
+    const strat = taraStrategy(c, state.tara.lines);
     state.taraDraft = state.taraDraft || {};
     state.taraDraft[id] = {ccy:state.tara.ccy, total:state.tara.total, lines:JSON.parse(JSON.stringify(state.tara.lines))};
+    /* P3.19: the draft is recorded in the client's CRM timeline so it is visible later. */
+    state.crm[id] = state.crm[id] || {notes:[],tags:[],tasks:[],follow:[],meets:[],files:[]};
+    state.crm[id].notes.unshift({t:'Tara portfolio draft saved: ' + money(state.tara.total) + ' ' + state.tara.ccy
+      + ', ' + strat.growth + '% growth, ~' + strat.ret.toFixed(1) + '% expected return.',
+      by: state.advisor.name, ts: localISO(new Date())});
     audit('Saved a personalised portfolio draft', c?c.name:id, id);
-    return toast('Draft saved. It is here when you come back.');
+    return toast('Draft saved. It is in ' + (c?c.name.split(' ')[0]:'the client') + '\'s timeline and here when you come back.');
   }
   if(t.dataset.tarasuggest){
     if(taraTotalWeight() !== 100) return toast('Weights must total 100% before you suggest it');
     const id = state.tara.custId, c = state.customers.find(x=>x.id===id);
+    const note = ((document.getElementById('taraNote')||{}).value || state.tara.note || '').trim();
+    const strat = taraStrategy(c, state.tara.lines);
     state.taraSuggestion = state.taraSuggestion || {};
     state.taraSuggestion[id] = {total:state.tara.total, ccy:state.tara.ccy,
       lines:JSON.parse(JSON.stringify(state.tara.lines)), from:state.advisor.name,
+      note, strat:{ret:strat.ret, vol:strat.vol, fee:strat.fee, fit:strat.fit, type:c.type},
       ts:localISO(new Date()), invested:false};
     audit('Suggested a personalised portfolio', c?c.name:id, id);
     if(id === CLIENT_ID){
@@ -6077,6 +6875,26 @@ document.addEventListener('click', e => {
     return render();
   }
   if(t.dataset.pview){ return openModal(portDrawer(allPortfolios()[+t.dataset.pview])); }
+  /* P2.17: open a fund fact sheet as a placeholder PDF. */
+  if(t.dataset.factsheet){
+    const [n, tk, type, r, v] = t.dataset.factsheet.split('|');
+    downloadPdf([
+      'VAULT22', 'Fund fact sheet', '',
+      n + ' (' + tk + ')', 'Risk profile: ' + type, '',
+      'Expected annual return: ' + r + '%', 'Expected annual volatility: ' + v + '%', '',
+      'This is a prototype placeholder fact sheet. The live build serves the fund manager\'s',
+      'official fact sheet with fees, mandate and full historic performance.'
+    ], (tk||'fund').toLowerCase() + '-factsheet.pdf');
+    audit('Opened fund fact sheet', n);
+    return toast('Opening ' + n + ' fact sheet');
+  }
+  /* P2.17: Vault22 moderation, reject a submitted portfolio. */
+  if(t.dataset.modq){
+    const s = (state.subPorts||[])[+t.dataset.modq];
+    if(s){ s.status = 'Rejected'; audit('Rejected advisor portfolio (Vault22 review)', s.name);
+      render(); toast(s.name + ' was not approved.'); }
+    return;
+  }
   if(t.dataset.approveport){
     /* Part A.4: the Vault22 moderation step (a presenter action). Flips the submission to
        Approved, which makes allPortfolios() include it in the live list. */
@@ -6184,6 +7002,38 @@ document.addEventListener('click', e => {
     if(t.dataset.prefilter !== 'all') state.filters.add(t.dataset.prefilter);
     state.q = '';
   }
+  /* P2.12: bulk-select on Registered Users (handled before data-lead so the checkbox
+     never navigates into the profile). */
+  if(t.dataset.selrow){
+    state.leadSel = state.leadSel || new Set();
+    state.leadSel.has(t.dataset.selrow) ? state.leadSel.delete(t.dataset.selrow) : state.leadSel.add(t.dataset.selrow);
+    return render();
+  }
+  if(t.dataset.selall){
+    const ids = applyLeads().map(l=>l.id);
+    state.leadSel = state.leadSel || new Set();
+    const allOn = ids.length && ids.every(id=>state.leadSel.has(id));
+    state.leadSel = new Set(allOn ? [] : ids);
+    return render();
+  }
+  if(t.dataset.selclear){ state.leadSel = new Set(); return render(); }
+  if(t.dataset.bulkemail || t.dataset.bulkexport){
+    const sel = state.leadSel || new Set();
+    const picked = state.leads.filter(l=>sel.has(l.id));
+    if(!picked.length) return toast('Select at least one registered user');
+    if(t.dataset.bulkemail){
+      openMailto('', 'A message from ' + state.advisor.name, 'Hi,\n\n\n\nBest,\n' + state.advisor.name);
+      /* real recipients would be BCC'd; the prototype opens a blank compose so nothing is sent */
+      audit('Emailed selected registered users', plural(picked.length,'recipient'));
+      return toast('Opening an email to ' + plural(picked.length,'selected user'));
+    }
+    const csv = toCSV(['Name','Email','Phone','Stage','Source','Net worth'],
+      picked.map(l=>[l.name,l.email,l.phone,l.stage,acqSource(l),l.nw||'']));
+    downloadText(csv, 'vault22-registered-users-' + TODAY_STR + '.csv', 'text/csv');
+    audit('Exported selected registered users', plural(picked.length,'user'));
+    return toast('Exported ' + plural(picked.length,'registered user') + ' as CSV');
+  }
+  if(t.dataset.gsjump) closeGlobalSearch();   /* P1.3: close the search dropdown on jump */
   if(t.dataset.go)   return go(t.dataset.go, null, t.dataset.backto ? state.route : null);
   if(t.dataset.cust){
     const c = state.customers.find(x=>x.id===t.dataset.cust);
@@ -6195,13 +7045,14 @@ document.addEventListener('click', e => {
     const who = state.leads.find(x=>x.id===t.dataset.lead);
     audit('Viewed registered user', who ? who.name : t.dataset.lead, t.dataset.lead);
     return go('customer', t.dataset.lead, state.route); }
-  if(t.dataset.share) return openModal(shareModal());
+  if(t.dataset.share){ state.setup = state.setup || {}; state.setup.share = true; return openModal(shareModal()); }
   if(t.dataset.close) return closeModal();
   if(t.dataset.dl){
     const cv = document.getElementById('lpQr');
     const a2 = document.createElement('a');
     a2.download = state.advisor.slug + '-vault22-qr.png';
     a2.href = cv.toDataURL('image/png'); a2.click();
+    state.setup = state.setup || {}; state.setup.qr = true;   /* P0.1: ticks the checklist */
     audit('Downloaded QR code', advisorUrl(state.advisor));
     return toast('QR downloaded, it is a real code, try scanning it');
   }
@@ -6235,13 +7086,28 @@ document.addEventListener('click', e => {
   if(t.dataset.auditf === '__clear'){ state.auditFilter = {who:'',act:'',date:''}; return render(); }
   /* §6 add / cancel a document. */
   if(t.dataset.doccancel){ state.docDraft = null; state.docReqDraft = null; return render(); }
+  /* P1.5: open/preview a document. No real file store, so build a placeholder PDF that
+     stands in for the uploaded document (name, type, dates). */
+  if(t.dataset.docview){
+    const [name, type, date, expiry] = t.dataset.docview.split('|');
+    downloadPdf([
+      'VAULT22 ADVISOR', 'Document preview', '',
+      'File: ' + name, 'Type: ' + type,
+      'Uploaded: ' + (date || 'n/a'), 'Expiry: ' + (expiry || 'No expiry'), '',
+      'This is a prototype placeholder. In the live build this opens the real uploaded',
+      'document from secure storage.'
+    ], (name || 'document').replace(/\.[^.]+$/,'') + '.pdf');
+    audit('Opened document', name);
+    return toast('Opening ' + name);
+  }
   if(t.dataset.docsave){
     const [scope, id] = t.dataset.docsave.split(':');
     const name = (document.getElementById('docName')||{}).value?.trim();
     const type = (document.getElementById('docType')||{}).value;
+    const expiry = (document.getElementById('docExpiry')||{}).value || null;
     if(!name) return toast('Give the document a name');
     if(!type) return toast('Choose a document type');   /* P2.12: no silent default */
-    const rec = {did:newDid(), name, type, date: localISO(new Date()).slice(0,10), status:'received'};
+    const rec = {did:newDid(), name, type, date: localISO(new Date()).slice(0,10), expiry, status:'received'};
     const key = scope === 'client' ? CLIENT_ID : id;
     state.docs = state.docs || {}; (state.docs[key] = state.docs[key] || []).unshift(rec);
     if(scope === 'client') auditShared('Client uploaded document', name + ' (' + type + ')', CLIENT_ID);
@@ -6321,6 +7187,7 @@ document.addEventListener('click', e => {
     a.initials = initialsOf(a.name);
     a.code     = refCodeOf(a.name);
     a.phone    = (a.phoneFmt||'').replace(/[^\d+]/g,'');
+    state.setup = state.setup || {}; state.setup.landing = true;   /* P0.1: customise ticks the landing step */
     audit('Updated profile', a.email);
     closeModal();
     render();
@@ -6481,6 +7348,16 @@ document.addEventListener('input', e => {
     state.tara.q = e.target.value;
     return liveRegion('taraUni', taraScreen);
   }
+  /* P1.5: the advisor's note to the client is stored as typed, no re-render (caret stable). */
+  if(e.target.dataset && e.target.dataset.tarabind && state.tara){
+    state.tara[e.target.dataset.tarabind] = e.target.value;
+    return;
+  }
+  /* P1.3: global client search in the top bar. Filters customers + registered users and
+     renders a results dropdown in place, no full re-render (caret stays put). */
+  if(e.target.id === 'globalSearch'){ return renderGlobalSearch(e.target.value); }
+  /* P1.6: advisor-directory search, rebuilds only the results grid in place. */
+  if(e.target.id === 'dirSearch'){ state.dirQ = e.target.value; return liveRegion('dirResults', vDirectory); }
   /* §14.2 add-portfolio fields are two-way bound so a factsheet pick (which re-opens
      the drawer) does not discard what was already typed. */
   if(e.target.dataset && e.target.dataset.portfield){
