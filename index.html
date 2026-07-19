@@ -1849,7 +1849,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-19.6';
+const BUILD_VERSION = '2026-07-19.7';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -4258,24 +4258,24 @@ function vAnalytics(){
     .sort((a,b)=>b.pv-a.pv);
 
   return `
-    <div class="page-head between">
-      <div><h1>Analytics</h1>
-        <p class="lede">How your funnel is converting and where the book is growing.
-          Every figure below is for <b>${win.label}</b>.</p></div>
-      <div style="text-align:right">
-        <div class="row" style="justify-content:flex-end;gap:var(--v4-space-2);margin-bottom:var(--v4-space-2)">
+    <div class="page-head">
+      <div class="between" style="align-items:flex-start">
+        <div><h1>Analytics</h1>
+          <p class="lede">How your funnel is converting and where the book is growing.
+            Every figure below is for <b>${win.label}</b>.</p></div>
+        <div class="row" style="gap:var(--v4-space-2);flex:none;margin-left:auto">
           <button class="btn btn-sm" data-anexport="csv">Export CSV</button>
           <button class="btn btn-sm" data-anexport="pdf">Download report</button>
         </div>
-        <div class="chips" style="justify-content:flex-end">${AN_PERIODS.map(p=>`
-          <button class="fchip ${period===p?'on':''}" data-period="${esc(p)}">${p}</button>`).join('')}</div>
-        ${period==='Custom' ? `<div class="row" style="justify-content:flex-end;margin-top:var(--v4-space-3)">
-          <label style="margin:0;display:flex;align-items:center;gap:6px;font-size:12px">From
-            <input class="inp inp-sm" type="date" id="anFrom" value="${customFrom()}" max="${customTo()}" style="width:150px"></label>
-          <label style="margin:0;display:flex;align-items:center;gap:6px;font-size:12px">To
-            <input class="inp inp-sm" type="date" id="anTo" value="${customTo()}" min="${customFrom()}" style="width:150px"></label>
-        </div>` : ''}
       </div>
+      <div class="chips" style="justify-content:flex-end;margin-top:var(--v4-space-3)">${AN_PERIODS.map(p=>`
+        <button class="fchip ${period===p?'on':''}" data-period="${esc(p)}">${p}</button>`).join('')}</div>
+      ${period==='Custom' ? `<div class="row" style="justify-content:flex-end;margin-top:var(--v4-space-3)">
+        <label style="margin:0;display:flex;align-items:center;gap:6px;font-size:12px">From
+          <input class="inp inp-sm" type="date" id="anFrom" value="${customFrom()}" max="${customTo()}" style="width:150px"></label>
+        <label style="margin:0;display:flex;align-items:center;gap:6px;font-size:12px">To
+          <input class="inp inp-sm" type="date" id="anTo" value="${customTo()}" min="${customFrom()}" style="width:150px"></label>
+      </div>` : ''}
     </div>
 
     <div class="kpis">
