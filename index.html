@@ -1221,7 +1221,7 @@ body.dark .advnote{background:rgba(1,195,141,.08)}
 .feetier-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
 .feetier-r{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:var(--v4-radius-sm,6px);font-size:13px}
 .feetier-r.on{background:var(--v4-teal-50);color:var(--v4-teal-800);font-weight:600}
-body.dark .feetier-r.on{background:rgba(1,195,141,.10)}
+body.dark .feetier-r.on{background:rgba(1,195,141,.14);color:#5eead4}
 .mtile-spark{margin:2px 0}
 .mtile-spark svg{display:block;width:110px;height:24px}
 /* P2.10: fees breakdown expander */
@@ -1263,6 +1263,7 @@ body.dark .ov-c{background:var(--v4-navy-50)}
 .cobrand-v22{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
 .cobrand-v22 img{height:16px}
 .cfoot-fsp{font-size:11px;color:var(--muted);text-align:center;padding:var(--v4-space-3) var(--v4-space-4);line-height:1.5}
+.cfoot-cobrand{justify-content:center;flex-wrap:wrap;padding:var(--v4-space-3) var(--v4-space-4) 0}
 /* P2.12: bulk-select on Registered Users */
 .selbox{width:20px;height:20px;border:1.5px solid var(--v4-navy-300);border-radius:5px;background:var(--surface);
   cursor:pointer;font-size:12px;color:#fff;display:flex;align-items:center;justify-content:center;padding:0}
@@ -1791,7 +1792,7 @@ function loadScenario(s){
   const _c1 = state.customers.find(x=>x.id===CLIENT_ID);
   if(_c1 && !state.taraSuggestion[CLIENT_ID])
     state.taraSuggestion[CLIENT_ID] = {total:_c1.inv, ccy:'ZAR', lines:taraBuild(_c1,'ZAR'),
-      from:ADVISOR_EST.name, ts:'2026-07-16T10:00:00', invested:false};
+      from:ADVISOR_EST.name, fromLicence:ADVISOR_EST.licence, ts:'2026-07-16T10:00:00', invested:false};
   /* §9.1 qualification thresholds are the advisor's setting; don't reset mid-demo. */
   if(!state.qual) state.qual = {...QUAL};
   /* Part A.3 shared firm page; survives switches so an admin's edit persists in a demo. */
@@ -1848,7 +1849,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-19.5';
+const BUILD_VERSION = '2026-07-19.6';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -4986,8 +4987,8 @@ function availabilityCard(){
       </div>
       <div class="sec-t mt" style="font-size:14px">Meeting types</div>
       <div class="svc">${av.types.map(x=>`<span class="pill p-teal">${esc(x)}</span>`).join('')}</div>
-      <div class="legalnote" style="margin-top:var(--v4-space-3)">In the full build these sync live with your Google
-        or Outlook calendar. In the prototype the booking calendar uses a fixed weekday schedule.</div>
+      <div class="legalnote" style="margin-top:var(--v4-space-3)">Your working hours and buffer already shape the
+        booking slots. In the full build availability also syncs live with your Google or Outlook calendar.</div>
     </div>`;
 }
 function membershipCard(){
@@ -5425,7 +5426,16 @@ function clientShell(body){
         <span class="cfoot-mid">✉ <a class="link-a" data-stub="Contact support|In the real build this opens support chat.|Prototype: no support service.">Need Help? Contact support</a></span>
         <span class="cfoot-soc">${['in','X','f','◎','▶'].map(s=>`<span class="soc">${s}</span>`).join('')}</span>
       </footer>
-      ${state.linkedAdvisor ? `<div class="cfoot-fsp">Advised by ${esc(state.linkedAdvisor.name)}, ${esc(state.linkedAdvisor.firm)} · ${esc(state.linkedAdvisor.licence)}, an authorised financial services provider. Your advice is your advisor's, not Vault22's.</div>` : ''}
+      ${state.linkedAdvisor ? (()=>{ const la = state.linkedAdvisor;
+        const flogo = la.logo || (state.firm && state.firm.name === la.firm ? state.firm.logo : null);
+        return `<div class="cobrand cfoot-cobrand">
+          ${flogo ? `<img src="${flogo}" alt="${esc(la.firm)} logo" class="cobrand-logo">`
+            : `<span class="cobrand-firm">${esc(la.firm)}</span>`}
+          <span class="cobrand-fsp">Authorised financial services provider · ${esc(la.licence)}</span>
+          <span class="cobrand-v22">powered by <img src="assets/img/vault22-logo.png" alt="Vault22"></span>
+        </div>
+        <div class="cfoot-fsp">Advised by ${esc(la.name)}, ${esc(la.firm)}. Your advice is your advisor's, not Vault22's.</div>`;
+      })() : ''}
     </main>
     </div>
   </div>
@@ -5578,11 +5588,11 @@ function vClientProfile(){
         <span class="pill ${sug.invested?'p-green':'p-amber'}">${sug.invested?'Invested':'Total '+sugWeight+'%'}</span></div>
       <p class="lede" style="margin:var(--v4-space-2) 0 var(--v4-space-3)">${sug.invested
         ? 'You invested in this portfolio. Your advisor can see it in their portal.'
-        : (esc((linked&&linked.name.split(' ')[0])||'Your advisor')) + ' built this for you. Adjust the weightings if you like, then invest. Total invested ' + money(sug.total) + '.'}</p>
-      ${sug.note ? `<div class="advnote"><span class="advnote-h">Note from ${esc((linked&&linked.name.split(' ')[0])||'your advisor')}</span>
+        : esc((sug.from||(linked&&linked.name)||'Your advisor').split(' ')[0]) + ' built this for you. Adjust the weightings if you like, then invest. Total invested ' + money(sug.total) + '.'}</p>
+      ${sug.note ? `<div class="advnote"><span class="advnote-h">Note from ${esc((sug.from||(linked&&linked.name)||'your advisor').split(' ')[0])}</span>
         <p>${esc(sug.note)}</p></div>` : ''}
       <div class="roa"><span class="roa-h">Record of advice</span>
-        <span class="sub">${esc((linked&&linked.name)||'Your advisor')}${linked&&linked.licence?' · '+esc(linked.licence):''} · ${sug.ts ? sug.ts.slice(0,10) : TODAY_STR} · logged</span></div>
+        <span class="sub">${esc(sug.from||(linked&&linked.name)||'Your advisor')}${(sug.fromLicence||(linked&&linked.licence))?' · '+esc(sug.fromLicence||(linked&&linked.licence)):''} · ${sug.ts ? sug.ts.slice(0,10) : TODAY_STR} · logged</span></div>
       ${sug.strat ? `<div class="row" style="gap:var(--v4-space-2);margin-bottom:var(--v4-space-3);flex-wrap:wrap">
         <span class="pill p-gray">Expected return ~${sug.strat.ret.toFixed(1)}%</span>
         <span class="pill p-gray">Volatility ~${sug.strat.vol.toFixed(1)}%</span>
@@ -5787,10 +5797,16 @@ const LOC_OPTS = [['Video call','🎥'],['Phone','📞'],['In person','📍']];
 const DUR_OPTS = [15,30,60];
 const dstr = d => localISO(d).slice(0,10);
 const pad2 = n => String(n).padStart(2,'0');
-/* Business hours 09:00 to 17:00 SAST, lunch 12:00 to 13:00, slot spacing = duration. */
+/* Slots run inside the advisor's own working hours (state.advisor.availability), with the
+   configured buffer added between meetings. Lunch 12:00 to 13:00 stays reserved. */
 function slotTimes(dur){
+  const av = (state.advisor && state.advisor.availability) || {};
+  const toMin = t => { const [h,m] = String(t||'').split(':').map(Number); return (h||0)*60 + (m||0); };
+  const startM = toMin(av.start || '09:00');
+  const endM   = toMin(av.end   || '17:00');
+  const step   = dur + (Number(av.buffer) || 0);
   const out = [];
-  for(let m = 9*60; m + dur <= 17*60; m += dur){
+  for(let m = startM; m + dur <= endM; m += step){
     if(m >= 12*60 && m < 13*60) continue;         /* lunch */
     out.push(pad2(Math.floor(m/60)) + ':' + pad2(m%60));
   }
@@ -5956,10 +5972,9 @@ function bookDrawer(id){
         ${day&&slot ? (confirming ? 'Confirm and send' : 'Send invite') : 'Pick a day and time'}</button>
     </div>
     <div class="legalnote">Logs a ${dur}-minute ${esc(loc.toLowerCase())} against ${esc(who.name.split(' ')[0])} and gives you a
-      real calendar invite to download. Availability shown here is a fixed prototype schedule
-      (weekdays, 09:00 to 17:00 SAST). In the real build it syncs live with your Google or Outlook
-      calendar (working hours, buffers and existing events), emails the invite to ${esc(who.email)},
-      and writes it to your linked calendar.</div>
+      real calendar invite to download. Slots follow your working hours and buffer from My Profile
+      (weekdays only in the prototype). In the real build availability also syncs live with your Google or Outlook
+      calendar (existing events), emails the invite to ${esc(who.email)}, and writes it to your linked calendar.</div>
     ${booked.length ? `<div class="sec-t" style="margin-top:var(--v4-space-6)">Already booked with ${esc(who.name.split(' ')[0])}</div>
       ${booked.map(m=>`<div class="list-row"><span>${esc(m.t || 'Meeting')}
         ${m.status?`<span class="pill ${MEET_PILL[m.status]||'p-gray'}" style="margin-left:6px">${MEET_LABEL[m.status]||m.status}</span>`:''}</span>
@@ -6846,7 +6861,7 @@ document.addEventListener('click', e => {
     const strat = taraStrategy(c, state.tara.lines);
     state.taraSuggestion = state.taraSuggestion || {};
     state.taraSuggestion[id] = {total:state.tara.total, ccy:state.tara.ccy,
-      lines:JSON.parse(JSON.stringify(state.tara.lines)), from:state.advisor.name,
+      lines:JSON.parse(JSON.stringify(state.tara.lines)), from:state.advisor.name, fromLicence:state.advisor.licence,
       note, strat:{ret:strat.ret, vol:strat.vol, fee:strat.fee, fit:strat.fit, type:c.type},
       ts:localISO(new Date()), invested:false};
     audit('Suggested a personalised portfolio', c?c.name:id, id);
