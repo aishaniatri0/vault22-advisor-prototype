@@ -465,6 +465,27 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 .p-blue{background:#eff6ff;color:var(--v4-info-dark)}
 .p-amber{background:#fffbeb;color:var(--v4-warning-dark)}
 .p-red{background:#fef2f2;color:var(--v4-danger-dark)}
+.p-slate{background:var(--v4-navy-50);color:var(--v4-navy-600)}
+/* Calendly-grade booking surface: a day column beside a scrollable time column. */
+.bookgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--v4-space-4);align-items:start}
+.bookcol .sec-t{margin-bottom:var(--v4-space-3)}
+.bookdays{display:flex;flex-direction:column;gap:8px}
+.bookday{display:flex;align-items:baseline;gap:8px;border:1px solid var(--line);background:var(--surface);
+  border-radius:var(--v4-radius-md);padding:10px 12px;cursor:pointer;text-align:left;transition:.12s}
+.bookday:hover{border-color:var(--v4-navy-300)}
+.bookday.on{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff}
+.bookday .bd-wd{font-size:11.5px;font-weight:600;color:var(--muted);width:30px}
+.bookday.on .bd-wd,.bookday.on .bd-mon{color:rgba(255,255,255,.75)}
+.bookday .bd-num{font-size:16px;font-weight:700}
+.bookday .bd-mon{font-size:11.5px;color:var(--muted)}
+.bookslots{display:flex;flex-direction:column;gap:8px;max-height:264px;overflow-y:auto;padding-right:2px}
+.bookslot{border:1px solid var(--v4-navy-200);background:var(--surface);color:var(--v4-navy-700);
+  border-radius:var(--v4-radius-md);padding:11px 12px;cursor:pointer;font-weight:600;font-size:14px;
+  font-variant-numeric:tabular-nums;transition:.12s}
+.bookslot:hover{border-color:var(--v4-navy-700)}
+.bookslot.on{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff}
+body.dark .bookslot{color:var(--text)}
+@media(max-width:520px){.bookgrid{grid-template-columns:1fr}}
 
 label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
 /* The live app's field: 56px, grey fill, NO border, 8px radius, green focus ring.
@@ -1635,7 +1656,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-19.2';
+const BUILD_VERSION = '2026-07-19.3';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -1883,6 +1904,10 @@ const REGIONS = [
   {k:'Global / other',       f:'🌍', d:'Set your currency and providers'}
 ];
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+/* Defect 3: phone fields accept digits and phone punctuation only. `cleanPhone` strips
+   anything else (for live input filtering); `validPhone` checks it has a sane digit count. */
+const cleanPhone = v => (v || '').replace(/[^\d+\s()-]/g, '');
+const validPhone = v => { const d = (v || '').replace(/\D/g, ''); return d.length >= 7 && d.length <= 15; };
 
 /* Mock availability: a few reserved names so the taken-state is demonstrable. */
 const SLUG_TAKEN = ['admin','www','test','advisor','api','support','help','app','vault22'];
@@ -2070,7 +2095,7 @@ ONB.register = () => {
       ${pwField('r_pass')}
       <div class="onb-check bad" id="err_pass"></div>
       <div class="field"><label>Phone number</label>
-        <input class="inp" id="r_phone" value="${esc(a.phoneFmt)}" placeholder="Enter your phone number" autocomplete="off"></div>
+        <input class="inp" id="r_phone" type="tel" inputmode="numeric" data-phone value="${esc(a.phoneFmt)}" placeholder="Enter your phone number" autocomplete="off"></div>
       <details style="margin-bottom:var(--v4-space-3)" ${a.company||a.licence||a.referredBy?'open':''}>
         <summary style="font-size:13px;color:var(--muted);cursor:pointer;font-weight:600">More details</summary>
         <div style="margin-top:var(--v4-space-4)">
@@ -2330,6 +2355,11 @@ function goOnb(id){
         state.regErr='pass';
         setErr('pass', pw ? 'Use at least 8 characters' : 'Choose a password');
         (document.getElementById('r_pass')||{focus(){}}).focus(); return;
+      }
+      /* Phone is optional here, but if given it must be a real number (Defect 3). */
+      if(val('r_phone') && !validPhone(val('r_phone'))){
+        state.regErr='phone';
+        return toast('Enter a valid phone number, or leave it blank');
       }
       state.advisor.hasPassword = true;   // never store the password itself
       state.regErr = null;
@@ -3938,6 +3968,10 @@ function vLanding(){
 
     <!-- R26: the clean public page a prospect lands on. Description left, uploaded image right,
          register + get in touch. No advisor admin tools here. -->
+    <div class="between" style="margin-bottom:var(--v4-space-3)">
+      <span class="pill p-amber">Preview · what a prospect sees</span>
+      <span class="sub">Start Investing and Get in touch are the prospect's actions.</span>
+    </div>
     <div class="grid2">
       <div class="card card-p">
         <span class="eyebrow teal">${esc(a.company || firm.name)}</span>
@@ -4013,7 +4047,8 @@ function registerDrawer(){
   const a = state.advisor;
   return `
     <div class="between" style="margin-bottom:var(--v4-space-2)">
-      <div><h2>Start investing with Vault22</h2>
+      <div><span class="pill p-amber" style="margin-bottom:6px">Simulating a prospect</span>
+        <h2>Start investing with Vault22</h2>
         <p class="lede">Create your account. ${esc(a.name)} will be your advisor.</p></div>
       <button class="x" data-close="1">×</button></div>
     <div class="field" style="margin-top:var(--v4-space-4)"><label>Full name</label>
@@ -4021,10 +4056,10 @@ function registerDrawer(){
     <div class="field"><label>Email</label>
       <input class="inp inp-sm" id="regEmail" placeholder="you@email.com"></div>
     <div class="field"><label>Mobile</label>
-      <input class="inp inp-sm" id="regPhone" placeholder="+27…"></div>
+      <input class="inp inp-sm" id="regPhone" type="tel" inputmode="numeric" data-phone placeholder="+27…"></div>
     <div class="actions"><button class="obtn obtn-pri" data-register="1">Create account</button></div>
-    <div class="legalnote">Prototype: this starts standard Vault22 onboarding, tagged to
-      ${esc(a.name.split(' ')[0])}, so a new registered user appears in their dashboard.</div>`;
+    <div class="legalnote">Prototype: this simulates a prospect signing up through
+      ${esc(a.name.split(' ')[0])}'s link, so a new registered user appears in their dashboard and list.</div>`;
 }
 /* §10.1: the advisor's public profile card, previewed on My Profile. */
 function advisorPreview(a){
@@ -4043,7 +4078,7 @@ function advisorPreview(a){
           ${a.services.map(s=>`<span class="pill p-teal">${esc(s)}</span>`).join('')}</div>` : ''}
       ${socialLinks(a)}
       <div class="between">
-        <button class="btn btn-teal" data-stub="Start Investing|The prospect's entry point on your public landing page.|Per the 17 Jul stand-up the investor journey is unchanged, so it is not rebuilt here.">Start Investing</button>
+        <button class="btn btn-teal" data-startinvest="1">Start Investing</button>
         <div class="sub">${esc(a.email)}${a.phoneFmt ? ' · ' + esc(a.phoneFmt) : ''}</div>
       </div>
     </div>
@@ -4077,7 +4112,7 @@ function customiseDrawer(){
       <input class="inp" data-services="1" value="${esc(a.services.join(', '))}">
       <div class="sub" style="margin-top:4px">Separate services with commas</div></div>
     <div class="field"><label>Email</label><input class="inp" ${bind('advisor.email')}></div>
-    <div class="field"><label>Phone</label><input class="inp" ${bind('advisor.phoneFmt')}></div>
+    <div class="field"><label>Phone</label><input class="inp" type="tel" inputmode="numeric" data-phone ${bind('advisor.phoneFmt')}></div>
     <div class="field"><label>FSP licence</label><input class="inp" ${bind('advisor.licence')}></div>
     <div class="field"><label>LinkedIn</label><input class="inp" ${bind('advisor.social.linkedin')} placeholder="linkedin.com/in/…"></div>
     <div class="field"><label>Website URL</label><input class="inp" ${bind('advisor.website')} placeholder="yourfirm.co.za"></div>
@@ -5035,28 +5070,43 @@ const pendingMeetingReqs = () => {
 function bookDrawer(id){
   const who = state.customers.concat(state.leads).find(x=>x.id===id);
   if(!who) return '';
-  const days = nextDays(5);
+  const days = nextDays(7);
   const day  = state.bookDay || days[0].v;
   const slot = state.bookSlot;
   const booked = (state.crm[id] && state.crm[id].meets) || [];
   const confirming = state.bookConfirmMid;
+  const dayLabel = (days.find(d=>d.v===day)||days[0]).l;
   return `
     <div class="between" style="margin-bottom:var(--v4-space-2)">
       <div><h2>${confirming ? 'Confirm a time' : 'Book a meeting'}</h2>
         <p class="lede">${confirming ? esc(who.name.split(' ')[0]) + ' asked to meet. Pick a time to confirm.'
           : 'With ' + esc(who.name) + ' · ' + esc(who.email)}</p></div>
       <button class="x" data-close="1">×</button></div>
-    <div class="sec-t" style="margin-top:var(--v4-space-5)">Day</div>
-    <div class="chips">${days.map(d=>`
-      <button class="fchip ${day===d.v?'on':''}" data-bday="${d.v}">${d.l}</button>`).join('')}</div>
-    <div class="sec-t" style="margin-top:var(--v4-space-5)">Time</div>
-    <div class="chips">${SLOTS.map(s=>`
-      <button class="fchip ${slot===s?'on':''}" data-bslot="${s}">${s}</button>`).join('')}</div>
+    <div class="chips" style="gap:var(--v4-space-2);margin:var(--v4-space-3) 0 var(--v4-space-4)">
+      <span class="pill p-slate">🕑 30 min</span>
+      <span class="pill p-slate">🌍 SAST (GMT+2)</span>
+      <span class="pill p-slate">🎥 Vault22 video call</span>
+    </div>
+    <div class="bookgrid">
+      <div class="bookcol">
+        <div class="sec-t">Select a day</div>
+        <div class="bookdays">${days.map(d=>{
+          const [wd, dnum, mon] = d.l.split(' ');
+          return `<button class="bookday ${day===d.v?'on':''}" data-bday="${d.v}">
+            <span class="bd-wd">${wd}</span><span class="bd-num">${dnum}</span><span class="bd-mon">${mon}</span>
+          </button>`; }).join('')}</div>
+      </div>
+      <div class="bookcol">
+        <div class="sec-t">${esc(dayLabel)}</div>
+        <div class="bookslots">${SLOTS.map(s=>`
+          <button class="bookslot ${slot===s?'on':''}" data-bslot="${s}">${s}</button>`).join('')}</div>
+      </div>
+    </div>
     <div class="actions" style="margin-top:var(--v4-space-5)">
       <button class="obtn obtn-pri" ${slot?'':'disabled'} data-bconfirm="${id}">
-        ${slot ? (confirming ? 'Confirm ' : 'Send invite for ') + day + ' at ' + slot : 'Pick a time'}</button>
+        ${slot ? (confirming ? 'Confirm ' : 'Send invite ') + '· ' + dayLabel + ' at ' + slot : 'Pick a day and time'}</button>
     </div>
-    <div class="legalnote">Logs the meeting against ${esc(who.name.split(' ')[0])} and gives you a
+    <div class="legalnote">Logs a 30-minute meeting against ${esc(who.name.split(' ')[0])} and gives you a
       real calendar invite to download. In the real build it is also emailed to
       ${esc(who.email)} and written to your linked calendar
       (${esc(state.advisor.calendar || 'set a link in My Profile')}).</div>
@@ -5597,13 +5647,22 @@ document.addEventListener('click', e => {
   if(t.dataset.startinvest){ return openModal(registerDrawer()); }
   if(t.dataset.register){
     const val = id => (document.getElementById(id)||{}).value?.trim() || '';
-    const name = val('regName'), email = val('regEmail');
+    const name = val('regName'), email = val('regEmail'), phone = val('regPhone');
     if(!name) return toast('Add your name');
     if(!EMAIL_RE.test(email)) return toast('Add a valid email');
+    if(!validPhone(phone)) return toast('Enter a valid mobile number');
+    /* Defect 2: registering a prospect creates a REAL Registered User tagged to the advisor,
+       so the count, the list and conversion all move. Nulls at the Registered stage mirror
+       the "Johan Botha" seed. */
+    const id = 'L' + (++_mseq), now = localISO(new Date());
+    state.leads.unshift({id, name, email, phone: cleanPhone(phone), signup: now.slice(0,10),
+      stage:'Registered', ffs:null, nw:null, sav:null, cap:null, income:null, port:null,
+      dob:null, nationality:null, dependents:null, housing:null, lastLogin: now, act: now});
+    state.crm[id] = state.crm[id] || {notes:[],tags:[],tasks:[],follow:[],meets:[],files:[]};
     state.notifs.unshift({id:'SIGNUP'+(++_mseq), type:'New Lead', em:'👤',
-      msg: name + ' signed up through your landing page', ts: localISO(new Date()), go:['dashboard'], unread:true});
-    audit('New registered user via landing page', name + ' (' + email + ')');
-    closeModal(); renderBell();
+      msg: name + ' signed up through your landing page', ts: now, go:['customer', id], unread:true});
+    audit('New registered user via landing page', name + ' (' + email + ')', id);
+    closeModal(); render();
     return toast('Welcome to Vault22. ' + esc(state.advisor.name.split(' ')[0]) + ' is now your advisor. Complete KYC to start investing.');
   }
   /* Defect 3: a prospect's enquiry from the landing page closes the acquisition loop. */
@@ -5935,6 +5994,7 @@ document.addEventListener('click', e => {
     const a = state.advisor;
     if(!a.name.trim()) return toast('Your name cannot be empty');
     if(!EMAIL_RE.test(a.email)) return toast('That doesn’t look like an email address');
+    if(a.phoneFmt && !validPhone(a.phoneFmt)) return toast('Enter a valid phone number');
     a.initials = initialsOf(a.name);
     a.code     = refCodeOf(a.name);
     a.phone    = (a.phoneFmt||'').replace(/[^\d+]/g,'');
@@ -6064,6 +6124,15 @@ document.addEventListener('click', e => {
 document.getElementById('protoScrim').addEventListener('click', closeProto);
 
 document.addEventListener('input', e => {
+  /* Defect 3: phone fields strip anything that is not a digit or phone punctuation, live,
+     preserving the caret. If the field is also two-way bound, keep state in sync. */
+  if(e.target.dataset && e.target.dataset.phone !== undefined){
+    const el = e.target, pos = el.selectionStart, cleaned = cleanPhone(el.value);
+    if(cleaned !== el.value){ el.value = cleaned;
+      try{ el.setSelectionRange(Math.max(0,pos-1), Math.max(0,pos-1)); }catch(_){} }
+    if(el.dataset.bind) setPath(state, el.dataset.bind, el.value);
+    return;
+  }
   /* Defect 1: search/typed fields update state and rebuild only their results region in
      place (liveRegion), never re-rendering the whole view, so the caret never jumps and
      what you type is exactly what you get. */
