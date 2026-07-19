@@ -584,6 +584,13 @@ body.dw-open .topbar{right:var(--dw)}
 .panel{position:fixed;top:78px;right:var(--v4-space-6);width:380px;max-height:74vh;overflow-y:auto;
   background:var(--surface);border-radius:var(--v4-radius-xl);box-shadow:var(--v4-shadow-lg);z-index:50;display:none}
 .panel.open{display:block}
+/* One long segmented pill (Green / Mid navy / Navy) in the Prototype settings gear. */
+.view-seg{display:flex;background:var(--v4-navy-50);border:1px solid var(--line);
+  border-radius:var(--v4-radius-full);padding:3px;gap:2px}
+.view-seg button{flex:1;border:0;background:none;padding:8px 6px;border-radius:var(--v4-radius-full);
+  font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;transition:all .15s}
+.view-seg button:hover{color:var(--text)}
+.view-seg button.on{background:var(--v4-navy-700);color:#fff}
 .nt{display:flex;gap:var(--v4-space-3);padding:var(--v4-space-3) var(--v4-space-4);
   border-bottom:1px solid var(--v4-navy-50);cursor:pointer;text-align:left;border:0;background:none;width:100%}
 .nt:hover{background:var(--v4-navy-50)}
@@ -1121,10 +1128,7 @@ body.client-app .proto-fab{right:auto;left:var(--v4-space-5)}
     <span class="tag">Advisor</span>
   </div>
   <div class="tb-right">
-    <!-- §2.1/§2.2 settings cluster: view theme (advisor green ⇄ navy) + light/dark. -->
-    <button class="chip" data-vtheme="1" id="vthemeBtn" title="Switch view: Green, Mid navy, Navy"
-      aria-label="Switch advisor view">Green view</button>
-    <button class="icon-btn" data-mode="1" id="modeBtn" title="Light or dark" aria-label="Light or dark">☾</button>
+    <!-- §2.1/§2.2: view theme + light/dark live in the Prototype settings gear (bottom-right). -->
     <button class="icon-btn" id="bell" title="Notifications" aria-label="Notifications">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1631,7 +1635,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-19.1';
+const BUILD_VERSION = '2026-07-19.2';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -1916,6 +1920,15 @@ function protoDrawer(){
         ${opt('est','Established advisor','Aishani Atri · 10 registered users, 5 customers')}
         ${opt('client','Financial Advisor view','Lerato Khumalo\'s own Vault22 profile, where she grants access')}
       </div>
+      <div class="pd-sec" style="margin-top:var(--v4-space-5)">Appearance</div>
+      ${state.scen!=='client' ? `
+        <div class="pd-note" style="margin:0 0 6px">View theme (advisor portal)</div>
+        <div class="view-seg" style="margin-bottom:var(--v4-space-3)">
+          <button class="${state.viewTheme==='green'?'on':''}" data-setvtheme="green">Green</button>
+          <button class="${state.viewTheme==='midnavy'?'on':''}" data-setvtheme="midnavy">Mid navy</button>
+          <button class="${state.viewTheme==='navy'?'on':''}" data-setvtheme="navy">Navy</button>
+        </div>` : ''}
+      <button class="btn" style="width:100%;justify-content:center" data-mode="1">${state.mode==='dark'?'☀ Light mode':'☾ Dark mode'}</button>
       <p class="pd-note">Switching reloads the scenario and returns you to its
         starting screen. Nothing persists across a page reload.</p>
       <p class="pd-note" style="opacity:.7">Build ${BUILD_VERSION}. If two tabs differ,
@@ -4587,6 +4600,12 @@ function togglePanel(){
         <p>You'll be notified when someone signs up, completes KYC, or invests.</p></div>`;
   p.classList.add('open');
 }
+/* View theme + light/dark live in the Prototype settings gear; after a change, refresh
+   that drawer in place so the active state updates without closing it. */
+const reopenProtoIfOpen = () => {
+  const p = document.getElementById('protoDrawer');
+  if(p && p.classList.contains('open')) p.innerHTML = protoDrawer();
+};
 
 
 /* =====================================================================
@@ -4657,7 +4676,6 @@ function clientShell(body){
     <header class="ctop">
       <img class="clogo" src="assets/img/vault22-logo.png" alt="Vault22">
       <div class="ctop-r">
-        <button class="icon-btn" data-mode="1" title="Light or dark" aria-label="Light or dark">${state.mode==='dark'?'☀':'☾'}</button>
         <button class="icon-btn" id="cbell" aria-label="Notifications" data-cbell="1">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -5364,10 +5382,6 @@ function render(){
     }
   }
   renderNav(); renderBell();
-  const mb = document.getElementById('modeBtn'); if(mb) mb.textContent = state.mode==='dark' ? '☀' : '☾';
-  const vb = document.getElementById('vthemeBtn'); if(vb){
-    vb.textContent = {green:'Green view', midnavy:'Mid navy', navy:'Navy view'}[state.viewTheme] || 'Green view';
-    vb.classList.toggle('on', state.viewTheme!=='green'); }
   const a = state.advisor;
   document.documentElement.style.setProperty('--lp-theme', a.theme || '#01c38d');
   document.getElementById('whoName').textContent = a.name;
@@ -5399,7 +5413,7 @@ function liveRegion(regionId, build){
 }
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-mode],[data-vtheme],[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
+  const t = e.target.closest('[data-setvtheme],[data-mode],[data-vtheme],[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
     '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-cbell],[data-fee],[data-book],[data-bday],[data-bslot],[data-bconfirm],[data-invite],[data-nprefs],[data-nsave],[data-cnav],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
     '[data-notif],[data-readall],[data-audit],[data-dl],[data-save],[data-status],[data-slug],[data-ics],[data-unfile],[data-vemail],[data-votp],[data-switch],[data-sconfirm],[data-prefilter],'+
     '[data-auditf],[data-docsave],[data-doccancel],[data-pview],[data-psearch],[data-addport],[data-portsub],[data-portcancel],[data-ctab],[data-reqrisk],[data-period],[data-notype],[data-nsave2],[data-qualedit],[data-qualsave],[data-editland],[data-firm],[data-appt],[data-custom],[data-portfield],[data-csend],[data-reqmeet],[data-custompd],'+
@@ -5411,10 +5425,12 @@ document.addEventListener('click', e => {
     return;
   }
   if(t.dataset.audit) audit(t.dataset.audit, state.arg || advisorUrl(state.advisor));
-  /* §2.2 light/dark, and §2.1 advisor accent. */
-  if(t.dataset.mode){ state.mode = state.mode==='dark' ? 'light' : 'dark'; return render(); }
+  /* Appearance lives in the Prototype settings gear: the segmented pill sets the view
+     theme, the button toggles light/dark; the drawer stays open, refreshed in place. */
+  if(t.dataset.setvtheme){ state.viewTheme = t.dataset.setvtheme; render(); return reopenProtoIfOpen(); }
+  if(t.dataset.mode){ state.mode = state.mode==='dark' ? 'light' : 'dark'; render(); return reopenProtoIfOpen(); }
   if(t.dataset.vtheme){ const order=['green','midnavy','navy'];
-    state.viewTheme = order[(order.indexOf(state.viewTheme)+1)%order.length]; return render(); }
+    state.viewTheme = order[(order.indexOf(state.viewTheme)+1)%order.length]; render(); return reopenProtoIfOpen(); }
   /* §8 tabs */
   if(t.dataset.tab8){ state.tab8 = t.dataset.tab8; return render(); }
   /* Consent: the advisor asks; the client decides. Writes to the audit log. */
