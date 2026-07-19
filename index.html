@@ -390,6 +390,15 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
   font-variant-numeric:tabular-nums}
 .mtile-s{font-size:11px;color:var(--v4-navy-300)}
 .hr{height:1px;background:var(--line);margin:var(--v4-space-5) 0}
+/* P2.13: dashboard KPI tiles for Pending KYC / Pending Risk, clickable to the filtered list. */
+.kpi-strip{display:grid;grid-template-columns:1fr 1fr;gap:var(--v4-space-5)}
+@media(max-width:640px){.kpi-strip{grid-template-columns:1fr}}
+.kpi-tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--v4-radius-md);
+  padding:var(--v4-space-4);display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:.12s}
+.kpi-tile:hover{border-color:var(--v4-navy-300);box-shadow:var(--v4-shadow-sm,0 1px 3px rgba(0,0,0,.06))}
+.kpi-l{font-size:12.5px;font-weight:600;color:var(--muted)}
+.kpi-v{font-size:26px;font-weight:700;color:var(--live-head,var(--text));line-height:1.05;font-variant-numeric:tabular-nums}
+.kpi-s{font-size:11.5px;color:var(--v4-navy-300)}
 
 /* Live progress track: h-2 bg-[#E4E5E8] rounded-lg, fill bg-[#01C38D]. */
 .track{height:8px;background:#E4E5E8;border-radius:8px;overflow:hidden}
@@ -466,26 +475,70 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 .p-amber{background:#fffbeb;color:var(--v4-warning-dark)}
 .p-red{background:#fef2f2;color:var(--v4-danger-dark)}
 .p-slate{background:var(--v4-navy-50);color:var(--v4-navy-600)}
-/* Calendly-grade booking surface: a day column beside a scrollable time column. */
-.bookgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--v4-space-4);align-items:start}
-.bookcol .sec-t{margin-bottom:var(--v4-space-3)}
-.bookdays{display:flex;flex-direction:column;gap:8px}
-.bookday{display:flex;align-items:baseline;gap:8px;border:1px solid var(--line);background:var(--surface);
-  border-radius:var(--v4-radius-md);padding:10px 12px;cursor:pointer;text-align:left;transition:.12s}
-.bookday:hover{border-color:var(--v4-navy-300)}
-.bookday.on{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff}
-.bookday .bd-wd{font-size:11.5px;font-weight:600;color:var(--muted);width:30px}
-.bookday.on .bd-wd,.bookday.on .bd-mon{color:rgba(255,255,255,.75)}
-.bookday .bd-num{font-size:16px;font-weight:700}
-.bookday .bd-mon{font-size:11.5px;color:var(--muted)}
-.bookslots{display:flex;flex-direction:column;gap:8px;max-height:264px;overflow-y:auto;padding-right:2px}
-.bookslot{border:1px solid var(--v4-navy-200);background:var(--surface);color:var(--v4-navy-700);
-  border-radius:var(--v4-radius-md);padding:11px 12px;cursor:pointer;font-weight:600;font-size:14px;
-  font-variant-numeric:tabular-nums;transition:.12s}
-.bookslot:hover{border-color:var(--v4-navy-700)}
-.bookslot.on{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff}
-body.dark .bookslot{color:var(--text)}
-@media(max-width:520px){.bookgrid{grid-template-columns:1fr}}
+/* ===== Calendly-grade scheduling surface ===== */
+/* Meeting controls row */
+.bookctl{display:flex;flex-wrap:wrap;gap:var(--v4-space-4);margin:var(--v4-space-4) 0}
+.bookctl-f{display:flex;flex-direction:column;gap:6px}
+.bookctl-f label{margin:0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--v4-radius-full);padding:3px;gap:2px;background:var(--surface)}
+.seg-b{border:none;background:none;padding:6px 12px;border-radius:var(--v4-radius-full);cursor:pointer;
+  font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.12s}
+.seg-b:hover{color:var(--text)}
+.seg-b.on{background:var(--v4-navy-700);color:#fff}
+/* Two-column layout: calendar beside slot column */
+.booklayout{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--v4-space-5);align-items:start}
+@media(max-width:560px){.booklayout{grid-template-columns:1fr}}
+/* Month calendar */
+.cal{border:1px solid var(--line);border-radius:var(--v4-radius-lg,14px);padding:var(--v4-space-4);background:var(--surface)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--v4-space-3)}
+.cal-title{font-size:15px;font-weight:700}
+.cal-nav{width:32px;height:32px;border:1px solid var(--line);background:var(--surface);border-radius:50%;
+  cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;transition:.12s}
+.cal-nav:hover:not(:disabled){border-color:var(--v4-navy-400);background:var(--v4-navy-50)}
+.cal-nav:disabled{opacity:.35;cursor:not-allowed}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{margin-bottom:4px}
+.cal-wd{text-align:center;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;padding:4px 0}
+.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:13.5px;border-radius:var(--v4-radius-md);position:relative}
+.cal-empty{visibility:hidden}
+.cal-day{border:none;background:none;font-weight:500;color:var(--text)}
+.cal-open{cursor:pointer;transition:.1s}
+.cal-open:hover{background:var(--v4-navy-50);color:var(--v4-navy-800)}
+.cal-off{color:var(--v4-navy-300);opacity:.55;cursor:not-allowed}
+.cal-today{font-weight:800;box-shadow:inset 0 0 0 1.5px var(--v4-teal-500,#01C38D)}
+.cal-day.on{background:var(--v4-navy-700);color:#fff;font-weight:700}
+.cal-dot{width:4px;height:4px;border-radius:50%;background:var(--v4-teal-500,#01C38D);position:absolute;bottom:6px}
+.cal-day.on .cal-dot{background:#fff}
+/* Slot column */
+.slotcol{border:1px solid var(--line);border-radius:var(--v4-radius-lg,14px);padding:var(--v4-space-4);background:var(--surface);min-height:240px}
+.slotcol-empty{display:flex;align-items:center;justify-content:center}
+.slot-emptybox{text-align:center;color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:8px;font-size:26px}
+.slot-emptybox div{font-size:13px}
+.slotcol-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--v4-space-3)}
+.slotcol-date{font-size:14px;font-weight:700}
+.hourtog{display:inline-flex;border:1px solid var(--line);border-radius:var(--v4-radius-full);overflow:hidden}
+.ht{border:none;background:var(--surface);padding:4px 10px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer}
+.ht.on{background:var(--v4-navy-700);color:#fff}
+.slotscroll{max-height:300px;overflow-y:auto;padding-right:2px}
+.slot-glabel{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:var(--v4-space-3) 0 6px}
+.slot-glabel:first-child{margin-top:0}
+.slotwrap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tslot{border:1px solid var(--v4-navy-200);background:var(--surface);color:var(--v4-navy-700);
+  border-radius:var(--v4-radius-md);padding:10px;cursor:pointer;font-weight:600;font-size:13.5px;
+  font-variant-numeric:tabular-nums;transition:.12s;text-align:center}
+.tslot:hover{border-color:var(--v4-navy-700)}
+.tslot.on{background:var(--v4-navy-700);border-color:var(--v4-navy-700);color:#fff}
+.tslot-off{opacity:.5;cursor:not-allowed;display:flex;flex-direction:column;gap:2px}
+.tslot-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--v4-danger-dark,#c0392b)}
+body.dark .tslot{color:var(--text)}
+/* Summary card */
+.booksum{border:1px solid var(--line);border-radius:var(--v4-radius-md);background:var(--v4-navy-50);
+  padding:var(--v4-space-4);margin-top:var(--v4-space-4)}
+body.dark .booksum{background:rgba(255,255,255,.04)}
+.booksum-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+.booksum-r{display:flex;gap:10px;align-items:baseline;font-size:13.5px;padding:3px 0;line-height:1.5}
+.booksum-r span{flex:none}
 
 label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
 /* The live app's field: 56px, grey fill, NO border, 8px radius, green focus ring.
@@ -571,7 +624,11 @@ td .nm{font-weight:600}
 .dropzone b{color:var(--text);font-size:14px}
 
 /* filter chips */
-.chips{display:flex;gap:var(--v4-space-2);flex-wrap:wrap}
+.chips{display:flex;gap:var(--v4-space-2);flex-wrap:wrap;align-items:center}
+.chip-div{width:1px;align-self:stretch;min-height:20px;background:var(--line);margin:0 2px}
+.radio-row{display:flex;gap:var(--v4-space-4)}
+.radio{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500}
+.radio input{width:16px;height:16px;accent-color:var(--v4-teal-600,#00A677);cursor:pointer}
 .fchip{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:var(--v4-radius-full);
   font-size:12.5px;font-weight:500;color:var(--v4-navy-600)}
 .fchip:hover{border-color:var(--v4-navy-200)}
@@ -1109,6 +1166,9 @@ body.client-app .proto-fab{right:auto;left:var(--v4-space-5)}
 .tara-line:last-child{border-bottom:0}
 .tara-stp{display:flex;align-items:center;gap:6px}
 .tara-list{display:flex;flex-direction:column;max-height:46vh;overflow:auto}
+.uni-sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--muted);padding:var(--v4-space-3) 0 4px;position:sticky;top:0;background:var(--card)}
+.uni-sec:first-child{padding-top:2px}
 </style>
 </head>
 <body>
@@ -1656,7 +1716,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-19.3';
+const BUILD_VERSION = '2026-07-19.4';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -1846,12 +1906,31 @@ document.addEventListener('change', e => {
     r.onload = () => { state.clientPhoto = r.result; toast('Profile picture added. Profile complete.'); render(); };
     return r.readAsDataURL(file);
   }
+  /* Booking timezone selector (display-only). */
+  const tz = e.target.closest('[data-btz]');
+  if(tz){ state.bookTz = tz.value; return openModal(bookDrawer(state.bookFor||state.arg)); }
+  /* P2.14: same-firm choice as a real radio group. */
+  const fr = e.target.closest('[data-firm-radio]');
+  if(fr){
+    state.invForm = state.invForm || {};
+    state.invForm.sameFirm = fr.value === 'yes';
+    if(state.invForm.sameFirm && !state.invForm.role) state.invForm.role = 'Member';
+    return render();
+  }
+  /* P2.12: choosing a document type updates the draft and re-enables Save. */
+  const dt = e.target.closest('[data-doctype]');
+  if(dt){
+    if(dt.dataset.doctype==='draft' && state.docDraft) state.docDraft.type = dt.value;
+    if(dt.dataset.doctype==='req' && state.docReqDraft) state.docReqDraft.type = dt.value;
+    return render();
+  }
   /* §6 document library — capture the picked file's name, then let the advisor/user
      name it and choose a type before it is added. */
   const df = e.target.closest('[data-docfile]');
   if(df && df.files && df.files[0]){
     const [scope, id] = df.dataset.docfile.split(':');
-    state.docDraft = {scope, id: id||'', name: df.files[0].name, type: 'Identity'};
+    /* P2.12: no default type; the uploader must choose one before Save enables. */
+    state.docDraft = {scope, id: id||'', name: df.files[0].name, type: ''};
     return render();
   }
   /* Part A.2: the client uploads a file to FULFIL an advisor's request; the doc flips to
@@ -2511,7 +2590,7 @@ function vDashboard(){
             </div>
             <div class="hero-v"><span class="cur">R</span>${money(aua).replace('R','')}</div>
             <div style="font-size:12.5px;color:rgba(255,255,255,.72);margin-top:6px">
-              ${auaDelta>=0?'+':''}${auaDelta.toFixed(1)}% increase from last month</div>
+              (${auaDelta>=0?'+':''}${auaDelta.toFixed(1)}% from last month)</div>
             <div class="hero-subs">
               ${heroSub('Registered users', L.length, mnu ? '+' + mnu + ' this month' : null)}
               ${heroSub('Customers', C.length, mnc ? '+' + mnc + ' this month' : null)}
@@ -2534,6 +2613,19 @@ function vDashboard(){
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- P2.13 (spec §7): Pending KYC and Pending Risk Assessments as first-class KPI tiles,
+         clickable through to the pre-filtered Registered Users list. Also still to-do rows. -->
+    <div class="kpi-strip mt">
+      <div class="kpi-tile" data-go="leads" data-backto="1" data-prefilter="kyc">
+        <span class="kpi-l">Pending KYC</span>
+        <span class="kpi-v">${pkyc}</span>
+        <span class="kpi-s">Registered users with KYC still to complete</span></div>
+      <div class="kpi-tile" data-go="leads" data-backto="1" data-prefilter="risk">
+        <span class="kpi-l">Pending risk assessments</span>
+        <span class="kpi-v">${prisk}</span>
+        <span class="kpi-s">Registered users who still need a risk profile</span></div>
     </div>
 
     <div class="dgrid mt">
@@ -2722,8 +2814,11 @@ function vLeads(){
       <div class="card-p" style="padding-top:0;padding-bottom:var(--v4-space-4)">
         <div class="chips">
           <span class="pill p-gray" style="align-self:center">${rows.length} of ${state.leads.length}</span>
-          <button class="fchip ${(!state.filters.has('qual')&&!state.filters.has('unqual'))?'on':''}" data-filter="__allqual">All</button>
-          ${LEAD_FILTERS.map(f=>`<button class="fchip ${state.filters.has(f.k)?'on':''}" data-filter="${f.k}">${f.t}</button>`).join('')}
+          <span class="sub" style="align-self:center">Qualification:</span>
+          <button class="fchip ${(!state.filters.has('qual')&&!state.filters.has('unqual'))?'on':''}" data-filter="__allqual">Any</button>
+          ${LEAD_FILTERS.filter(f=>f.k==='qual'||f.k==='unqual').map(f=>`<button class="fchip ${state.filters.has(f.k)?'on':''}" data-filter="${f.k}">${f.t}</button>`).join('')}
+          <span class="chip-div"></span>
+          ${LEAD_FILTERS.filter(f=>f.k!=='qual'&&f.k!=='unqual').map(f=>`<button class="fchip ${state.filters.has(f.k)?'on':''}" data-filter="${f.k}">${f.t}</button>`).join('')}
           ${state.filters.size?`<button class="fchip" data-filter="__clear">Clear all ✕</button>`:''}
         </div>
       </div>
@@ -2825,7 +2920,7 @@ function vCustomers(){
         </div>
       </div>
       ${rows.length?`<div class="tbl-scroll"><table>
-        <thead><tr>${th('name','Name')}<th>Risk profile</th>${th('nw','Net worth')}
+        <thead><tr>${th('name','Name')}<th>Risk Profile</th>${th('nw','Net Worth')}
           ${th('pv','Portfolio Value')}<th>Profit/Loss</th><th>% change</th>
           <th>Last risk review</th><th></th></tr></thead>
         <tbody>${body}</tbody></table></div>`
@@ -2849,7 +2944,6 @@ const TABS8 = [
   {k:'investment', t:'Investment', gated:true},
   {k:'risk',       t:'Risk',       gated:true},
   {k:'documents',  t:'Documents'},
-  {k:'onboarding', t:'Onboarding'},
   {k:'activity',   t:'Activity'},
   {k:'crm',        t:'CRM'},
   {k:'audit',      t:'Audit'}
@@ -2903,8 +2997,7 @@ function tab8Personal(p){
       ['Home owner / tenant', p.housing || dash],
       ['Signup date', p.signup || p.since],
       ['Registration date', p.signup || p.since],
-      ['Status', isCust ? '<span class="pill p-teal">Customer</span>'
-                        : `<span class="pill ${stagePill(p.stage)}">${p.stage}</span>`],
+      /* P2.11: onboarding-stage pill lives on the header + Activity tab; not duplicated here. */
       ['KYC status', p.kyc ? `<span class="pill p-green">${p.kyc}</span>`
                            : (STAGES.indexOf(p.stage)>=4 ? '<span class="pill p-green">Approved</span>'
                                                          : '<span class="pill p-gray">In progress</span>')],
@@ -3034,13 +3127,13 @@ function invoicePDF(inv){
     'Total AUM: R' + Math.round(inv.aum).toLocaleString('en-US'),
     'Total non-Vault22 AUM: R' + Math.round(inv.nonV22).toLocaleString('en-US'),
     '',
-    'Subscription fee (' + inv.tier + '): $' + inv.sub,
-    'AUM fee (25 bps p.a. on non-Vault22, paid by customer): R' + inv.aumFee.toLocaleString('en-US'),
+    'Your subscription fee (' + inv.tier + '): $' + inv.sub,
+    'AUM fee (25 bps p.a. on non-Vault22 assets), billed to the customer: R' + inv.aumFee.toLocaleString('en-US'),
     '',
-    'AMOUNT DUE FROM YOU: $' + inv.sub,
-    'The AUM fee is billed to the customer and is not part of your amount due.',
+    'AMOUNT DUE FROM YOU: $' + inv.sub + ' (subscription only)',
+    'The 25 bps AUM fee is charged to the customer and is not part of your amount due.',
     '',
-    'Subscription pricing shown in USD and to be confirmed.'
+    'Subscription pricing shown in USD.'
   ], 'vault22-invoice-' + inv.key + '.pdf');
 }
 /* BUG 3: the financial-profile report downloads a real one-page PDF, like the invoice,
@@ -3085,17 +3178,17 @@ function invoiceDrawer(key){
       ['Number of customers', inv.count],
       ['Total AUM', money(inv.aum)],
       ['Total non-Vault22 AUM', money(inv.nonV22)],
-      ['Subscription fee (' + inv.tier + ')', usd(inv.sub)],
-      ['AUM fee, 25 bps p.a. on non-Vault22, paid by customer', money(inv.aumFee)]
+      ['Your subscription fee (' + inv.tier + ')', usd(inv.sub)],
+      ['AUM fee (25 bps p.a. on non-Vault22 assets), billed to the customer', money(inv.aumFee)]
     ])}
     <div class="list-row" style="margin-top:var(--v4-space-3);border-top:1px solid var(--line);padding-top:var(--v4-space-3)">
-      <span><b>Amount due from you</b><div class="sub">The AUM fee is billed to the customer, not to you.</div></span>
+      <span><b>Amount due from you</b><div class="sub">Your subscription only. The 25 bps AUM fee is charged to the customer, not to you.</div></span>
       <b class="num" style="font-size:18px">${usd(inv.sub)}</b></div>
     <div class="actions" style="margin-top:var(--v4-space-4)">
       <button class="obtn obtn-pri" data-invoicedl="${inv.key}">Download PDF</button>
       <button class="obtn obtn-ghost" data-close="1">Done</button></div>
-    <div class="legalnote">Subscription pricing shown in USD and to be confirmed. The 25 bps AUM fee on
-      non-Vault22 assets is paid by the customer, to be confirmed with Greg.</div>`;
+    <div class="legalnote">Two separate charges: your Vault22 subscription (shown in USD), and a 25 bps p.a.
+      AUM fee on the client's non-Vault22 assets that is billed to the client. Your amount due is the subscription only.</div>`;
 }
 
 function tab8Investment(p){
@@ -3224,9 +3317,10 @@ function docSection(scope, id){
         <div class="field"><label>Document name</label>
           <input class="inp inp-sm" id="docName" value="${esc(draft.name)}"></div>
         <div class="field"><label>Document type</label>
-          <select class="inp inp-sm" id="docType">
+          <select class="inp inp-sm" id="docType" data-doctype="draft">
+            <option value="" ${!draft.type?'selected':''} disabled>Select type…</option>
             ${DOC_TYPES.map(t=>`<option ${draft.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
-        <div class="row"><button class="btn btn-pri btn-sm" data-docsave="${dz}">Add document</button>
+        <div class="row"><button class="btn btn-pri btn-sm" data-docsave="${dz}" ${draft.type?'':'disabled'}>Add document</button>
           <button class="btn btn-sm" data-doccancel="1">Cancel</button></div>
       </div>`
     : reqDraft ? `
@@ -3235,9 +3329,10 @@ function docSection(scope, id){
         <div class="field"><label>Document name</label>
           <input class="inp inp-sm" id="docReqName" value="${esc(reqDraft.name)}" placeholder="e.g. Proof of address"></div>
         <div class="field"><label>Document type</label>
-          <select class="inp inp-sm" id="docReqType">
+          <select class="inp inp-sm" id="docReqType" data-doctype="req">
+            <option value="" ${!reqDraft.type?'selected':''} disabled>Select type…</option>
             ${DOC_TYPES.map(t=>`<option ${reqDraft.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
-        <div class="row"><button class="btn btn-pri btn-sm" data-docreqsave="${docStoreId(scope,id)}">Send request</button>
+        <div class="row"><button class="btn btn-pri btn-sm" data-docreqsave="${docStoreId(scope,id)}" ${reqDraft.type?'':'disabled'}>Send request</button>
           <button class="btn btn-sm" data-doccancel="1">Cancel</button></div>
       </div>`
     : `
@@ -3259,14 +3354,22 @@ function tab8Documents(p){
     ${docSection('cust', p.id)}
   </div>`;
 }
-/* §4.2: the Onboarding tab owns the ten-stage lifecycle. The in-progress stage is
-   labelled "Pending" (the founder's rename of "current"). Onboarding-stage milestones
-   live only here, so the Activity tab no longer duplicates them. */
-function tab8Onboarding(p){
+/* P0.4 (Stephen: "Activity timeline seems similar to the stages after onboarding, suggest
+   to merge"): one Activity tab that carries the ten-stage onboarding lifecycle AND the
+   post-onboarding recurring events on a single timeline. The in-progress stage is labelled
+   "Pending" (the founder's rename of "current"). The per-client audit log stays in Audit. */
+function tab8Activity(p){
   const isCust = !!p.pv;
   const idx = isCust ? STAGES.length : STAGES.indexOf(p.stage);
+  const items = [
+    ['First investment', p.onetime ? p.since : null],
+    ['SIP started', p.sip ? (p.sipStart || null) : null],
+    ['Risk assessment last completed', p.riskDate || (p.risk==='Completed' ? p.since : null)],
+    ['Portfolio review last completed', p.review || null]
+  ];
+  const crm = state.crm[p.id] || {notes:[],meets:[]};
   return `<div class="card card-p">
-    <div class="sec-t">Onboarding</div>
+    <div class="sec-t">Onboarding stage</div>
     <p class="lede" style="margin-bottom:var(--v4-space-4)">The ten-stage lifecycle from first
       registration to ready to invest.${isCust ? ' This customer has completed onboarding and made a first investment.' : ''}</p>
     ${STAGES.map((s,i)=>{
@@ -3276,22 +3379,8 @@ function tab8Onboarding(p){
         ${st==='done' ? '<span class="pill p-gray">Done</span>'
           : st==='pending' ? '<span class="pill p-amber">Pending</span>' : ''}</div>`;
     }).join('')}
-  </div>`;
-}
-/* §4.2: post-onboarding, recurring events only. The ten onboarding stages live in
-   the Onboarding tab; the per-client audit log lives in the Audit tab. */
-function tab8Activity(p){
-  const items = [
-    ['First investment', p.onetime ? p.since : null],
-    ['SIP started', p.sip ? (p.sipStart || null) : null],
-    ['Risk assessment last completed', p.riskDate || (p.risk==='Completed' ? p.since : null)],
-    ['Portfolio review last completed', p.review || null]
-  ];
-  const crm = state.crm[p.id] || {notes:[],meets:[]};
-  return `<div class="card card-p">
-    <div class="sec-t">Activity timeline</div>
-    <p class="lede" style="margin-bottom:var(--v4-space-4)">Recurring events since onboarding.
-      The ten onboarding stages are under the Onboarding tab.</p>
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Since onboarding</div>
+    <p class="lede" style="margin-bottom:var(--v4-space-4)">Recurring events after the client went live.</p>
     <div class="tl">${items.map(([t,dt])=>`<div class="tl-i ${dt?'':'tl-off'}">
       <div class="tl-t">${t}</div><div class="tl-d">${dt || 'Not yet'}</div></div>`).join('')}</div>
     ${(crm.meets||[]).length ? `<div class="sec-t" style="margin-top:var(--v4-space-6)">Meetings</div>
@@ -3324,10 +3413,13 @@ const crmWho = id => {
 };
 
 function tabs8(p){
-  const cur = state.tab8 || 'personal';
+  let cur = state.tab8 || 'personal';
   const body = {personal:tab8Personal, financial:tab8Financial, investment:tab8Investment,
-                risk:tab8Risk, documents:tab8Documents, onboarding:tab8Onboarding,
-                activity:tab8Activity, crm:tab8Crm, audit:tab8Audit}[cur](p);
+                risk:tab8Risk, documents:tab8Documents,
+                activity:tab8Activity, crm:tab8Crm, audit:tab8Audit};
+  /* P0.4: the Onboarding tab was merged into Activity; a stale route lands on Activity. */
+  if(!body[cur]) cur = 'activity';
+  const view = body[cur](p);
   return `
     <div class="tabs">${TABS8.map(t=>{
       const st = t.gated ? consentOf(p.id, t.k) : null;
@@ -3335,7 +3427,7 @@ function tabs8(p){
                 : st==='none' ? ' <span class="tdot"></span>' : '';
       return `<button class="tab ${cur===t.k?'on':''}" data-tab8="${t.k}">${t.t}${dot}</button>`;
     }).join('')}</div>
-    ${body}`;
+    ${view}`;
 }
 
 /* =====================================================================
@@ -3408,15 +3500,21 @@ function vCustomer(){
   if(!c) return vCustomers();
   const isCust = !!c.pv;
   const wa = 'https://wa.me/'+c.phone.replace(/\D/g,'')+'?text='+encodeURIComponent('Hi '+c.name.split(' ')[0]+', ');
+  /* P0.1: the annual risk reassessment is independent of financial-data view consent,
+     so the trigger and the last-assessment date live on the header and are reachable
+     for every client (even C3 pending / C4 no consent), not only inside the gated Risk tab. */
+  const lastRisk = c.riskDate || (c.risk==='Completed' ? c.since : null);
   return `
     <div class="page-head between">
       <div><h1>${esc(c.name)}</h1>
-        <p class="lede">${esc(c.email)} · ${c.phone} · ${esc(c.country||'South Africa')}</p></div>
+        <p class="lede">${esc(c.email)} · ${c.phone} · ${esc(c.country||'South Africa')}</p>
+        <p class="sub" style="margin-top:2px">Last risk assessment: <b>${lastRisk || 'not completed'}</b></p></div>
       <div class="row">
         <a class="btn btn-sm" href="tel:${c.phone}" data-audit="Called ${c.id}">Call</a>
         <a class="btn btn-sm" href="mailto:${c.email}" data-audit="Emailed ${c.id}">Email</a>
         <a class="btn btn-sm" target="_blank" rel="noopener" href="${wa}" data-audit="WhatsApped ${c.id}">WhatsApp</a>
         <button class="btn btn-sm" data-book="${c.id}">Book</button>
+        <button class="btn btn-sm" data-reqrisk="${c.id}">Request risk assessment</button>
         ${isCust ? `<button class="btn btn-sm btn-pri" data-tara="${c.id}">Personalise portfolio</button>` : ''}
         <span class="pill ${isCust?'p-teal':stagePill(c.stage)}">${isCust?'Customer':c.stage}</span>
       </div>
@@ -3468,11 +3566,14 @@ const SUBPORTS_SEED = [
 /* Default risk-band return/volatility/allocation, so an approved advisor submission can
    render in the live list and detail drawer without the advisor supplying every field. */
 const RISK_RV    = {'Very Conservative':[5.2,2.5],'Conservative':[7.4,5.6],'Balanced':[9.8,9.2],'Growth':[12.3,13.8],'Aggressive':[15.0,19.0]};
+/* P1.6: illustrative annual fee (TER) per risk band, used as the fallback when a fund has
+   no explicit fee. An advisor-entered fee on a submitted portfolio always takes precedence. */
+const FEE_BY_RISK = {'Very Conservative':0.45,'Conservative':0.60,'Balanced':0.85,'Growth':1.05,'Aggressive':1.35};
 const RISK_ALLOC = {'Very Conservative':{Cash:60,Bonds:35,Equity:3,Property:2},'Conservative':{Cash:25,Bonds:50,Equity:20,Property:5},'Balanced':{Equity:50,Bonds:30,Cash:12,Property:8},'Growth':{Equity:72,Bonds:14,Cash:6,Property:8},'Aggressive':{Equity:88,Bonds:5,Cash:3,Property:4}};
 const subPortToPort = s => ({
   n:s.name, tk:s.ticker, t:s.risk,
   r:(RISK_RV[s.risk]||[9,9])[0], v:(RISK_RV[s.risk]||[9,9])[1],
-  min:s.min||1000, ccy:s.ccy||'ZAR', ti:0, a:RISK_ALLOC[s.risk]||RISK_ALLOC.Balanced,
+  min:s.min||1000, ccy:s.ccy||'ZAR', ti:0, fee:s.fee, a:RISK_ALLOC[s.risk]||RISK_ALLOC.Balanced,
   d:'Advisor-submitted portfolio, approved by Vault22.' + (s.exposure ? ' Exposure: ' + s.exposure + '.' : ''),
   bf:'As described by the submitting advisor', submitted:true
 });
@@ -3590,6 +3691,7 @@ function portDrawer(p){
       ['Best for', esc(p.bf)],
       ['Minimum investment', money(p.min)],
       ['Currency', p.ccy],
+      ['Annual fee (TER)', (p.fee != null ? p.fee : FEE_BY_RISK[p.t]) != null ? (p.fee != null ? p.fee : FEE_BY_RISK[p.t]) + '%' : dash],
       ['Expected annual return', p.r + '%'],
       ['Expected annual volatility', p.v + '%'],
       ['Total invested', portInvested(p) ? money(portInvested(p)) : 'None yet']
@@ -3625,6 +3727,9 @@ function addPortDrawer(){
     <div class="field"><label>Risk profile</label>
       <select class="inp inp-sm" data-portfield="risk">
         ${TYPES.map(t=>`<option ${d.risk===t?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="field"><label>Fees (annual fee / TER %)</label>
+      <div class="row"><input class="inp inp-sm" type="number" step="0.01" min="0" max="10"
+        data-portfield="fee" value="${esc(d.fee||'')}" placeholder="e.g. 0.85" style="max-width:150px"><span class="sub">% a year</span></div></div>
     <div class="field"><label>Fees factsheet</label>
       <label class="btn btn-sm" style="width:100%;text-align:center">${d.factsheet?esc(d.factsheet):'Upload fees factsheet'}
         <input type="file" data-portfsheet="1" hidden></label></div>
@@ -3810,6 +3915,8 @@ function vAnalytics(){
   const TRENDS = [
     {t:'Change in portfolios', now:sum(c=>c.pv),         was:prevSum('pv'),   note:'Total portfolio value across the book'},
     {t:'Change in savings',    now:sum(c=>c.sav),        was:prevSum('sav'),  note:'Monthly savings across the book'},
+    /* P3.21: invert is intended. For liabilities, a DECREASE is good news for the book, so
+       the colour is inverted (down = green, up = red), unlike the other growth metrics. */
     {t:'Change in liabilities',now:sum(c=>c.liabilities),was:prevSum('liab'), note:'Total liabilities across the book', invert:true},
     {t:'Change in net worth',  now:sum(c=>c.nw),         was:prevSum('nw'),   note:'Total net worth across the book'}
   ];
@@ -4325,6 +4432,20 @@ function taraRationale(c, ccy, lines){
   return `${esc(c.name.split(' ')[0])} is ${age}, ${esc(c.type.toLowerCase())} risk (${c.score}/100), with ${fitness} and ${deps}, `
     + `so I have ${tilt} and ${buffer}. ${ccyNote}`;
 }
+/* P3.19: group the add-asset universe into labelled sections (ETFs, single stocks, other
+   securities) rather than one mixed list, so the advisor scans by instrument type. */
+function taraUniverseSections(universe){
+  const groups = [
+    ['Exchange-traded funds', universe.filter(a=>a.type==='ETF')],
+    ['Single stocks',         universe.filter(a=>a.type==='Stock')],
+    ['Other securities',      universe.filter(a=>a.type!=='ETF' && a.type!=='Stock')]
+  ];
+  return groups.filter(([,list])=>list.length).map(([label,list])=>`
+    <div class="uni-sec">${label}</div>
+    ${list.map(a=>`<div class="list-row">
+      <span><b>${esc(a.name)}</b><div class="sub">${a.ticker} · ${a.type} · ${a.cls}</div></span>
+      <button class="btn btn-sm" data-taraadd="${a.ticker}">Add</button></div>`).join('')}`).join('');
+}
 function taraScreen(){
   const c = state.customers.find(x=>x.id===state.tara.custId);
   if(!c){ state.tara=null; return ''; }
@@ -4391,9 +4512,7 @@ function taraScreen(){
         <div class="sec-t" style="margin:0 0 var(--v4-space-2)">Add from the ${ccy} universe</div>
         <input class="inp inp-sm" id="taraSrch" placeholder="Search by name or ticker" value="${esc(state.tara.q||'')}">
         <div class="tara-list mt" id="taraUni">
-          ${universe.length ? universe.map(a=>`<div class="list-row">
-            <span><b>${esc(a.name)}</b><div class="sub">${a.ticker} · ${a.type} · ${a.cls}</div></span>
-            <button class="btn btn-sm" data-taraadd="${a.ticker}">Add</button></div>`).join('')
+          ${universe.length ? taraUniverseSections(universe)
             : '<p class="lede">Nothing matches. Try another search or currency.</p>'}
         </div>
       </section>
@@ -4470,7 +4589,6 @@ function vProfile(){
             style="max-height:44px;display:block;margin-bottom:8px">` : ''}
           ${imgPicker('logo','Upload logo', true)}
         </div>
-        <button class="btn btn-pri mt" style="width:100%" data-custompd="1">Customise profile</button>
       </div>
     </div>`;
 }
@@ -4930,9 +5048,9 @@ function vClientProfile(){
   const advisorPanel = suggestionCard + `
     <div class="card card-p ${sug?'mt':''}">
       <span class="eyebrow teal">Your advisor</span><div class="sec-t">Financial Advisor</div>
-      ${linked ? `<div class="between" style="margin-bottom:var(--v4-space-4)">
-        <span></span>
-        <button class="btn btn-sm btn-pri" data-reqmeet="1">Request meeting</button></div>` : ''}
+      <div class="between" style="margin-bottom:var(--v4-space-4)">
+        <span class="sub">${linked ? '' : 'Request a meeting with any advisor, even before you appoint one.'}</span>
+        <button class="btn btn-sm btn-pri" data-reqmeet="1">Request meeting</button></div>
       ${linked ? `
         <div class="row" style="align-items:flex-start;gap:var(--v4-space-4)">
           <span class="ava" style="width:56px;height:56px;font-size:19px;flex:none">${initialsOf(linked.name)}</span>
@@ -4954,8 +5072,8 @@ function vClientProfile(){
       ${!linked && state.prevAdvisor ? `
         <div class="relink">
           <span><b>${esc(state.prevAdvisor.name)}</b>
-            <div class="sub">${esc(state.prevAdvisor.firm)} · you unlinked them. Re-linking does not
-              restore what you shared before. You choose that again.</div></span>
+            <div class="sub">${esc(state.prevAdvisor.firm)} · you removed them as your advisor.
+              Appointing them again does not restore what you previously shared. You choose that again.</div></span>
           <button class="btn btn-pri btn-sm" data-link-adv="${state.prevAdvisor.id}">Appoint again</button>
         </div>` : ''}
       <input class="inp inp-sm" id="advQ" placeholder="Search by name, firm or city" value="${esc(state.advQ||'')}"
@@ -5049,6 +5167,50 @@ const nextDays = n => Array.from({length:n}, (_,i) => {
   return {v: localISO(d).slice(0,10),
           l: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] + ' ' + d.getDate() + ' Jul'};
 });
+/* ===== Calendly-grade scheduling helpers (prototype dates are fixed off NOW) ===== */
+const PROTO_TODAY = new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate());
+const TODAY_STR   = localISO(PROTO_TODAY).slice(0,10);
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WEEKDAYS_MON = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DOW_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+/* A couple of fully-booked working days, so the calendar shows genuine unavailability. */
+const FULLY_BOOKED = new Set(['2026-07-22','2026-07-31','2026-08-06']);
+const TZ_OPTS = [['SAST','SAST (GMT+2)'],['GMT','GMT (London)'],['CET','CET (GMT+1)'],['GST','GST Dubai (GMT+4)'],['EST','EST New York (GMT-5)']];
+const LOC_OPTS = [['Video call','🎥'],['Phone','📞'],['In person','📍']];
+const DUR_OPTS = [15,30,60];
+const dstr = d => localISO(d).slice(0,10);
+const pad2 = n => String(n).padStart(2,'0');
+/* Business hours 09:00 to 17:00 SAST, lunch 12:00 to 13:00, slot spacing = duration. */
+function slotTimes(dur){
+  const out = [];
+  for(let m = 9*60; m + dur <= 17*60; m += dur){
+    if(m >= 12*60 && m < 13*60) continue;         /* lunch */
+    out.push(pad2(Math.floor(m/60)) + ':' + pad2(m%60));
+  }
+  return out;
+}
+/* Display a HH:MM in 12h or 24h. Timezone label is display-only. */
+function fmtTime(hhmm, is12h){
+  if(!is12h) return hhmm;
+  let [h,m] = hhmm.split(':').map(Number);
+  const ap = h < 12 ? 'AM' : 'PM';
+  h = h % 12; if(h === 0) h = 12;
+  return h + ':' + pad2(m) + ' ' + ap;
+}
+const isWeekendStr = s => { const d = new Date(+s.slice(0,4), +s.slice(5,7)-1, +s.slice(8,10)); return d.getDay()===0 || d.getDay()===6; };
+/* A day is bookable if it is a weekday, today or later, and not fully booked. */
+const dayAvailable = s => s >= TODAY_STR && !isWeekendStr(s) && !FULLY_BOOKED.has(s);
+/* Slots already taken for this client on a given day (so we never double-book). */
+const bookedSlotsFor = (id, day) => new Set(((state.crm[id]||{}).meets||[])
+  .filter(m => m.day === day && m.slot).map(m => m.slot));
+/* Open the scheduler fresh: no day/slot chosen, calendar on the current month, sensible
+   meeting defaults. confirmMid is set when confirming a client-requested meeting. */
+function resetBooking(id, confirmMid){
+  state.bookFor = id;
+  state.bookDay = null; state.bookSlot = null; state.bookConfirmMid = confirmMid || null;
+  state.bookMonth = TODAY_STR.slice(0,7);
+  state.bookDur = 30; state.bookTz = 'SAST'; state.bookLoc = 'Video call'; state.book12h = false;
+}
 /* Part A.1: a meeting is one shared object both sides act on. status:
    'invited'   advisor asked the client, awaiting the client's accept/decline
    'requested' client asked the advisor, awaiting the advisor to confirm a time
@@ -5067,51 +5229,132 @@ const pendingMeetingReqs = () => {
   }));
   return out;
 };
+/* The month grid: Mon-Sun header, ‹ / › navigation, past + weekend + fully-booked days
+   disabled, today marked, selected filled, available days carry an availability dot. */
+function bookCalendar(id){
+  const monthKey = state.bookMonth || TODAY_STR.slice(0,7);
+  const [my, mm] = monthKey.split('-').map(Number);
+  const first = new Date(my, mm-1, 1);
+  const daysInMonth = new Date(my, mm, 0).getDate();
+  const lead = (first.getDay() + 6) % 7;                 /* Monday-first offset */
+  const canPrev = monthKey > TODAY_STR.slice(0,7);
+  const cells = [];
+  for(let i=0;i<lead;i++) cells.push('<span class="cal-cell cal-empty"></span>');
+  for(let d=1; d<=daysInMonth; d++){
+    const ds = my + '-' + pad2(mm) + '-' + pad2(d);
+    const avail = dayAvailable(ds);
+    const isToday = ds === TODAY_STR;
+    const on = ds === state.bookDay;
+    const cls = ['cal-cell','cal-day', avail?'cal-open':'cal-off', isToday?'cal-today':'', on?'on':'']
+      .filter(Boolean).join(' ');
+    cells.push(avail
+      ? `<button class="${cls}" data-bcalday="${ds}"><span>${d}</span><i class="cal-dot"></i></button>`
+      : `<span class="${cls}"><span>${d}</span></span>`);
+  }
+  return `
+    <div class="cal">
+      <div class="cal-head">
+        <button class="cal-nav" data-bcalmonth="prev" ${canPrev?'':'disabled'} aria-label="Previous month">‹</button>
+        <div class="cal-title">${MONTHS_FULL[mm-1]} ${my}</div>
+        <button class="cal-nav" data-bcalmonth="next" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-grid cal-dow">${WEEKDAYS_MON.map(w=>`<span class="cal-wd">${w}</span>`).join('')}</div>
+      <div class="cal-grid">${cells.join('')}</div>
+    </div>`;
+}
+/* The time column for the selected day: grouped Morning / Afternoon / Evening, with
+   already-booked slots disabled so a taken time can't be double-booked. */
+function bookSlotColumn(id, day, dur, is12h, tz){
+  if(!day) return `<div class="slotcol slotcol-empty">
+    <div class="slot-emptybox">📅<div>Select a day to see available times</div></div></div>`;
+  const taken = bookedSlotsFor(id, day);
+  const all = slotTimes(dur);
+  const groups = [
+    ['Morning',   all.filter(s => +s.slice(0,2) < 12)],
+    ['Afternoon', all.filter(s => +s.slice(0,2) >= 12 && +s.slice(0,2) < 17)],
+    ['Evening',   all.filter(s => +s.slice(0,2) >= 17)]
+  ].filter(([,l]) => l.length);
+  const d = new Date(+day.slice(0,4), +day.slice(5,7)-1, +day.slice(8,10));
+  const heading = DOW_FULL[d.getDay()] + ', ' + d.getDate() + ' ' + MONTHS_FULL[d.getMonth()];
+  return `<div class="slotcol">
+    <div class="slotcol-head">
+      <div class="slotcol-date">${heading}</div>
+      <div class="hourtog">
+        <button class="ht ${is12h?'':'on'}" data-b12h="24">24h</button>
+        <button class="ht ${is12h?'on':''}" data-b12h="12">12h</button>
+      </div>
+    </div>
+    <div class="slotscroll">
+      ${groups.map(([label,list]) => `
+        <div class="slot-glabel">${label}</div>
+        <div class="slotwrap">${list.map(s => {
+          const isTaken = taken.has(s);
+          const on = s === state.bookSlot;
+          return isTaken
+            ? `<span class="tslot tslot-off" title="Already booked">${fmtTime(s,is12h)}<span class="tslot-tag">Booked</span></span>`
+            : `<button class="tslot ${on?'on':''}" data-bslot="${s}">${fmtTime(s,is12h)}</button>`;
+        }).join('')}</div>`).join('')}
+    </div>
+  </div>`;
+}
 function bookDrawer(id){
   const who = state.customers.concat(state.leads).find(x=>x.id===id);
   if(!who) return '';
-  const days = nextDays(7);
-  const day  = state.bookDay || days[0].v;
+  const dur = state.bookDur || 30;
+  const day = state.bookDay || null;
   const slot = state.bookSlot;
-  const booked = (state.crm[id] && state.crm[id].meets) || [];
+  const loc = state.bookLoc || 'Video call';
+  const tz  = state.bookTz  || 'SAST';
+  const is12h = !!state.book12h;
+  const booked = ((state.crm[id] && state.crm[id].meets) || [])
+    .slice().sort((x,y)=> ((x.day||x.d||'')+(x.slot||'')).localeCompare((y.day||y.d||'')+(y.slot||'')));
   const confirming = state.bookConfirmMid;
-  const dayLabel = (days.find(d=>d.v===day)||days[0]).l;
+  const locIcon = (LOC_OPTS.find(l=>l[0]===loc)||['','🎥'])[1];
+  const tzLabel = (TZ_OPTS.find(t=>t[0]===tz)||['','SAST (GMT+2)'])[1];
+  const summary = day && slot ? (() => {
+    const d = new Date(+day.slice(0,4), +day.slice(5,7)-1, +day.slice(8,10));
+    return `${DOW_FULL[d.getDay()]} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]}, ${fmtTime(slot,is12h)} (${tz})`;
+  })() : '';
   return `
     <div class="between" style="margin-bottom:var(--v4-space-2)">
       <div><h2>${confirming ? 'Confirm a time' : 'Book a meeting'}</h2>
         <p class="lede">${confirming ? esc(who.name.split(' ')[0]) + ' asked to meet. Pick a time to confirm.'
           : 'With ' + esc(who.name) + ' · ' + esc(who.email)}</p></div>
       <button class="x" data-close="1">×</button></div>
-    <div class="chips" style="gap:var(--v4-space-2);margin:var(--v4-space-3) 0 var(--v4-space-4)">
-      <span class="pill p-slate">🕑 30 min</span>
-      <span class="pill p-slate">🌍 SAST (GMT+2)</span>
-      <span class="pill p-slate">🎥 Vault22 video call</span>
+
+    <div class="bookctl">
+      <div class="bookctl-f"><label>Duration</label>
+        <div class="seg">${DUR_OPTS.map(m=>`<button class="seg-b ${dur===m?'on':''}" data-bdur="${m}">${m<60?m+' min':'1 hr'}</button>`).join('')}</div></div>
+      <div class="bookctl-f"><label>Timezone</label>
+        <select class="inp inp-sm" data-btz>${TZ_OPTS.map(([v,l])=>`<option value="${v}" ${tz===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      <div class="bookctl-f"><label>Location</label>
+        <div class="seg">${LOC_OPTS.map(([v,ic])=>`<button class="seg-b ${loc===v?'on':''}" data-bloc="${v}">${ic} ${v}</button>`).join('')}</div></div>
     </div>
-    <div class="bookgrid">
-      <div class="bookcol">
-        <div class="sec-t">Select a day</div>
-        <div class="bookdays">${days.map(d=>{
-          const [wd, dnum, mon] = d.l.split(' ');
-          return `<button class="bookday ${day===d.v?'on':''}" data-bday="${d.v}">
-            <span class="bd-wd">${wd}</span><span class="bd-num">${dnum}</span><span class="bd-mon">${mon}</span>
-          </button>`; }).join('')}</div>
-      </div>
-      <div class="bookcol">
-        <div class="sec-t">${esc(dayLabel)}</div>
-        <div class="bookslots">${SLOTS.map(s=>`
-          <button class="bookslot ${slot===s?'on':''}" data-bslot="${s}">${s}</button>`).join('')}</div>
-      </div>
+
+    <div class="booklayout">
+      ${bookCalendar(id)}
+      ${bookSlotColumn(id, day, dur, is12h, tz)}
     </div>
-    <div class="actions" style="margin-top:var(--v4-space-5)">
-      <button class="obtn obtn-pri" ${slot?'':'disabled'} data-bconfirm="${id}">
-        ${slot ? (confirming ? 'Confirm ' : 'Send invite ') + '· ' + dayLabel + ' at ' + slot : 'Pick a day and time'}</button>
+
+    ${day && slot ? `
+      <div class="booksum">
+        <div class="booksum-h">Meeting summary</div>
+        <div class="booksum-r"><span>🗓️</span><b>${dur}-minute Vault22 review</b> with ${esc(who.name)}</div>
+        <div class="booksum-r"><span>⏰</span>${summary}</div>
+        <div class="booksum-r"><span>${locIcon}</span>${esc(loc)} · ${tzLabel}</div>
+      </div>` : ''}
+
+    <div class="actions" style="margin-top:var(--v4-space-4)">
+      <button class="obtn obtn-pri" ${day&&slot?'':'disabled'} data-bconfirm="${id}">
+        ${day&&slot ? (confirming ? 'Confirm and send' : 'Send invite') : 'Pick a day and time'}</button>
     </div>
-    <div class="legalnote">Logs a 30-minute meeting against ${esc(who.name.split(' ')[0])} and gives you a
+    <div class="legalnote">Logs a ${dur}-minute ${esc(loc.toLowerCase())} against ${esc(who.name.split(' ')[0])} and gives you a
       real calendar invite to download. In the real build it is also emailed to
       ${esc(who.email)} and written to your linked calendar
       (${esc(state.advisor.calendar || 'set a link in My Profile')}).</div>
-    ${booked.length ? `<div class="sec-t" style="margin-top:var(--v4-space-6)">Already booked</div>
-      ${booked.map(m=>`<div class="list-row"><span>${esc(m.t)}</span>
+    ${booked.length ? `<div class="sec-t" style="margin-top:var(--v4-space-6)">Already booked with ${esc(who.name.split(' ')[0])}</div>
+      ${booked.map(m=>`<div class="list-row"><span>${esc(m.t || 'Meeting')}
+        ${m.status?`<span class="pill ${MEET_PILL[m.status]||'p-gray'}" style="margin-left:6px">${MEET_LABEL[m.status]||m.status}</span>`:''}</span>
         <span class="sub num">${meetWhen(m)||''}</span></div>`).join('')}` : ''}`;
 }
 
@@ -5148,8 +5391,14 @@ const icsPlus = (day, hhmm, mins) => {
   const p = n => String(n).padStart(2,'0');
   return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(d.getHours())}${p(d.getMinutes())}00`;
 };
-function buildICS(who, day, slot){
+function buildICS(who, day, slot, opts){
   const a = state.advisor;
+  const dur = (opts && opts.dur) || state.bookDur || 30;
+  const loc = (opts && opts.loc) || state.bookLoc || 'Video call';
+  /* A video/phone meeting has no physical address; fall back to the advisor's link. */
+  const where = loc === 'In person' ? (a.office || a.calendar || 'Advisor office')
+              : loc === 'Phone'     ? 'Phone call'
+              : (a.calendar || 'Vault22 video call');
   /* CRLF line endings and an escaped SUMMARY: both are required by RFC 5545. */
   return [
     'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Vault22//Advisor//EN','CALSCALE:GREGORIAN',
@@ -5157,23 +5406,33 @@ function buildICS(who, day, slot){
     'UID:' + day.replace(/-/g,'') + '-' + (who?who.id:'x') + '@vault22.com',
     'DTSTAMP:' + icsStamp(day, slot) + 'Z',
     'DTSTART:' + icsStamp(day, slot),
-    'DTEND:'   + icsPlus(day, slot, 30),
+    'DTEND:'   + icsPlus(day, slot, dur),
     'SUMMARY:Vault22 review with ' + (a.name || 'your advisor'),
-    'DESCRIPTION:A 30-minute portfolio review booked through Vault22 Advisor.',
+    'DESCRIPTION:A ' + dur + '-minute portfolio review (' + loc.toLowerCase() + ') booked through Vault22 Advisor.',
     'ORGANIZER;CN=' + (a.name||'Advisor') + ':mailto:' + (a.email||'advisor@vault22.com'),
     who ? 'ATTENDEE;CN=' + who.name + ';RSVP=TRUE:mailto:' + who.email : '',
-    'LOCATION:' + (a.calendar || 'Online'),
+    'LOCATION:' + where,
     'END:VEVENT','END:VCALENDAR'
   ].filter(Boolean).join('\r\n');
 }
-function downloadICS(who, day, slot){
-  const blob = new Blob([buildICS(who, day, slot)], {type:'text/calendar;charset=utf-8'});
+function downloadICS(who, day, slot, opts){
+  const blob = new Blob([buildICS(who, day, slot, opts)], {type:'text/calendar;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const el = document.createElement('a');
   el.href = url;
   el.download = 'vault22-' + (who ? who.name.toLowerCase().replace(/\s+/g,'-') : 'meeting') + '-' + day + '.ics';
   document.body.appendChild(el); el.click(); el.remove();
   setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+/* P0.2: on Send, drop the advisor into their own mail client with the edited To/Subject/
+   Body so they review and send it themselves. A raw mailto cannot carry an attachment,
+   so the .ics is downloaded separately and the copy tells them to attach it. */
+function openMailto(to, subject, body){
+  const url = 'mailto:' + encodeURIComponent(to || '')
+    + '?subject=' + encodeURIComponent(subject || '')
+    + '&body=' + encodeURIComponent(body || '');
+  const el = document.createElement('a');
+  el.href = url; document.body.appendChild(el); el.click(); el.remove();
 }
 function icsModal(who, day, slot){
   return openModal(`
@@ -5230,13 +5489,13 @@ function composeDrawer(){
       <input class="inp inp-sm" id="cmpSub" value="${esc(cx.subject||'')}"></div>
     <div class="field"><label>Message</label>
       <textarea class="inp" rows="8" id="cmpBody">${esc(cx.body||'')}</textarea></div>
-    ${icsName ? `<div class="list-row"><span>📎 ${esc(icsName)}</span>
-      <span class="sub">Calendar invite attached</span></div>` : ''}
+    ${icsName ? `<div class="list-row"><span>📅 ${esc(icsName)}</span>
+      <button class="btn btn-sm" data-ics="${cx.icsWho.id}|${cx.day}|${cx.slot}">Download to attach</button></div>` : ''}
     <div class="actions" style="margin-top:var(--v4-space-5)">
       <button class="obtn obtn-pri" data-csend="1">Send</button></div>
     <div class="legalnote">${cx.mode==='client'
-      ? 'The prototype composes the request in your browser. The real build sends it to your advisor and offers times to meet.'
-      : 'The prototype builds a real .ics you can download after sending. The real build also emails it to the client and writes it to your linked calendar.'}</div>`;
+      ? 'Send opens the request in your own email client, prefilled with your text, so you review and send it. The real build also offers times to meet.'
+      : 'Send opens your email client with this text and downloads the .ics; attach that file before sending. The real build also emails it to the client and writes it to your linked calendar.'}</div>`;
 }
 
 /* =====================================================================
@@ -5269,9 +5528,9 @@ function vInvites(){
             <input class="inp inp-sm" id="invLast" placeholder="Last name"></div>
         </div>
         <div class="field"><label>Is this advisor at the same firm?</label>
-          <div class="chips">
-            <button class="fchip ${(state.invForm||{}).sameFirm?'on':''}" data-firm="yes">Yes</button>
-            <button class="fchip ${!(state.invForm||{}).sameFirm?'on':''}" data-firm="no">No</button>
+          <div class="radio-row">
+            <label class="radio"><input type="radio" name="samefirm" value="yes" data-firm-radio ${(state.invForm||{}).sameFirm?'checked':''}><span>Yes</span></label>
+            <label class="radio"><input type="radio" name="samefirm" value="no" data-firm-radio ${!(state.invForm||{}).sameFirm?'checked':''}><span>No</span></label>
           </div></div>
         ${(state.invForm||{}).sameFirm ? `
           <div class="field"><label>Role
@@ -5341,6 +5600,16 @@ function vQualSettings(){
 }
 /* R14 / §8: notification settings as their own full page. Every type has an on/off toggle;
    three carry an editable threshold (kept in Rands, the app's customer currency). */
+/* P1.5: read the three amount fields from the DOM into state. Called on toggle and on
+   save so the model is symmetric and no in-progress edit is silently discarded. */
+function syncNprefAmounts(){
+  if(!document.getElementById('npInvest')) return;
+  const num = (id, d) => { const v = +(document.getElementById(id)||{}).value; return isNaN(v)?d:v; };
+  state.nprefs = state.nprefs || JSON.parse(JSON.stringify(NOTIF_PREFS));
+  state.nprefs.invest     = num('npInvest', state.nprefs.invest);
+  state.nprefs.pct        = num('npPct', state.nprefs.pct);
+  state.nprefs.withdrawal = num('npAmt', state.nprefs.withdrawal);
+}
 function vNotifSettings(){
   const p = state.nprefs || NOTIF_PREFS;
   const on = p.on || {};
@@ -5380,9 +5649,30 @@ const VIEWS = {dashboard:vDashboard, leads:vLeads, customers:vCustomers, custome
   profile:vProfile, invites:vInvites, permissions:vPermissions, audit:vAudit,
   qualSettings:vQualSettings, notifSettings:vNotifSettings};
 
+/* P3.20: persist the whole demo to sessionStorage so an accidental refresh mid-demo keeps
+   uploaded docs, consent grants, notes and Tara drafts. Keyed by BUILD_VERSION so a new
+   deploy always starts clean (no cross-version state). state.filters is a Set, handled here. */
+const SESSION_KEY = () => 'v22adv:' + (typeof BUILD_VERSION!=='undefined' ? BUILD_VERSION : '0');
+function saveSession(){
+  try{
+    sessionStorage.setItem(SESSION_KEY(), JSON.stringify(state,
+      (k,v)=> v instanceof Set ? {__set:[...v]} : v));
+  }catch(_){ /* quota or private mode: skip silently */ }
+}
+function restoreSession(){
+  try{
+    const raw = sessionStorage.getItem(SESSION_KEY());
+    if(!raw) return false;
+    const snap = JSON.parse(raw, (k,v)=> v && v.__set ? new Set(v.__set) : v);
+    Object.keys(snap).forEach(k => { state[k] = snap[k]; });
+    if(!(state.filters instanceof Set)) state.filters = new Set();
+    return true;
+  }catch(_){ return false; }
+}
 function render(){
   /* §2.1/§2.2 themes, applied before any early return so every branch honours them.
      Navy accent is advisor-only; the client app always stays green. */
+  saveSession();
   document.body.classList.toggle('dark', state.mode === 'dark');
   const advTheme = state.scen !== 'client' ? state.viewTheme : 'green';
   document.body.classList.toggle('theme-navy', advTheme === 'navy');
@@ -5464,7 +5754,7 @@ function liveRegion(regionId, build){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-setvtheme],[data-mode],[data-vtheme],[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-cbell],[data-fee],[data-book],[data-bday],[data-bslot],[data-bconfirm],[data-invite],[data-nprefs],[data-nsave],[data-cnav],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
+    '[data-close],[data-scen],[data-protoclose],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-cbell],[data-fee],[data-book],[data-bslot],[data-bconfirm],[data-bcalmonth],[data-bcalday],[data-bdur],[data-bloc],[data-b12h],[data-invite],[data-nprefs],[data-nsave],[data-cnav],[data-perm],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],'+
     '[data-notif],[data-readall],[data-audit],[data-dl],[data-save],[data-status],[data-slug],[data-ics],[data-unfile],[data-vemail],[data-votp],[data-switch],[data-sconfirm],[data-prefilter],'+
     '[data-auditf],[data-docsave],[data-doccancel],[data-pview],[data-psearch],[data-addport],[data-portsub],[data-portcancel],[data-ctab],[data-reqrisk],[data-period],[data-notype],[data-nsave2],[data-qualedit],[data-qualsave],[data-editland],[data-firm],[data-appt],[data-custom],[data-portfield],[data-csend],[data-reqmeet],[data-custompd],'+
     '[data-invoice],[data-invoicedl],[data-tara],[data-taraback],[data-taraccy],[data-taraweight],[data-taraadd],[data-tararm],[data-tarasave],[data-tarasuggest],[data-clientinvest],[data-clienttweak],[data-tarasrch],'+
@@ -5513,28 +5803,28 @@ document.addEventListener('click', e => {
   if(t.dataset.notype){
     state.nprefs = state.nprefs || JSON.parse(JSON.stringify(NOTIF_PREFS));
     state.nprefs.on = state.nprefs.on || {};
+    /* P1.5: commit any in-progress amount edits to state before the re-render, so
+       flipping a toggle never reverts a field the advisor was mid-typing. */
+    syncNprefAmounts();
     state.nprefs.on[t.dataset.notype] = state.nprefs.on[t.dataset.notype] === false;
     renderBell();
     return render();
   }
   if(t.dataset.nsave){
-    const num = (id, d) => { const v = +(document.getElementById(id)||{}).value; return isNaN(v)?d:v; };
     state.nprefs = state.nprefs || JSON.parse(JSON.stringify(NOTIF_PREFS));
-    state.nprefs.invest     = num('npInvest', state.nprefs.invest);
-    state.nprefs.pct        = num('npPct', state.nprefs.pct);
-    state.nprefs.withdrawal = num('npAmt', state.nprefs.withdrawal);
+    syncNprefAmounts();
     audit('Updated notification settings',
       'Investment over R' + state.nprefs.invest.toLocaleString('en-US') + ', ' + state.nprefs.pct + '% change');
     renderBell();
     render();
     return toast('Settings saved. ' + plural(notifShown().length,'notification') + ' now meet them.');
   }
-  if(t.dataset.book){ state.bookFor=t.dataset.book; state.bookDay=null; state.bookSlot=null; state.bookConfirmMid=null;
+  if(t.dataset.book){ resetBooking(t.dataset.book, null);
     return openModal(bookDrawer(t.dataset.book)); }
   if(t.dataset.meetconfirm){
     /* Part A.1: advisor confirms a client-requested meeting by picking a time. */
     const [id, mid] = t.dataset.meetconfirm.split('|');
-    state.bookFor=id; state.bookDay=null; state.bookSlot=null; state.bookConfirmMid=mid;
+    resetBooking(id, mid);
     return openModal(bookDrawer(id));
   }
   if(t.dataset.meetaccept || t.dataset.meetdecline){
@@ -5553,8 +5843,22 @@ document.addEventListener('click', e => {
     if(r){ go('customer', r.id, 'dashboard'); state.tab8='crm'; state.tab='meets'; render(); }
     return;
   }
-  if(t.dataset.bday){ state.bookDay = t.dataset.bday; return openModal(bookDrawer(state.bookFor||state.arg)); }
+  if(t.dataset.bcalmonth){
+    const cur = state.bookMonth || TODAY_STR.slice(0,7);
+    let [y,m] = cur.split('-').map(Number);
+    m += (t.dataset.bcalmonth === 'next' ? 1 : -1);
+    if(m < 1){ m = 12; y--; } if(m > 12){ m = 1; y++; }
+    const key = y + '-' + pad2(m);
+    if(key >= TODAY_STR.slice(0,7)) state.bookMonth = key;   /* never before this month */
+    return openModal(bookDrawer(state.bookFor||state.arg));
+  }
+  if(t.dataset.bcalday){ state.bookDay = t.dataset.bcalday; state.bookSlot = null;
+    return openModal(bookDrawer(state.bookFor||state.arg)); }
   if(t.dataset.bslot){ state.bookSlot = t.dataset.bslot; return openModal(bookDrawer(state.bookFor||state.arg)); }
+  if(t.dataset.bdur){ state.bookDur = +t.dataset.bdur; state.bookSlot = null;   /* slots change with duration */
+    return openModal(bookDrawer(state.bookFor||state.arg)); }
+  if(t.dataset.bloc){ state.bookLoc = t.dataset.bloc; return openModal(bookDrawer(state.bookFor||state.arg)); }
+  if(t.dataset.b12h){ state.book12h = t.dataset.b12h === '12'; return openModal(bookDrawer(state.bookFor||state.arg)); }
   if(t.dataset.bconfirm){
     /* §7.1: "Send invite" opens an editable email carrying the calendar invite. The
        meeting is booked when the advisor actually sends it (data-csend). */
@@ -5562,13 +5866,16 @@ document.addEventListener('click', e => {
     const who = state.customers.concat(state.leads).find(x=>x.id===id);
     const day = state.bookDay || nextDays(1)[0].v;
     const slot = state.bookSlot;
+    const dur = state.bookDur || 30;
+    const loc = state.bookLoc || 'Video call';
+    const tz  = state.bookTz  || 'SAST';
     const a = state.advisor;
     const confirming = state.bookConfirmMid;
     state.compose = {
-      mode:'advisor', id, day, slot, icsWho: who, to: who ? who.email : '', confirmMid: confirming,
+      mode:'advisor', id, day, slot, dur, loc, tz, icsWho: who, to: who ? who.email : '', confirmMid: confirming,
       subject: (confirming ? 'Your Vault22 meeting is confirmed with ' : 'Vault22 review with ') + (a.name || 'your advisor'),
       body: 'Hi ' + (who ? who.name.split(' ')[0] : '') + ',\n\n'
-        + (confirming ? 'Thanks for the request. ' : '') + 'I have set a 30-minute portfolio review for ' + day + ' at ' + slot + '.\n'
+        + (confirming ? 'Thanks for the request. ' : '') + 'I have set a ' + dur + '-minute portfolio review for ' + day + ' at ' + slot + ' (' + tz + '), ' + loc.toLowerCase() + '.\n'
         + 'The calendar invite is attached; accept it to add it to your calendar.\n\n'
         + 'Best,\n' + (a.name || 'Your advisor') + '\n' + (a.company || '')
     };
@@ -5577,19 +5884,23 @@ document.addEventListener('click', e => {
   if(t.dataset.csend){
     const cx = state.compose || {};
     const to = (document.getElementById('cmpTo')||{}).value || cx.to;
+    const subject = (document.getElementById('cmpSub')||{}).value || cx.subject || '';
+    const body = (document.getElementById('cmpBody')||{}).value || cx.body || '';
     if(!EMAIL_RE.test((to||'').trim())) return toast('Enter a valid recipient email');
     if(cx.mode === 'advisor'){
       const id = cx.id, who = cx.icsWho, day = cx.day, slot = cx.slot;
+      const dur = cx.dur || 30, loc = cx.loc || 'Video call';
+      const mtitle = dur + '-min review, ' + slot;
       state.crm[id] = state.crm[id] || {notes:[],tags:[],tasks:[],follow:[],meets:[],files:[]};
       /* Part A.1: confirming a client request updates the SAME meeting (so the client
          sees it flip to confirmed); otherwise create a fresh invited meeting. */
       const existing = cx.confirmMid && (state.crm[id].meets||[]).find(m=>m.mid===cx.confirmMid);
       if(existing){
-        existing.day = day; existing.slot = slot; existing.status = 'confirmed'; existing.by = 'advisor';
-        existing.t = 'Review, ' + slot;
+        existing.day = day; existing.slot = slot; existing.dur = dur; existing.loc = loc;
+        existing.status = 'confirmed'; existing.by = 'advisor'; existing.t = mtitle;
         audit('Confirmed meeting', (who ? who.name : id) + ' · ' + day + ' at ' + slot, id);
       } else {
-        state.crm[id].meets.unshift({mid:newMid(), day, slot, status:'invited', by:'advisor', t:'Review, ' + slot});
+        state.crm[id].meets.unshift({mid:newMid(), day, slot, dur, loc, status:'invited', by:'advisor', t:mtitle});
         audit('Sent meeting invite', (who ? who.name : id) + ' · ' + day + ' at ' + slot, id);
       }
       /* The client is notified in their own app when they are the recipient. */
@@ -5600,17 +5911,23 @@ document.addEventListener('click', e => {
           m: day + ' at ' + slot + (existing ? '.' : '. Accept or decline it under Your Advisor.'), unread:true});
       }
       state.compose = null; state.bookConfirmMid = null;
+      /* P0.2: hand off to the real mail client with the edited copy, and put the genuine
+         .ics in the advisor's downloads so they can attach it before sending. */
+      if(who) downloadICS(who, day, slot, {dur, loc});
+      openMailto(to, subject, body);
       closeModal();
       return icsModal(who, day, slot);
     }
     /* §7.2 client request: create a real requested meeting the advisor must confirm. */
     state.crm[CLIENT_ID] = state.crm[CLIENT_ID] || {notes:[],tags:[],tasks:[],follow:[],meets:[],files:[]};
     state.crm[CLIENT_ID].meets.unshift({mid:newMid(), status:'requested', by:'client',
-      t:'Meeting request', note:(document.getElementById('cmpBody')||{}).value || ''});
+      t:'Meeting request', note:body});
     auditShared('Requested a meeting with advisor', cx.toName || to, CLIENT_ID);
     state.compose = null;
+    /* P0.2: open the user's mail client prefilled with their edited request. */
+    openMailto(to, subject, body);
     closeModal();
-    return toast('Meeting request sent to ' + (cx.toName || to) + '. They will confirm a time.');
+    return toast('Meeting request opened in your email to ' + (cx.toName || to) + '. Send it to reach them.');
   }
   if(t.dataset.reqmeet){
     /* R12: default to the appointed advisor; the client can switch to another in the drawer. */
@@ -5697,9 +6014,12 @@ document.addEventListener('click', e => {
   if(t.dataset.taraback){ const id = state.tara && state.tara.custId; state.tara = null;
     return id ? go('customer', id) : render(); }
   if(t.dataset.taraccy){
+    /* P2.10: switching currency must not wipe the advisor's weight tweaks or added/removed
+       assets. Keep the current lines; the currency only relabels the total and filters the
+       "add an asset" universe. Only build a default set if there are no lines yet. */
     const c = state.customers.find(x=>x.id===state.tara.custId);
     state.tara.ccy = t.dataset.taraccy;
-    state.tara.lines = taraBuild(c, state.tara.ccy);
+    if(!state.tara.lines || !state.tara.lines.length) state.tara.lines = taraBuild(c, state.tara.ccy);
     return render();
   }
   if(t.dataset.taraweight){
@@ -5773,6 +6093,7 @@ document.addEventListener('click', e => {
     state.subPorts = state.subPorts || [];
     state.subPorts.unshift({name:d.name.trim(), ticker:(d.ticker||'').trim().toUpperCase(),
       min:+d.min||0, ccy:d.ccy||'ZAR', exposure:d.exposure||'', risk:d.risk||'Balanced',
+      fee:(d.fee!==undefined && d.fee!=='') ? +d.fee : null,
       factsheet:d.factsheet||'', status:'Pending approval'});
     audit('Submitted portfolio for approval', d.name.trim());
     state.portDraft = null;
@@ -5917,8 +6238,9 @@ document.addEventListener('click', e => {
   if(t.dataset.docsave){
     const [scope, id] = t.dataset.docsave.split(':');
     const name = (document.getElementById('docName')||{}).value?.trim();
-    const type = (document.getElementById('docType')||{}).value || 'Other';
+    const type = (document.getElementById('docType')||{}).value;
     if(!name) return toast('Give the document a name');
+    if(!type) return toast('Choose a document type');   /* P2.12: no silent default */
     const rec = {did:newDid(), name, type, date: localISO(new Date()).slice(0,10), status:'received'};
     const key = scope === 'client' ? CLIENT_ID : id;
     state.docs = state.docs || {}; (state.docs[key] = state.docs[key] || []).unshift(rec);
@@ -5930,12 +6252,13 @@ document.addEventListener('click', e => {
     return render();
   }
   /* Part A.2: advisor requests a document from the client. */
-  if(t.dataset.docreq){ state.docReqDraft = {id:t.dataset.docreq, name:'', type:'Proof of Address'}; return render(); }
+  if(t.dataset.docreq){ state.docReqDraft = {id:t.dataset.docreq, name:'', type:''}; return render(); }
   if(t.dataset.docreqsave){
     const id = t.dataset.docreqsave;
     const name = (document.getElementById('docReqName')||{}).value?.trim();
-    const type = (document.getElementById('docReqType')||{}).value || 'Other';
+    const type = (document.getElementById('docReqType')||{}).value;
     if(!name) return toast('Name the document you need');
+    if(!type) return toast('Choose a document type');   /* P2.12: no silent default */
     state.docs = state.docs || {}; (state.docs[id] = state.docs[id] || [])
       .push({did:newDid(), name, type, status:'requested'});
     const who = state.customers.concat(state.leads).find(x=>x.id===id);
@@ -6084,7 +6407,7 @@ document.addEventListener('drop', e => {
   const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
   if(!file) return;
   const [scope, id] = dz.dataset.dropzone.split(':');
-  state.docDraft = {scope, id: id||'', name: file.name, type: 'Identity'};
+  state.docDraft = {scope, id: id||'', name: file.name, type: ''};   /* P2.12: no default type */
   render();
 });
 
@@ -6243,7 +6566,9 @@ document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal(); 
 /* Boot into Scenario A. The advisor onboarding journey is the first thing the
    demo walks through, so it must be what you land on, booting into the
    established advisor hid it behind the demo switcher entirely. */
-loadScenario('new');
+/* P3.20: resume a mid-demo session if one was saved for this exact build; otherwise boot
+   fresh into the advisor onboarding journey. */
+if(!restoreSession()) loadScenario('new');
 render();
 
 /* =====================================================================
