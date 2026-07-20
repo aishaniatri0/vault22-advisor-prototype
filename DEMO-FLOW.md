@@ -60,3 +60,6 @@ The exact click path for a live demo. Switch scenarios with the bottom-right gea
 ## No dead ends
 Every button on this path is wired. Stubs (e.g. client-app sections other than Profile, "collapse
 menu") show an explanatory modal, never a blank. See `DEMO-REALVSMOCK.md` for the full real/mock map.
+
+- **Vault22 admin**: settings gear → scenario **Vault22 admin** → **Portfolio moderation**.
+  Approve a pending submission, switch back to the advisor, and it is live in Portfolios.

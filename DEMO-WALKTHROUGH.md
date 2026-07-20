@@ -87,3 +87,9 @@ No dead ends; no `undefined`/`NaN`; no jargon; works in Navy and Dark and at pho
   behind the settings gear → **Vault22 admin** for now.
 - **Invoice PDF** carries a typed Vault22 wordmark, not the logo image: the hand-rolled PDF writer
   has no image support.
+
+## Vault22 admin (portfolio moderation)
+Settings gear → Scenario → **Vault22 admin**. The left nav becomes **Vault22 admin → Portfolio
+moderation**, listing advisor-submitted portfolios with Approve / Reject. Approving puts the
+portfolio live on the advisor's platform (switch back to Established advisor → Portfolios to show it).
+Advisors cannot approve their own submissions; their Add-a-portfolio screen is read-only.
