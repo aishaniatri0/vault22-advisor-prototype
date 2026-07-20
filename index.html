@@ -1249,6 +1249,13 @@ body.dark .ov-c{background:var(--v4-navy-50)}
 .ov-k{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
 .ov-v{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 /* P1.6: advisor directory grid */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--v4-space-6)}
+@media(max-width:1023px){.chart-grid{grid-template-columns:1fr}}
+.chart-card{min-width:0}
+.chart-fs{font-size:13px;line-height:1}
+.chart-full{position:fixed;inset:0;z-index:120;background:var(--surface);padding:var(--v4-space-6);
+  overflow-y:auto;display:flex;flex-direction:column}
+.chart-full .chart-full-in{max-width:1100px;width:100%;margin:0 auto}
 .dir-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--v4-space-4)}
 @media(max-width:900px){.dir-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.dir-grid{grid-template-columns:1fr}}
@@ -1258,6 +1265,7 @@ body.dark .ov-c{background:var(--v4-navy-50)}
 .cobrand{display:flex;align-items:center;gap:var(--v4-space-3);flex-wrap:wrap;margin-top:var(--v4-space-5);
   padding-top:var(--v4-space-4);border-top:1px solid var(--line)}
 .cobrand-logo{height:26px;max-width:120px;object-fit:contain}
+.lp-logo{max-height:30px;display:block;margin:0 0 6px}
 .cobrand-firm{font-weight:700;font-size:13px}
 .cobrand-fsp{font-size:11.5px;color:var(--muted);flex:1;min-width:120px}
 .cobrand-v22{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
@@ -1459,6 +1467,8 @@ const short = n => n>=1e6 ? 'R'+(n/1e6).toFixed(1)+'m' : n>=1e3 ? 'R'+Math.round
 /* The advisor's Vault22 platform subscription is the ONE deliberately-USD figure in the
    app (Stephen quoted $10 / $25 / $40). Everything the customer sees stays in Rands. */
 const usd = n => '$' + Math.round(n).toLocaleString('en-US');
+/* R4 4.2: invoice lines need cents so subtotal + VAT = total actually reconciles on screen. */
+const usd2 = n => '$' + Number(n).toFixed(2);
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const rel = iso => {
   const d = (NOW - new Date(iso))/1000;
@@ -1505,6 +1515,7 @@ const ADVISOR_EST = {
   bio:'Certified financial planner helping South Africans build long-term wealth through low-cost, goal-based investing.',
   calendar:'cal.com/aishaniatri/30min', welcome:'Let’s build your financial future, together.',
   website:'vault22wealth.co.za', joined:'2025-09-04', role:'Admin',
+  address:'14 Fredman Drive, Sandton, Johannesburg, 2196',
   services:['Goal-based investing','Retirement planning','Tax-free savings','Portfolio reviews'],
   /* §2/§3 configurables. Social, theme and the three images had no home in state
      at all, which is why every input on those two screens was inert. */
@@ -1518,7 +1529,7 @@ const ADVISOR_NEW = {
   name:'', initials:'', email:'', phone:'',
   phoneFmt:'', company:'', country:'',
   licence:'', idNum:'9105120055086', status:'Pending Verification', slug:'', code:'',
-  bio:'', calendar:'', welcome:'', website:'', joined:'', role:'Admin', services:[],
+  bio:'', calendar:'', welcome:'', website:'', joined:'', role:'Admin', services:[], address:'',
   social:{linkedin:'', facebook:'', x:''},
   theme:'#01c38d', photo:null, logo:null, banner:null
 };
@@ -1608,7 +1619,7 @@ const CUSTOMERS_EST = [
 ];
 
 const NOTIFS_EST = [
-  {id:'N1',type:'New Lead',em:'👤',msg:'Thandiwe Mokoena signed up through your link',ts:'2026-07-17T07:10:00',go:['lead','L1'],unread:true},
+  {id:'N1',type:'New User',em:'👤',msg:'Thandiwe Mokoena signed up through your link',ts:'2026-07-17T07:10:00',go:['lead','L1'],unread:true},
   {id:'N2',type:'Risk Assessment Completed',em:'📊',msg:'Pieter van der Merwe completed his risk assessment, Balanced',ts:'2026-07-16T14:22:00',go:['lead','L2'],unread:true},
   {id:'N3',type:'Large Investment',em:'💰',amt:120000,msg:'Fatima Ismail invested R120,000 in one transaction',ts:'2026-07-14T10:40:00',go:['customer','C5'],unread:true},
   {id:'N4',type:'KYC Completed',em:'✅',msg:'Aisha Patel’s KYC was approved',ts:'2026-07-16T09:05:00',go:['lead','L3'],unread:false},
@@ -1649,7 +1660,7 @@ const notifShown = () => state.notifs.filter(n => {
 });
 /* §8: which notifications the advisor wants, plus the amount/percentage thresholds. */
 const NOTIF_PREFS = {
-  on: {'New Lead':true, 'Risk Assessment Completed':true, 'Large Investment':true,
+  on: {'New User':true, 'Risk Assessment Completed':true, 'Large Investment':true,
        'KYC Completed':true, 'First Investment':true, 'SIP Failed':true, 'Birthday':true,
        'Portfolio Review Due':true, '% change in portfolio value':true,
        'Withdrawals above threshold':true},
@@ -1657,7 +1668,7 @@ const NOTIF_PREFS = {
 };
 /* The settings surface: each row is a type, a toggle, and an optional threshold. */
 const NOTIF_SETTINGS = [
-  {t:'New Lead', label:'New Lead'},
+  {t:'New User', label:'New User'},
   {t:'Risk Assessment Completed', label:'Risk Assessment Completed'},
   {t:'Large Investment', label:'Investment over', amt:'invest', prefix:'R'},
   {t:'KYC Completed', label:'KYC Completed'},
@@ -1699,9 +1710,10 @@ const AUDIT_EST = [
    States: 'granted' | 'pending' | 'none'. */
 const CONSENT_SECTIONS = [
   {k:'financial', t:'Financial',
+   /* R4 §2.2: "Total fees earned" is an advisor-side figure. It is deliberately NOT in the
+      client's sharing list or the client-facing report. The advisor keeps their own block. */
    fields:['Net Worth','Total Savings','Monthly Savings','Financial Fitness Score','Amount Invested',
-           'Monthly Income','Emergency Fund','Total Investments','Insurance Coverage','Total Liabilities',
-           'Total fees earned']},
+           'Monthly Income','Emergency Fund','Total Investments','Insurance Coverage','Total Liabilities']},
   {k:'investment', t:'Investment',
    fields:['Financial profile report','Current Portfolio Value','Asset Allocation','Products Owned',
            'Invested Amount','Profit/Loss','Recurring Investment','One-time Investments','Fees earned']},
@@ -1849,7 +1861,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-19.7';
+const BUILD_VERSION = '2026-07-20.1';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -1857,6 +1869,14 @@ const localISO = (d) => {
   return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+
          'T'+z(d.getHours())+':'+z(d.getMinutes())+':'+z(d.getSeconds());
 };
+/* R4 §1.2: EVERY rendered date is dd-mm-yyyy, advisor and client alike. Storage, sort keys
+   and <input type="date"> values stay ISO via localISO(); this is the display layer only.
+   Accepts 'yyyy-mm-dd' or a full ISO timestamp; passes anything else through untouched. */
+function fmtDate(v){
+  if(!v) return '';
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(v));
+  return m ? m[3]+'-'+m[2]+'-'+m[1] : String(v);
+}
 /* `who` is the client this action concerns, when it concerns one. The per-customer
    log used to be a substring match on `tgt`, so an advisor-level row whose text merely
    contained 'C1' surfaced in C1's compliance log. Scope by id, never by text. */
@@ -1900,7 +1920,6 @@ const NAV = [
   {sep:'My platform'},
   {id:'landing',label:'Landing Page',ic:'landing'},
   {id:'profile',label:'My Profile',ic:'profile'},
-  {id:'directory',label:'Browse advisors',ic:'customers'},
   {id:'team',label:'Firm team',ic:'leads'},
   {id:'invites',label:'Invite advisors',ic:'leads'},
   {sep:'Compliance'},
@@ -1944,10 +1963,11 @@ function closeGlobalSearch(){
    top-level destinations never show a Back they don't need. */
 const ROUTE_LABEL = {dashboard:'Dashboard', leads:'Registered Users', customers:'Customers',
   risk:'Risk Profiles', portfolios:'Portfolios', analytics:'Analytics',
-  landing:'Landing Page', profile:'My Profile', directory:'Browse advisors', team:'Firm team',
+  landing:'Landing Page', profile:'My Profile', team:'Firm team',
   invites:'Invite advisors', permissions:'Permissions', audit:'Audit Log',
   qualSettings:'Qualified user filtering', notifSettings:'Notification settings'};
 function go(id, arg, backTo){
+  state.chartFull = null;   /* R4 1.1: never carry an expanded chart across a nav */
   document.body.classList.remove('nav-open');
   closeGlobalSearch();
   if(arg && arg !== state.arg) state.tab8 = 'overview';
@@ -2197,6 +2217,22 @@ function protoDrawer(){
           <button class="${state.viewTheme==='navy'?'on':''}" data-setvtheme="navy">Navy</button>
         </div>` : ''}
       <button class="btn" style="width:100%;justify-content:center" data-mode="1">${state.mode==='dark'?'☀ Light mode':'☾ Dark mode'}</button>
+      <!-- R4 7.1: moderating advisor-submitted portfolios is a Vault22 admin job, not an
+           advisor one. It sits here behind the internal surface until Uday says where it
+           belongs in project x. -->
+      <div class="pd-sec" style="margin-top:var(--v4-space-5)">Vault22 admin</div>
+      ${(()=>{ const q = (state.subPorts||[]).filter(x=>x.status==='Pending approval');
+        return `<p class="pd-note" style="margin:0 0 6px">Moderation queue${q.length?` · ${q.length} awaiting review`:''}</p>
+        ${(state.subPorts||[]).length ? (state.subPorts||[]).map((x,i)=>`
+          <div class="list-row" style="padding:6px 0">
+            <span style="font-size:12.5px">${esc(x.name)}
+              <div class="sub">${esc(x.risk)} · ${x.status}</div></span>
+            ${x.status==='Pending approval' ? `<span class="row" style="gap:6px">
+              <button class="btn btn-sm" data-approveport="${i}">Approve</button>
+              <button class="btn btn-sm" data-modq="${i}">Reject</button></span>` : ''}
+          </div>`).join('') : '<p class="pd-note" style="opacity:.7">No submissions yet.</p>'}`; })()}
+      <p class="pd-note" style="opacity:.7">Stands in for Vault22's moderation team. Approving here
+        puts the portfolio live in the advisor's list. Final home to be confirmed with Uday.</p>
       <div class="pd-sec" style="margin-top:var(--v4-space-5)">Demo</div>
       <button class="btn" style="width:100%;justify-content:center" data-resetdemo="1">↺ Reset demo</button>
       <p class="pd-note">Reset clears everything you changed this session (docs, notes, Tara drafts,
@@ -2868,7 +2904,7 @@ function vDashboard(){
             <div class="todo-r" data-cust="${x.id}">
               <span class="row" style="gap:var(--v4-space-3)">
                 <span class="ava" style="width:32px;height:32px;font-size:12px;flex:none">${initialsOf(x.name)}</span>
-                <span><b>${esc(x.name)}</b><div class="sub">${esc(x.type)} · since ${x.since}</div></span>
+                <span><b>${esc(x.name)}</b><div class="sub">${esc(x.type)} · since ${fmtDate(x.since)}</div></span>
               </span>
               <span class="row" style="gap:var(--v4-space-4)">
                 <span class="num" style="font-weight:600">${money(x.pv)}</span>
@@ -3029,7 +3065,7 @@ function vLeads(){
         <div class="chips">
           <span class="pill p-gray" style="align-self:center">${rows.length} of ${state.leads.length}</span>
           <span class="sub" style="align-self:center">Qualification:</span>
-          <button class="fchip ${(!state.filters.has('qual')&&!state.filters.has('unqual'))?'on':''}" data-filter="__allqual">Any</button>
+          <button class="fchip ${(!state.filters.has('qual')&&!state.filters.has('unqual'))?'on':''}" data-filter="__allqual">All</button>
           ${LEAD_FILTERS.filter(f=>f.k==='qual'||f.k==='unqual').map(f=>`<button class="fchip ${state.filters.has(f.k)?'on':''}" data-filter="${f.k}">${f.t}</button>`).join('')}
           <span class="chip-div"></span>
           ${LEAD_FILTERS.filter(f=>f.k!=='qual'&&f.k!=='unqual').map(f=>`<button class="fchip ${state.filters.has(f.k)?'on':''}" data-filter="${f.k}">${f.t}</button>`).join('')}
@@ -3105,7 +3141,7 @@ function vCustomers(){
     const days = Math.round((NOW - new Date(d)) / 86400000);
     const tag = days > 365 ? '<span class="pill p-red" style="margin-left:6px">Overdue</span>'
               : days > 305 ? '<span class="pill p-amber" style="margin-left:6px">Due soon</span>' : '';
-    return `<span class="sub num">${d}</span>${tag}`;
+    return `<span class="sub num">${fmtDate(d)}</span>${tag}`;
   };
   const body = rows.map(c=>{
     const gl = c.pv - c.inv, ch = pchg(c);
@@ -3201,7 +3237,7 @@ function tab8Overview(p){
     ['Portfolio value', isCust ? money(p.pv) : dash],
     ['Fees earned (YTD)', isCust ? money(fees) : dash],
     ['Last contact', lc ? lc : (p.lastLogin ? rel(p.lastLogin) : dash)],
-    ['Last risk assessment', lastRiskDate(p) || 'Not completed'],
+    ['Last risk assessment', fmtDate(lastRiskDate(p)) || 'Not completed'],
     ['Acquisition source', esc(acqSource(p))]
   ];
   return `<div class="card card-p">
@@ -3209,12 +3245,9 @@ function tab8Overview(p){
     <p class="lede" style="margin-bottom:var(--v4-space-4)">${esc(p.name)} at a glance.</p>
     <div class="ov-grid">${cards.map(([k,v])=>`<div class="ov-c">
       <span class="ov-k">${k}</span><span class="ov-v">${v}</span></div>`).join('')}</div>
-    <div class="row" style="margin-top:var(--v4-space-4);flex-wrap:wrap;gap:var(--v4-space-2)">
-      <button class="btn btn-sm" data-book="${p.id}">Book meeting</button>
-      <button class="btn btn-sm" data-reqrisk="${p.id}">Request risk assessment</button>
-      ${CONSENT_SECTIONS.some(s=>consentOf(p.id,s.k)!=='granted') ? `<button class="btn btn-sm" data-reqallconsent="${p.id}">Request all data access</button>` : ''}
-      ${isCust ? `<button class="btn btn-sm btn-pri" data-tara="${p.id}">Personalise portfolio</button>` : ''}
-    </div>
+    ${isCust ? `<div class="row" style="margin-top:var(--v4-space-4);flex-wrap:wrap;gap:var(--v4-space-2)">
+      <button class="btn btn-sm btn-pri" data-tara="${p.id}">Personalise portfolio</button>
+    </div>` : ''}
   </div>`;
 }
 /* A Detail | Value table. The advisor's §8 tabs used to render this same label/value
@@ -3278,24 +3311,68 @@ function tab8Personal(p){
 function tab8Financial(p){
   const sec = CONSENT_SECTIONS[0];
   if(consentOf(p.id,'financial') !== 'granted') return lockedTab(p, sec);
+  /* R4 2.1: the flat label/value list read as raw data, not a report. This is the designed
+     financial report: headline position, net worth composition, cash flow and resilience,
+     each figure derived from the same client record. */
+  const nw = p.nw||0, liab = p.liabilities||0, assets = nw + liab;
+  const inc = p.income||0, sav = p.sav||0, ef = p.ef||0;
+  const savRate = inc ? Math.round(sav/inc*100) : 0;
+  const spend = Math.max(inc - sav, 0);
+  const efMonths = spend ? (ef/spend) : 0;
+  const debtRatio = assets ? Math.round(liab/assets*100) : 0;
+  const ffs = p.ffs||0, ffsPct = Math.round(ffs/1000*100);
+  const ffsBand = ffs>=750 ? 'Excellent' : ffs>=650 ? 'Strong' : ffs>=550 ? 'Building' : 'Needs work';
+  const pv = p.pv||0, inv = p.inv||0, growth = pv - inv;
+  const bar = (label, val, pct, tone) => `<div class="arow">
+    <span class="lb">${label}</span>
+    <span class="bar"><i style="width:${Math.max(0,Math.min(100,pct))}%${tone?';background:'+tone:''}"></i></span>
+    <span class="pc num">${val}</span></div>`;
   return `<div class="card card-p">
-    <div class="sec-t">Financial</div>
-    ${dl([
-      ['Net worth', p.nw!=null?money(p.nw):dash],
-      ['Total savings', p.totalSav!=null?money(p.totalSav):dash],
-      ['Monthly savings', p.sav!=null?money(p.sav)+'/mo':dash],
-      ['Financial fitness score', p.ffs!=null?p.ffs+' / 1000':dash],
-      /* These two used to be the same expression, so they rendered as two adjacent
-         rows reading the same rand figure. Amount invested is what the client put in;
-         Total investments is what it is worth now. */
-      ['Amount invested', p.inv!=null?money(p.inv)+' <span class="sub">contributed</span>':dash],
-      ['Monthly income', p.income!=null?money(p.income):dash],
-      ['Emergency fund', p.ef!=null?money(p.ef):dash],
-      ['Total investments', p.pv!=null?money(p.pv)+' <span class="sub">current value</span>':dash],
-      ['Insurance coverage', p.insurance!=null?money(p.insurance):dash],
-      ['Total liabilities', p.liabilities!=null?money(p.liabilities):dash]
-    ])}
+    <div class="between" style="margin-bottom:var(--v4-space-2)">
+      <div class="sec-t" style="margin:0">Financial report</div>
+      <span class="sub">${esc(p.name)} · as at ${fmtDate(TODAY_STR)}</span></div>
+    <p class="lede" style="margin-bottom:var(--v4-space-5)">Their position, how it is funded, and how
+      resilient it is. Shared with you by ${esc(p.name.split(' ')[0])}.</p>
+
+    <div class="kpis">
+      <div class="kpi"><div class="k">Net worth</div><div class="v">${nw?money(nw):dash}</div>
+        <div class="d">${money(assets)} assets less ${money(liab)} debt</div></div>
+      <div class="kpi"><div class="k">Total investments</div><div class="v">${pv?money(pv):dash}</div>
+        <div class="d">${money(inv)} contributed${growth?', '+(growth>=0?'+':'')+money(growth)+' growth':''}</div></div>
+      <div class="kpi"><div class="k">Monthly savings</div><div class="v">${sav?money(sav):dash}</div>
+        <div class="d">${savRate}% of ${money(inc)} income</div></div>
+      <div class="kpi"><div class="k">Financial fitness</div><div class="v">${ffs||dash}<span class="sub" style="font-size:13px"> / 1000</span></div>
+        <div class="d">${ffsBand}</div></div>
+    </div>
+
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Financial fitness</div>
+    <div class="bar" style="height:10px"><i style="width:${ffsPct}%"></i></div>
+    <div class="between sub" style="margin-top:6px"><span>0</span><span><b>${ffs}</b> · ${ffsBand}</span><span>1000</span></div>
+
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Net worth composition</div>
+    <p class="lede" style="margin-bottom:var(--v4-space-3)">What they own against what they owe.</p>
+    ${bar('Investments', money(pv), assets?pv/assets*100:0)}
+    ${bar('Savings', money(p.totalSav||0), assets?(p.totalSav||0)/assets*100:0)}
+    ${bar('Other assets', money(Math.max(assets-pv-(p.totalSav||0),0)), assets?Math.max(assets-pv-(p.totalSav||0),0)/assets*100:0)}
+    ${bar('Liabilities', money(liab), assets?liab/assets*100:0, 'var(--v4-navy-400)')}
+    <div class="sub" style="margin-top:var(--v4-space-2)">Debt is ${debtRatio}% of total assets.</div>
+
+    <div class="sec-t" style="margin-top:var(--v4-space-6)">Cash flow and resilience</div>
+    <div class="ov-grid">
+      <div class="ov-c"><span class="ov-k">Monthly income</span><span class="ov-v">${inc?money(inc):dash}</span></div>
+      <div class="ov-c"><span class="ov-k">Savings rate</span><span class="ov-v">${savRate}%</span></div>
+      <div class="ov-c"><span class="ov-k">Emergency fund</span><span class="ov-v">${ef?money(ef):dash}</span></div>
+      <div class="ov-c"><span class="ov-k">Cover</span><span class="ov-v">${efMonths?efMonths.toFixed(1)+' months':dash}</span></div>
+      <div class="ov-c"><span class="ov-k">Insurance coverage</span><span class="ov-v">${p.insurance!=null?money(p.insurance):dash}</span></div>
+      <div class="ov-c"><span class="ov-k">Total liabilities</span><span class="ov-v">${liab?money(liab):dash}</span></div>
+    </div>
+    <div class="consent" style="margin-top:var(--v4-space-4)">${
+      efMonths>=6 ? 'Emergency fund covers ' + efMonths.toFixed(1) + ' months of spending, a comfortable buffer.'
+      : efMonths>=3 ? 'Emergency fund covers ' + efMonths.toFixed(1) + ' months. Three to six months is the usual target.'
+      : 'Emergency fund covers under three months of spending. Worth a conversation.'}</div>
+
     <div class="sec-t" style="margin-top:var(--v4-space-6)">Total fees earned</div>
+    <p class="lede" style="margin-bottom:var(--v4-space-3)">Your fees from this client. Advisor view only.</p>
     <div class="row" style="margin-bottom:var(--v4-space-3)">
       ${['Year to date','This quarter','This month','All time'].map(o=>
         `<button class="fchip ${(state.feePeriod||'Year to date')===o?'on':''}" data-fee="${esc(o)}">${o}</button>`).join('')}
@@ -3330,6 +3407,10 @@ const aumFeeMonthly = nonV22 => Math.round((nonV22||0) * 0.0025 / 12);
 /* The last N billing months, newest first, derived from the book. Older months scale
    AUM down a little per month back, a seeded monotonic curve.
    // TODO: replace with real historic AUM. */
+/* R4 4.2: South African VAT. Kept as one constant so a rate change is a one-line edit,
+   same treatment as the subscription tiers pending Greg. */
+const VAT_RATE = 0.15;
+const lastDayOf = (y, m) => String(new Date(y, m, 0).getDate()).padStart(2,'0');
 function membershipInvoices(n){
   const [y, m] = state.advisor.joined ? state.advisor.joined.slice(0,7).split('-').map(Number) : [2025,9];
   const nowY = NOW.getFullYear(), nowM = NOW.getMonth()+1;
@@ -3349,7 +3430,12 @@ function membershipInvoices(n){
       label: MON[mm-1] + ' ' + yy,
       count, aum, nonV22,
       sub: subFee(count), tier: subTier(count),
-      aumFee: aumFeeMonthly(nonV22)
+      aumFee: aumFeeMonthly(nonV22),
+      /* R4 4.2: invoices are dated the last day of the billing month, and the
+         subscription carries SA VAT at 15% shown as its own line. */
+      date: yy + '-' + String(mm).padStart(2,'0') + '-' + lastDayOf(yy, mm),
+      vat: +(subFee(count) * VAT_RATE).toFixed(2),
+      total: +(subFee(count) * (1 + VAT_RATE)).toFixed(2)
     });
   }
   return out;
@@ -3400,24 +3486,31 @@ function downloadPdf(lines, filename){
 function invoicePDF(inv){
   const a = state.advisor;
   downloadPdf([
-    'Vault22',
-    'INVOICE  ' + inv.no,
+    'V  VAULT22',
+    'Vault22 (Pty) Ltd · vault22.com',
     '',
-    'Advisor: ' + a.name + '   ' + (a.licence || ''),
-    'Date joined: ' + (a.joined || 'n/a'),
+    'TAX INVOICE  ' + inv.no,
+    'Invoice date: ' + fmtDate(inv.date),
     'Billing month: ' + inv.label,
+    '',
+    'BILL TO',
+    a.name + (a.licence ? '   ' + a.licence : ''),
+    a.company || '',
+    a.address || '',
     '',
     'Number of customers: ' + inv.count,
     'Total AUM: R' + Math.round(inv.aum).toLocaleString('en-US'),
     'Total non-Vault22 AUM: R' + Math.round(inv.nonV22).toLocaleString('en-US'),
     '',
-    'Your subscription fee (' + inv.tier + '): $' + inv.sub,
-    'AUM fee (25 bps p.a. on non-Vault22 assets), billed to the customer: R' + inv.aumFee.toLocaleString('en-US'),
+    'Subscription fee (' + inv.tier + '): $' + inv.sub.toFixed(2),
+    'Subtotal: $' + inv.sub.toFixed(2),
+    'VAT @ 15%: $' + inv.vat.toFixed(2),
+    'TOTAL DUE FROM YOU: $' + inv.total.toFixed(2),
     '',
-    'AMOUNT DUE FROM YOU: $' + inv.sub + ' (subscription only)',
+    'AUM fee (25 bps p.a. on non-Vault22 assets), billed to the customer: R' + inv.aumFee.toLocaleString('en-US'),
     'The 25 bps AUM fee is charged to the customer and is not part of your amount due.',
     '',
-    'Subscription pricing shown in USD.'
+    'Subscription pricing shown in USD. VAT charged at the South African rate of 15%.'
   ], 'vault22-invoice-' + inv.key + '.pdf');
 }
 /* BUG 3: the financial-profile report downloads a real one-page PDF, like the invoice,
@@ -3454,20 +3547,27 @@ function invoiceDrawer(key){
         <p class="lede">${inv.label}</p></div>
       <button class="x" data-close="1">×</button></div>
     <div class="subtile" style="background:var(--v4-navy-25);padding:var(--v4-space-4);margin-bottom:var(--v4-space-4)">
-      <b style="font-size:15px">Vault22</b>
-      <div class="sub">${esc(a.name)}${a.licence?' · '+esc(a.licence):''}</div>
-      <div class="sub">Date joined ${a.joined||'n/a'}</div>
+      <div class="row" style="align-items:center;gap:var(--v4-space-3);margin-bottom:var(--v4-space-3)">
+        <img src="assets/img/vault22-logo.png" alt="Vault22" style="height:22px">
+        <span class="sub" style="margin-left:auto">Invoice date <b>${fmtDate(inv.date)}</b></span>
+      </div>
+      <div class="sub" style="text-transform:uppercase;letter-spacing:.04em;font-size:10.5px">Bill to</div>
+      <b style="font-size:14px">${esc(a.name)}</b>${a.licence?` <span class="sub">${esc(a.licence)}</span>`:''}
+      ${a.company?`<div class="sub">${esc(a.company)}</div>`:''}
+      ${a.address?`<div class="sub">${esc(a.address)}</div>`:''}
     </div>
     ${dl([
       ['Number of customers', inv.count],
       ['Total AUM', money(inv.aum)],
       ['Total non-Vault22 AUM', money(inv.nonV22)],
-      ['Your subscription fee (' + inv.tier + ')', usd(inv.sub)],
+      ['Subscription fee (' + inv.tier + ')', usd2(inv.sub)],
+      ['Subtotal', usd2(inv.sub)],
+      ['VAT at 15%', usd2(inv.vat)],
       ['AUM fee (25 bps p.a. on non-Vault22 assets), billed to the customer', money(inv.aumFee)]
     ])}
     <div class="list-row" style="margin-top:var(--v4-space-3);border-top:1px solid var(--line);padding-top:var(--v4-space-3)">
-      <span><b>Amount due from you</b><div class="sub">Your subscription only. The 25 bps AUM fee is charged to the customer, not to you.</div></span>
-      <b class="num" style="font-size:18px">${usd(inv.sub)}</b></div>
+      <span><b>Total due from you</b><div class="sub">Subscription plus VAT. The 25 bps AUM fee is charged to the customer, not to you.</div></span>
+      <b class="num" style="font-size:18px">${usd2(inv.total)}</b></div>
     <div class="actions" style="margin-top:var(--v4-space-4)">
       <button class="obtn obtn-pri" data-invoicedl="${inv.key}">Download PDF</button>
       <button class="obtn obtn-ghost" data-close="1">Done</button></div>
@@ -3556,11 +3656,11 @@ function tab8Risk(p){
       <div class="sec-t" style="margin:0">Risk</div>
       <button class="btn btn-sm btn-pri" data-reqrisk="${p.id}">Request risk assessment</button>
     </div>
-    <div class="sub" style="margin:-2px 0 var(--v4-space-4)">Last risk assessment: <b>${last || 'not completed'}</b></div>
+    <div class="sub" style="margin:-2px 0 var(--v4-space-4)">Last risk assessment: <b>${fmtDate(last) || 'not completed'}</b></div>
     ${dl([
       ['Risk assessment', p.risk || (p.stage==='Risk Assessment Completed'||STAGES.indexOf(p.stage)>=7 ? 'Completed' : 'Not completed')],
       ['Risk score', p.score!=null ? p.score+' / 100' : dash],
-      ['Last risk assessment', last || 'Not completed']
+      ['Last risk assessment', fmtDate(last) || 'Not completed']
     ])}
     <div class="sec-t" style="margin-top:var(--v4-space-5)">Risk profile</div>
     <div class="svc">${TYPES.map(t=>`<span class="pill ${t===type?'p-teal':'p-gray'}">${t}</span>`).join('')}</div>
@@ -3593,7 +3693,7 @@ function docSection(scope, id){
     ${received.length ? `<div class="ptbl-wrap" style="margin-bottom:var(--v4-space-4)"><table class="ptbl">
       <thead><tr><th>Document</th><th>Type</th><th>Date</th><th>Expiry</th><th></th></tr></thead>
       <tbody>${received.map(d=>`<tr><td>📎 ${esc(d.name)}${docExpiryFlag(d)}</td><td>${esc(d.type)}</td>
-        <td class="num">${d.date||''}</td><td class="num sub">${d.expiry||'No expiry'}</td>
+        <td class="num">${fmtDate(d.date)}</td><td class="num sub">${fmtDate(d.expiry)||'No expiry'}</td>
         <td><button class="btn btn-sm" data-docview="${esc(d.name)}|${esc(d.type)}|${d.date||''}|${d.expiry||''}">Open</button></td></tr>`).join('')}</tbody></table></div>`
       : (requested.length ? '' : '<p class="lede" style="margin-bottom:var(--v4-space-4)">No documents yet.</p>')}
     ${draft ? `
@@ -3669,7 +3769,7 @@ function tab8Activity(p){
     <div class="sec-t" style="margin-top:var(--v4-space-6)">Since onboarding</div>
     <p class="lede" style="margin-bottom:var(--v4-space-4)">Recurring events after the client went live.</p>
     <div class="tl">${items.map(([t,dt])=>`<div class="tl-i ${dt?'':'tl-off'}">
-      <div class="tl-t">${t}</div><div class="tl-d">${dt || 'Not yet'}</div></div>`).join('')}</div>
+      <div class="tl-t">${t}</div><div class="tl-d">${fmtDate(dt) || 'Not yet'}</div></div>`).join('')}</div>
     ${(crm.meets||[]).length ? `<div class="sec-t" style="margin-top:var(--v4-space-6)">Meetings</div>
       ${crm.meets.map(m=>`<div class="list-row"><span>${esc(m.t)}</span>
         <span class="sub num">${meetWhen(m)||''}</span></div>`).join('')}` : ''}
@@ -3795,7 +3895,7 @@ function vCustomer(){
     <div class="page-head between">
       <div><h1>${esc(c.name)}</h1>
         <p class="lede">${esc(c.email)} · ${c.phone} · ${esc(c.country||'South Africa')}</p>
-        <p class="sub" style="margin-top:2px">Last risk assessment: <b>${lastRisk || 'not completed'}</b></p></div>
+        <p class="sub" style="margin-top:2px">Last risk assessment: <b>${fmtDate(lastRisk) || 'not completed'}</b></p></div>
       <div class="row">
         <a class="btn btn-sm" href="tel:${c.phone}" data-audit="Called ${c.id}">Call</a>
         <a class="btn btn-sm" href="mailto:${c.email}" data-audit="Emailed ${c.id}">Email</a>
@@ -3803,6 +3903,7 @@ function vCustomer(){
         <button class="btn btn-sm" data-book="${c.id}">Book</button>
         <button class="btn btn-sm" data-reqrisk="${c.id}">Request risk assessment</button>
         <button class="btn btn-sm" data-reqkyc="${c.id}">Request KYC refresh</button>
+        ${CONSENT_SECTIONS.some(s=>consentOf(c.id,s.k)!=='granted') ? `<button class="btn btn-sm" data-reqallconsent="${c.id}">Request all data access</button>` : ''}
         ${isCust ? `<button class="btn btn-sm btn-pri" data-tara="${c.id}">Personalise portfolio</button>` : ''}
         <span class="pill ${isCust?'p-teal':stagePill(c.stage)}">${isCust?'Customer':c.stage}</span>
       </div>
@@ -3953,21 +4054,20 @@ function vPortfolios(){
       <div class="card-p" style="padding-top:0">
         <p class="lede">Submit a portfolio your clients are invested in. Vault22 moderates every
           submission; it only appears in the list above once approved.</p>
-        ${sub.length ? `<div class="sec-t mt" style="font-size:14px">Vault22 moderation queue</div>
+        ${sub.length ? `<div class="sec-t mt" style="font-size:14px">Your submissions</div>
         <div class="ptbl-wrap mt"><table class="ptbl">
           <thead><tr><th>Portfolio</th><th>Risk profile</th><th>Status</th><th></th></tr></thead>
-          <tbody>${sub.map((s,i)=>`<tr><td>${esc(s.name)} <span class="sub">${esc(s.ticker)}</span></td>
+          <tbody>${sub.map(s=>`<tr><td>${esc(s.name)} <span class="sub">${esc(s.ticker)}</span></td>
             <td>${esc(s.risk)}</td>
             <td><span class="pill ${s.status==='Approved'?'p-green':s.status==='Rejected'?'p-red':'p-amber'}">${s.status}</span></td>
-            <td>${s.status==='Approved'
-              ? '<span class="sub">Live in the list above</span>'
-              : s.status==='Rejected'
-              ? '<span class="sub">Not approved</span>'
-              : `<span class="row" style="gap:var(--v4-space-2)"><button class="btn btn-sm" data-approveport="${i}" title="Prototype: the Vault22 moderation step">Approve</button>
-                 <button class="btn btn-sm" data-modq="${i}">Reject</button></span>`}</td></tr>`).join('')}</tbody>
+            <td>${s.status==='Approved' ? '<span class="sub">Live in the list above</span>'
+              : s.status==='Rejected' ? '<span class="sub">Not approved</span>'
+              : '<span class="sub">With Vault22 for review</span>'}</td></tr>`).join('')}</tbody>
         </table></div>
-        <div class="sub" style="margin-top:var(--v4-space-3)">Approve and Reject stand in for Vault22's
-          moderation team, so the presenter can show a submission going live or being turned back.</div>` : '<p class="lede mt">You have not submitted any portfolios yet.</p>'}
+        <!-- R4 7.1/7.2: moderation is a Vault22 admin function, not an advisor one. The queue
+             lives behind the admin surface in the settings gear. -->
+        <div class="sub" style="margin-top:var(--v4-space-3)">Vault22 reviews every submission. You
+          cannot approve your own portfolio.</div>` : '<p class="lede mt">You have not submitted any portfolios yet.</p>'}
       </div>
     </div>`;
 }
@@ -4110,7 +4210,24 @@ function periodSeries(L, C, win){
   return {months: labels, users, custs, aum, inv};
 }
 
+/* R4 1.1: one chart card in the 2 x 2 grid, with a full-screen control. state.chartFull
+   holds the key of the expanded chart; the takeover re-renders the same body at a taller
+   spark height so the line genuinely gains resolution. */
+function chartCard(key, title, meta, body){
+  return `<div class="card card-p chart-card">
+    <div class="between" style="margin-bottom:var(--v4-space-2)">
+      <div class="sec-t" style="margin:0">${title}</div>
+      <span class="row" style="gap:var(--v4-space-2);align-items:center">
+        <span class="sub num">${meta}</span>
+        <button class="icon-btn chart-fs" data-chartfull="${key}" title="Full screen"
+          aria-label="Full screen: ${title}">⛶</button>
+      </span>
+    </div>
+    ${body}
+  </div>`;
+}
 function spark(vals,w=280,h=54){
+  if(state.chartFull) h = 260;   /* R4 1.1: re-render larger in the takeover */
   vals = (vals && vals.length) ? vals : [0,0];
   const mx=Math.max(...vals), mn=Math.min(...vals), rg=(mx-mn)||1;
   const denom = vals.length>1 ? (vals.length-1) : 1;
@@ -4257,6 +4374,38 @@ function vAnalytics(){
   const anPortRows = Object.entries(portAgg).map(([name,x])=>({name, n:x.n, pv:x.pv, pct: Math.round(x.pv/portTot*100)}))
     .sort((a,b)=>b.pv-a.pv);
 
+  /* R4 1.1: chart definitions built once, rendered both in the 2 x 2 grid and, when one is
+     expanded, in the full-screen takeover. Bodies are thunks so spark() picks up the taller
+     height only while state.chartFull is set. */
+  const CHARTS = [
+    {key:'growth', title:'Growth in registered users and customers', meta:win.label, body:()=>`
+      ${spark(usersSeries)}
+      <div class="row" style="gap:var(--v4-space-4);margin:6px 0">
+        <span class="sub"><b style="color:var(--v4-teal-600)">━</b> Registered users</span>
+        <span class="sub"><b style="color:var(--v4-navy-400)">━</b> Customers</span>
+      </div>
+      ${spark(custSeries)}
+      <div class="between sub">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>`},
+    {key:'aum', title:'AUM growth', meta:short(aumSeries[0])+' → '+short(aumSeries[aumSeries.length-1]), body:()=>`
+      ${spark(aumSeries)}
+      <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>`},
+    {key:'inv', title:'Investment trends', meta:'Invested per period · '+short(Math.max(...invSeries))+' peak', body:()=>`
+      ${spark(invSeries)}
+      <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>`},
+    {key:'trends', title:'Customer trends', meta:'Period over period', body:()=>`
+      <p class="lede" style="margin-bottom:var(--v4-space-3)">Change across your book since the
+        previous period. Every figure is computed from the book.</p>
+      ${TRENDS.concat(EXTRA).map(trendRow).join('')}`}
+  ];
+  /* The expanded chart takes over the view entirely. */
+  const full = CHARTS.find(c=>c.key===state.chartFull);
+  if(full) return `<div class="chart-full"><div class="chart-full-in">
+    <div class="between" style="margin-bottom:var(--v4-space-4)">
+      <div><h1 style="font-size:22px">${full.title}</h1>
+        <p class="lede">${full.meta}</p></div>
+      <button class="btn btn-sm" data-chartfull="__close">✕ Close</button></div>
+    ${full.body()}
+  </div></div>`;
   return `
     <div class="page-head">
       <div class="between" style="align-items:flex-start">
@@ -4359,7 +4508,7 @@ function vAnalytics(){
           so ${totalEver - lost} retained. (Total minus lost, over total.)</p>
         <div class="sec-t" style="margin-top:var(--v4-space-6)">Customers lost this period</div>
         ${lostInWin.length ? lostInWin.map(x=>`<div class="list-row"><span>${esc(x.name)}
-          <div class="sub">${esc(x.reason)}</div></span><span class="sub num">${x.left}</span></div>`).join('')
+          <div class="sub">${esc(x.reason)}</div></span><span class="sub num">${fmtDate(x.left)}</span></div>`).join('')
           : '<p class="lede">No customers lost in this period.</p>'}
       </div>
       <div class="card card-p">
@@ -4371,36 +4520,11 @@ function vAnalytics(){
       </div>
     </div>
 
-    <!-- Defect 2: these charts follow the period selector; buckets span the chosen window. -->
-    <div class="card card-p mt6">
-      <div class="between"><div class="sec-t" style="margin:0">Growth in registered users and customers</div>
-        <span class="sub">${win.label}</span></div>
-      ${spark(usersSeries)}
-      <div class="row" style="gap:var(--v4-space-4);margin:6px 0">
-        <span class="sub"><b style="color:var(--v4-teal-600)">━</b> Registered users</span>
-        <span class="sub"><b style="color:var(--v4-navy-400)">━</b> Customers</span>
-      </div>
-      ${spark(custSeries)}
-      <div class="between sub">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
-      <div class="between" style="margin-top:var(--v4-space-6)"><div class="sec-t" style="margin:0">AUM growth</div>
-        <span class="sub num">${short(aumSeries[0])} → <b>${short(aumSeries[aumSeries.length-1])}</b></span></div>
-      ${spark(aumSeries)}
-      <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
-      <div class="between" style="margin-top:var(--v4-space-6)">
-        <div class="sec-t" style="margin:0">Investment trends</div>
-        <span class="sub num">Invested per period · ${short(Math.max(...invSeries))} peak</span></div>
-      ${spark(invSeries)}
-      <div class="between sub" style="margin-top:6px">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div>
-    </div>
-
-    <div class="card card-p mt6">
-      <div class="between" style="margin-bottom:var(--v4-space-3)">
-        <div class="sec-t" style="margin:0">Customer trends</div>
-        <span class="sub">Period over period</span>
-      </div>
-      <p class="lede" style="margin-bottom:var(--v4-space-4)">Change across your book since the previous
-        period. Every figure is computed from the book.</p>
-      ${TRENDS.concat(EXTRA).map(trendRow).join('')}
+    <!-- R4 1.1: four charts in a 2 x 2 grid so the variation reads. Each has a full-screen
+         button that re-renders the same series larger (real resolution, not a CSS scale).
+         Charts follow the period selector; buckets span the chosen window. -->
+    <div class="chart-grid mt6">
+      ${CHARTS.map(ch=>chartCard(ch.key, ch.title, ch.meta, ch.body())).join('')}
     </div>`;
 }
 
@@ -4532,6 +4656,8 @@ function advisorPreview(a){
         ? `<img class="lp-av" src="${a.photo}" alt="${esc(a.name)}" style="object-fit:cover">`
         : `<div class="lp-av">${a.initials}</div>`}
       <h2 style="margin-top:var(--v4-space-3)">${esc(a.name)}</h2>
+      <!-- R4 4.1: the company logo belongs on the profile card as well as the landing page. -->
+      ${a.logo ? `<img src="${a.logo}" alt="${esc(a.company||'Company')} logo" class="lp-logo">` : ''}
       <div class="sub" style="margin-bottom:var(--v4-space-3)">${esc(a.company)}${a.licence ? ' · ' + esc(a.licence) : ''}</div>
       <p style="font-size:14px;line-height:1.6;margin-bottom:var(--v4-space-3)">${esc(a.welcome)}</p>
       <p class="lede" style="margin-bottom:var(--v4-space-4)">${esc(a.bio)}</p>
@@ -4781,6 +4907,20 @@ function taraReason(c, a, l){
 }
 /* One suggested/editable line: name, weight with steppers, amount, reason. `who` is
    'tara' (advisor screen) or 'client' (client tweak) to route the stepper action. */
+/* R4 6.3: what the client holds in this asset today. Seeded holdings carry a fund name
+   (and sometimes a ticker), so match on either. A new addition reads R0. */
+function currentHoldingOf(c, ticker){
+  const a = assetOf(ticker); if(!a) return 0;
+  const h = (c.holdings||[]).find(x =>
+    (x.tk && x.tk === ticker) || (x.p && x.p.toLowerCase() === a.name.toLowerCase()));
+  return h ? (h.mv || 0) : 0;
+}
+/* R4 6.2: holdings the client owns today that Tara is not suggesting they keep. These are
+   the disposals, and they get a Sell action rather than an Invest one. */
+function taraDisposals(c, lines){
+  const kept = new Set((lines||[]).map(l => (assetOf(l.ticker)||{}).name));
+  return (c.holdings||[]).filter(h => !kept.has(h.p));
+}
 function taraLineRow(c, l, who){
   const a = assetOf(l.ticker); if(!a) return '';
   const total = (state.tara ? state.tara.total : (state.taraSuggestion[c.id]||{}).total) || 0;
@@ -4797,7 +4937,13 @@ function taraLineRow(c, l, who){
       <span class="num" style="min-width:42px;text-align:center"><b>${l.weight}%</b></span>
       <button class="btn btn-sm" data-${step}="${a.ticker}|1" aria-label="Increase">+</button>
     </div>
+    ${who==='client' ? `<div class="num tara-cur" style="min-width:104px;text-align:right">
+      <span class="sub" style="display:block;font-size:10.5px">Current holding</span>
+      ${money(currentHoldingOf(c, a.ticker))}</div>` : ''}
     <div class="num" style="min-width:96px;text-align:right"><b>${money(amt)}</b></div>
+    ${who==='client' ? (()=>{ const done=((state.taraSuggestion[c.id]||{}).actioned||{})[a.ticker];
+      return done ? '<span class="pill p-green" style="min-width:74px;text-align:center">Invested</span>'
+        : `<button class="btn btn-sm btn-pri" data-tarainvest="${a.ticker}" style="min-width:74px">Invest</button>`; })() : ''}
     ${rm}
   </div>`;
 }
@@ -4999,7 +5145,7 @@ function membershipCard(){
   return `
     <div class="card card-p mt">
       <div class="sec-t">Membership plan</div>
-      <div class="list-row"><span>Date joined</span><span class="sub num">${a.joined || 'n/a'}</span></div>
+      <div class="list-row"><span>Date joined</span><span class="sub num">${fmtDate(a.joined) || 'n/a'}</span></div>
       <div class="list-row"><span>Current monthly fee
         <div class="sub">${plural(count,'customer')}, ${subTier(count)}</div></span>
         <b class="num" style="font-size:16px">${usd(subFee(count))}</b></div>
@@ -5058,9 +5204,13 @@ function vProfile(){
         ${membershipCard()}
         <div class="card card-p mt">
           <div class="sec-t">Company logo</div>
+          <p class="lede" style="margin-bottom:var(--v4-space-3)">Shows on your landing page and your
+            advisor profile card.</p>
           ${a.logo ? `<img src="${a.logo}" alt="Your company logo"
             style="max-height:44px;display:block;margin-bottom:8px">` : ''}
-          ${imgPicker('logo','Upload logo', true)}
+          ${imgPicker('logo', a.logo ? 'Replace logo' : 'Upload logo', true)}
+          <!-- R4 4.1: removing clears it from both the landing page and the profile card. -->
+          ${a.logo ? `<button class="btn btn-sm mt" data-rmlogo="1" style="width:100%">Remove logo</button>` : ''}
         </div>
       </div>
     </div>`;
@@ -5264,50 +5414,6 @@ const ADVISOR_DIR = [
   {id:'A3', name:'Sarah Delport',  firm:'Delport Advisory', licence:'FSP 44911', city:'Cape Town', email:'sarah@delportadvisory.co.za', services:['Offshore','Retirement','Insurance'], clients:8, aum:3120000},
   {id:'A4', name:'Rajesh Naidoo',  firm:'Naidoo & Partners',licence:'FSP 39880', city:'Durban', email:'r.naidoo@naidoopartners.co.za', services:['Investments','Tax-free savings'], clients:6, aum:2760000}
 ];
-/* P1.6: browsable advisor directory (advisor portal). Seeded cards from ADVISOR_DIR with
-   name/firm/FSP/services/city and a search + city filter. */
-function vDirectory(){
-  const q = (state.dirQ||'').trim().toLowerCase();
-  const city = state.dirCity || '';
-  const cities = [...new Set(ADVISOR_DIR.map(a=>a.city))].sort();
-  const list = ADVISOR_DIR.filter(a =>
-    (!city || a.city===city) &&
-    (!q || (a.name+' '+a.firm+' '+a.services.join(' ')+' '+a.city).toLowerCase().includes(q)));
-  return `
-    <div class="page-head"><h1>Browse advisors</h1>
-      <p class="lede">The Vault22 advisor network. Clients discover and appoint advisors from a directory like this.</p></div>
-    <div class="card card-p" style="padding:var(--v4-space-4)">
-      <div class="row" style="flex-wrap:wrap;gap:var(--v4-space-3)">
-        <input class="inp inp-sm" id="dirSearch" placeholder="Search name, firm, service or city" value="${esc(state.dirQ||'')}" style="flex:1;min-width:220px">
-        <select class="inp inp-sm" data-dircity style="max-width:200px">
-          <option value="">All cities</option>
-          ${cities.map(c=>`<option ${city===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
-      </div>
-    </div>
-    <div class="dir-grid mt6" id="dirResults">
-      ${list.length ? list.map(a=>`
-        <div class="card card-p dir-card">
-          <div class="row" style="align-items:flex-start;gap:var(--v4-space-3)">
-            <span class="ava" style="width:48px;height:48px;font-size:16px;flex:none">${initialsOf(a.name)}</span>
-            <div style="flex:1;min-width:0">
-              <b style="font-size:15px">${esc(a.name)}</b>
-              <div class="sub">${esc(a.firm)}</div>
-              <div class="sub">${esc(a.city)} · ${esc(a.licence)}</div>
-            </div>
-          </div>
-          <div class="svc mt">${a.services.map(s=>`<span class="pill p-gray">${esc(s)}</span>`).join('')}</div>
-          <div class="dir-meta">
-            <span>${plural(a.clients,'client')}</span><span>AUA ${short(a.aum)}</span>
-          </div>
-          <div class="row mt" style="gap:var(--v4-space-2)">
-            <a class="btn btn-sm" href="mailto:${a.email}" data-audit="Emailed advisor ${esc(a.name)}">Email</a>
-            <button class="btn btn-sm" data-stub="Advisor profile|${esc(a.name)} of ${esc(a.firm)}, ${esc(a.city)}, ${esc(a.licence)}. Services: ${esc(a.services.join(', '))}.|In the live build this opens their full public profile, the same page a client sees before appointing them.">View profile</button>
-          </div>
-        </div>`).join('')
-      : `<div class="empty"><div class="em">◎</div><h3>No advisors match</h3><p>Try another search or city.</p></div>`}
-    </div>`;
-}
-
 /* P2.11: the firm Team view. Advisors at the advisor's own firm, with combined AUM and
    client count. Shell depth: a roster + firm totals. Admin can see everyone; a Member sees
    the same roster read-only. */
@@ -5455,8 +5561,7 @@ function clientPreview(sec, c, st){
       ['Monthly Savings', money(c.sav)+'/mo'], ['Financial Fitness Score', c.ffs+' / 1000'],
       ['Amount Invested', money(c.inv)], ['Monthly Income', money(c.income)],
       ['Emergency Fund', money(c.ef)], ['Total Investments', money(c.pv)],
-      ['Insurance Coverage', money(c.insurance)], ['Total Liabilities', money(c.liabilities)],
-      ['Total fees earned', money(feesFor(c,'Year to date'))]
+      ['Insurance Coverage', money(c.insurance)], ['Total Liabilities', money(c.liabilities)]
     ],
     investment: [
       ['Financial profile report', 'Your full report'],
@@ -5504,7 +5609,7 @@ function vClientProfile(){
   const linked = state.linkedAdvisor;
   const q = (state.advQ||'').trim().toLowerCase();
   const results = q ? ADVISOR_DIR.filter(a =>
-    [a.name,a.firm,a.city].some(v=>v.toLowerCase().includes(q))) : [];
+    [a.name,a.firm,a.city,(a.services||[]).join(' ')].some(v=>v.toLowerCase().includes(q))) : [];
   /* §5.1: the long profile is broken into three top tabs. */
   const ctab = state.ctab || 'personal';
   const CTABS = [['personal','Personal Information'],['advisor','Your Advisor'],['documents','Documents library']];
@@ -5585,20 +5690,37 @@ function vClientProfile(){
     <div class="card card-p" style="border:1px solid var(--v4-teal-400)">
       <span class="eyebrow teal">From your advisor</span>
       <div class="between"><div class="sec-t" style="margin:0">Your advisor suggested a portfolio</div>
-        <span class="pill ${sug.invested?'p-green':'p-amber'}">${sug.invested?'Invested':'Total '+sugWeight+'%'}</span></div>
+        <!-- R4 6.1: a suggested portfolio has not been invested in. Status reflects the
+             suggestion, never "Invested". -->
+        <span class="pill p-amber">${sug.invested ? 'Suggested' : 'Total '+sugWeight+'%'}</span></div>
       <p class="lede" style="margin:var(--v4-space-2) 0 var(--v4-space-3)">${sug.invested
         ? 'You invested in this portfolio. Your advisor can see it in their portal.'
         : esc((sug.from||(linked&&linked.name)||'Your advisor').split(' ')[0]) + ' built this for you. Adjust the weightings if you like, then invest. Total invested ' + money(sug.total) + '.'}</p>
       ${sug.note ? `<div class="advnote"><span class="advnote-h">Note from ${esc((sug.from||(linked&&linked.name)||'your advisor').split(' ')[0])}</span>
         <p>${esc(sug.note)}</p></div>` : ''}
       <div class="roa"><span class="roa-h">Record of advice</span>
-        <span class="sub">${esc(sug.from||(linked&&linked.name)||'Your advisor')}${(sug.fromLicence||(linked&&linked.licence))?' · '+esc(sug.fromLicence||(linked&&linked.licence)):''} · ${sug.ts ? sug.ts.slice(0,10) : TODAY_STR} · logged</span></div>
+        <span class="sub">${esc(sug.from||(linked&&linked.name)||'Your advisor')}${(sug.fromLicence||(linked&&linked.licence))?' · '+esc(sug.fromLicence||(linked&&linked.licence)):''} · ${fmtDate(sug.ts || TODAY_STR)} · logged</span></div>
       ${sug.strat ? `<div class="row" style="gap:var(--v4-space-2);margin-bottom:var(--v4-space-3);flex-wrap:wrap">
         <span class="pill p-gray">Expected return ~${sug.strat.ret.toFixed(1)}%</span>
         <span class="pill p-gray">Volatility ~${sug.strat.vol.toFixed(1)}%</span>
         <span class="pill ${sug.strat.fit==='within'?'p-green':'p-amber'}">${sug.strat.fit==='within'?'Within your '+esc(sug.strat.type)+' profile':'Above your usual risk'}</span></div>` : ''}
       <div class="tara-lines">${sug.lines.map(l=>taraLineRow(c,l,'client')).join('')}</div>
+      <!-- R4 6.2: holdings Tara is not keeping are disposals, actioned with Sell. -->
+      ${(()=>{ const dis = taraDisposals(c, sug.lines); if(!dis.length) return '';
+        const sold = sug.sold || {};
+        return `<div class="sec-t" style="margin-top:var(--v4-space-5);font-size:14px">Suggested disposals</div>
+        <p class="lede" style="margin-bottom:var(--v4-space-2)">Holdings your advisor suggests moving out of.</p>
+        <div class="tara-lines">${dis.map(h=>`<div class="tara-line">
+          <div style="flex:1;min-width:0"><b>${esc(h.p)}</b>
+            <div class="sub" style="margin-top:2px">Not part of the suggested portfolio.</div></div>
+          <div class="num tara-cur" style="min-width:104px;text-align:right">
+            <span class="sub" style="display:block;font-size:10.5px">Current holding</span>${money(h.mv||0)}</div>
+          <div class="num" style="min-width:96px;text-align:right"><b>${money(0)}</b></div>
+          ${sold[h.p] ? '<span class="pill p-green" style="min-width:74px;text-align:center">Sold</span>'
+            : `<button class="btn btn-sm" data-tarasell="${esc(h.p)}" style="min-width:74px">Sell</button>`}
+        </div>`).join('')}</div>`; })()}
       ${sug.invested ? '' : `<div class="actions" style="margin-top:var(--v4-space-4)">
+        <button class="btn" data-taraactionall="1">Action all</button>
         <button class="btn btn-pri" data-clientinvest="1" ${sugWeight===100?'':'aria-disabled="true" disabled'}>Invest ${money(sug.total)}</button></div>
         <div class="legalnote"><b>Before you invest.</b> This advice is your advisor's, not Vault22's. It is a recommendation,
           not a guarantee, and the return and volatility shown are illustrative estimates. You can tweak the weightings, invest,
@@ -5662,7 +5784,7 @@ function vClientProfile(){
           <div style="flex:1;min-width:0">
             <h2 style="font-size:18px">${esc(linked.name)}</h2>
             <div class="sub">${esc(linked.firm)} · Licence ${esc(linked.licence)}</div>
-            <div class="sub" style="margin-top:2px">Your advisor since ${c.since}</div>
+            <div class="sub" style="margin-top:2px">Your advisor since ${fmtDate(c.since)}</div>
           </div>
           <button class="btn btn-sm" data-link-adv="__unlink">Remove</button>
         </div>`
@@ -5670,10 +5792,13 @@ function vClientProfile(){
     </div>
     ${meetingsCard}
 
+    <!-- R4 5.1/5.2: the advisor directory lives here on the user side, titled "Search for an
+         advisor". The old "Change advisor" list is gone; this is the single entry point for
+         finding and appointing an advisor. -->
     <div class="card card-p mt">
-      <div class="sec-t">${linked?'Change advisor':'Appoint an advisor'}</div>
-      <!-- Removing an advisor used to be one-way: they vanished and the only route back was
-           to remember their name and search for it. Offer them directly to appoint again. -->
+      <div class="sec-t">Search for an advisor</div>
+      <p class="lede" style="margin-bottom:var(--v4-space-3)">The Vault22 advisor network. Find an
+        advisor and appoint them${linked?', or switch to a different one':''}.</p>
       ${!linked && state.prevAdvisor ? `
         <div class="relink">
           <span><b>${esc(state.prevAdvisor.name)}</b>
@@ -5681,17 +5806,26 @@ function vClientProfile(){
               Appointing them again does not restore what you previously shared. You choose that again.</div></span>
           <button class="btn btn-pri btn-sm" data-link-adv="${state.prevAdvisor.id}">Appoint again</button>
         </div>` : ''}
-      <input class="inp inp-sm" id="advQ" placeholder="Search by name, firm or city" value="${esc(state.advQ||'')}"
+      <input class="inp inp-sm" id="advQ" placeholder="Search by name, firm, service or city" value="${esc(state.advQ||'')}"
              style="max-width:420px">
-      <!-- No placeholder sentence: show the directory itself, which is what the sentence
-           was describing. -->
       <div id="advResults">
-      ${(q ? results : ADVISOR_DIR).length ? `<div class="mt">${(q ? results : ADVISOR_DIR).map(a=>`
-          <div class="list-row">
-            <span><b>${esc(a.name)}</b><div class="sub">${esc(a.firm)} · ${esc(a.city)} · Licence ${esc(a.licence)}</div></span>
-            ${linked && linked.id===a.id
-              ? '<span class="pill p-green">Appointed</span>'
-              : `<button class="btn btn-sm" data-link-adv="${a.id}">Appoint</button>`}
+      ${(q ? results : ADVISOR_DIR).length ? `<div class="dir-grid mt">${(q ? results : ADVISOR_DIR).map(a=>`
+          <div class="card card-p dir-card">
+            <div class="row" style="align-items:flex-start;gap:var(--v4-space-3)">
+              <span class="ava" style="width:48px;height:48px;font-size:16px;flex:none">${initialsOf(a.name)}</span>
+              <div style="flex:1;min-width:0">
+                <b style="font-size:15px">${esc(a.name)}</b>
+                <div class="sub">${esc(a.firm)}</div>
+                <div class="sub">${esc(a.city)} · ${esc(a.licence)}</div>
+              </div>
+            </div>
+            <div class="svc mt">${a.services.map(x=>`<span class="pill p-gray">${esc(x)}</span>`).join('')}</div>
+            <div class="row mt" style="gap:var(--v4-space-2)">
+              ${linked && linked.id===a.id
+                ? '<span class="pill p-green">Appointed</span>'
+                : `<button class="btn btn-sm btn-pri" data-link-adv="${a.id}">Appoint</button>`}
+              <a class="btn btn-sm" href="mailto:${a.email}">Email</a>
+            </div>
           </div>`).join('')}</div>`
         : `<p class="lede mt">No advisor matches "${esc(state.advQ)}".</p>`}
       </div>
@@ -5843,7 +5977,7 @@ let _mseq = 100;
 const newMid = () => 'M' + (++_mseq);
 const MEET_PILL  = {invited:'p-amber', requested:'p-blue', confirmed:'p-green', declined:'p-red'};
 const MEET_LABEL = {invited:'Awaiting client', requested:'Awaiting you', confirmed:'Confirmed', declined:'Declined'};
-const meetWhen = m => m.day ? m.day + (m.slot ? ' at ' + m.slot : '') : (m.d || '');
+const meetWhen = m => m.day ? fmtDate(m.day) + (m.slot ? ' at ' + m.slot : '') : fmtDate(m.d) || '';
 /* Every client-requested meeting across the book, for the advisor's dashboard to-do. */
 const pendingMeetingReqs = () => {
   const out = [];
@@ -6191,7 +6325,7 @@ function vInvites(){
           <td class="nm">${(i.first||i.last)?esc([i.first,i.last].filter(Boolean).join(' ')):esc(i.email)}
             ${(i.first||i.last)?`<div class="sub">${esc(i.email)}</div>`:''}</td>
           <td>${i.sameFirm?`<span class="pill p-teal">Same firm · ${esc(i.role||'Member')}</span>`:'<span class="sub">External</span>'}</td>
-          <td class="num">${i.sent}</td>
+          <td class="num">${fmtDate(i.sent)}</td>
           <td><span class="pill ${INV_PILL[i.status]||'p-gray'}">${i.status}</span></td></tr>`).join('')}</tbody>
       </table></div>` : `<div class="empty"><div class="em">✉</div><h3>No invites yet</h3>
         <p>Invite an advisor by email, or share your link.</p></div>`}
@@ -6243,7 +6377,9 @@ function vNotifSettings(){
       <input class="inp inp-sm" id="${id}" type="number" min="0" ${s.amt==='pct'?'max="50"':'step="1000"'}
         value="${val}" style="max-width:150px">${s.suffix?`<span class="sub">${s.suffix} in a week</span>`:''}</div>`;
   };
-  const CHANNELS = ['Email','Push','WhatsApp','Telegram'];
+  /* R4 §2.3: WhatsApp dropped as a delivery channel, we do not have it yet. The WhatsApp
+     contact button on client profiles is a different thing and stays. */
+  const CHANNELS = ['Email','Push','Telegram'];
   const chans = p.channels || {};
   return `
     <div class="page-head"><h1>Notification settings</h1>
@@ -6273,7 +6409,7 @@ function vNotifSettings(){
         </div>
       </div>
       <button class="btn btn-pri mt" data-nsave="1">Save settings</button>
-      <div class="legalnote">Channels are per notification type. Telegram and WhatsApp delivery are wired in the full build.</div>
+      <div class="legalnote">Channels are per notification type. Telegram delivery is wired in the full build.</div>
     </div>`;
 }
 
@@ -6282,7 +6418,7 @@ function vNotifSettings(){
    ===================================================================== */
 const VIEWS = {dashboard:vDashboard, leads:vLeads, customers:vCustomers, customer:vCustomer,
   risk:vRisk, portfolios:vPortfolios, analytics:vAnalytics, landing:vLanding,
-  profile:vProfile, directory:vDirectory, team:vTeam, invites:vInvites, permissions:vPermissions, audit:vAudit,
+  profile:vProfile, team:vTeam, invites:vInvites, permissions:vPermissions, audit:vAudit,
   qualSettings:vQualSettings, notifSettings:vNotifSettings};
 
 /* P3.20: persist the whole demo to sessionStorage so an accidental refresh mid-demo keeps
@@ -6392,9 +6528,9 @@ function liveRegion(regionId, build){
 
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-setvtheme],[data-mode],[data-vtheme],[data-go],[data-lead],[data-cust],[data-share],[data-copy],[data-toast],'+
-    '[data-close],[data-scen],[data-protoclose],[data-resetdemo],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-cbell],[data-fee],[data-book],[data-bslot],[data-bconfirm],[data-bcalmonth],[data-bcalday],[data-bdur],[data-bloc],[data-b12h],[data-invite],[data-nprefs],[data-nsave],[data-nochan],[data-nodigest],[data-cnav],[data-perm],[data-permall],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],[data-selrow],[data-selall],[data-selclear],[data-bulkemail],[data-bulkexport],[data-dircity],'+
+    '[data-close],[data-scen],[data-protoclose],[data-resetdemo],[data-onb],[data-region],[data-back],[data-stub],[data-backto],[data-tab8],[data-req],[data-poa],[data-cbell],[data-fee],[data-book],[data-bslot],[data-bconfirm],[data-bcalmonth],[data-bcalday],[data-bdur],[data-bloc],[data-b12h],[data-invite],[data-nprefs],[data-nsave],[data-nochan],[data-nodigest],[data-cnav],[data-perm],[data-permall],[data-link-adv],[data-filter],[data-sort],[data-tab],[data-crm],[data-untag],[data-selrow],[data-selall],[data-selclear],[data-bulkemail],[data-bulkexport],'+
     '[data-notif],[data-readall],[data-audit],[data-dl],[data-save],[data-status],[data-slug],[data-ics],[data-unfile],[data-vemail],[data-votp],[data-switch],[data-sconfirm],[data-prefilter],'+
-    '[data-auditf],[data-docsave],[data-doccancel],[data-pview],[data-psearch],[data-addport],[data-portsub],[data-portcancel],[data-ctab],[data-reqrisk],[data-redorisk],[data-reqkyc],[data-dokyc],[data-reqpoa],[data-grantpoa],[data-auditexport],[data-anexport],[data-reqall],[data-gsjump],[data-period],[data-notype],[data-nsave2],[data-qualedit],[data-qualsave],[data-editland],[data-firm],[data-appt],[data-custom],[data-portfield],[data-csend],[data-reqmeet],[data-custompd],'+
+    '[data-auditf],[data-docsave],[data-doccancel],[data-pview],[data-psearch],[data-addport],[data-portsub],[data-portcancel],[data-ctab],[data-reqrisk],[data-redorisk],[data-reqkyc],[data-dokyc],[data-reqpoa],[data-grantpoa],[data-auditexport],[data-anexport],[data-reqall],[data-gsjump],[data-period],[data-notype],[data-nsave2],[data-qualedit],[data-qualsave],[data-editland],[data-firm],[data-appt],[data-custom],[data-portfield],[data-csend],[data-reqmeet],[data-custompd],[data-rmlogo],[data-chartfull],[data-tarainvest],[data-tarasell],[data-taraactionall],'+
     '[data-invoice],[data-invoicedl],[data-tara],[data-taraback],[data-taraccy],[data-taraweight],[data-taraadd],[data-tararm],[data-tarasave],[data-tarasuggest],[data-clientinvest],[data-clienttweak],[data-tarasrch],'+
     '[data-meetconfirm],[data-meetaccept],[data-meetdecline],[data-meetgo],[data-docreq],[data-docreqsave],[data-docfulfil],[data-docview],[data-firmedit],[data-firmsave],[data-roleview],[data-approveport],[data-getintouch],[data-sendenquiry],[data-reportdl],[data-startinvest],[data-register],[data-reqallconsent],[data-modq],[data-factsheet],[data-availset],[data-avail]');
   const panel = document.getElementById('panel');
@@ -6486,7 +6622,7 @@ document.addEventListener('click', e => {
     renderBell();
     return render();
   }
-  /* P2.13: per-notification delivery channel (Email / Push / WhatsApp / Telegram). */
+  /* P2.13: per-notification delivery channel (Email / Push / Telegram). */
   if(t.dataset.nochan){
     const [type, ch] = t.dataset.nochan.split('|');
     state.nprefs = state.nprefs || JSON.parse(JSON.stringify(NOTIF_PREFS));
@@ -6746,6 +6882,9 @@ document.addEventListener('click', e => {
     audit('Exported audit log', plural(rows.length,'event'));
     return toast('Audit log exported as CSV (' + rows.length + ' events)');
   }
+  /* R4 4.1: clear the company logo from every surface that renders it. */
+  if(t.dataset.rmlogo){ state.advisor.logo = null; audit('Removed company logo');
+    toast('Company logo removed'); return render(); }
   if(t.dataset.custompd){ return openModal(customiseDrawer()); }
   /* Part A.3: shared firm page + role. */
   if(t.dataset.roleview){ state.advisor.role = t.dataset.roleview; return render(); }
@@ -6771,7 +6910,7 @@ document.addEventListener('click', e => {
       stage:'Registered', ffs:null, nw:null, sav:null, cap:null, income:null, port:null,
       dob:null, nationality:null, dependents:null, housing:null, lastLogin: now, act: now});
     state.crm[id] = state.crm[id] || {notes:[],tags:[],tasks:[],follow:[],meets:[],files:[]};
-    state.notifs.unshift({id:'SIGNUP'+(++_mseq), type:'New Lead', em:'👤',
+    state.notifs.unshift({id:'SIGNUP'+(++_mseq), type:'New User', em:'👤',
       msg: name + ' signed up through your landing page', ts: now, go:['customer', id], unread:true});
     audit('New registered user via landing page', name + ' (' + email + ')', id);
     closeModal(); render();
@@ -6879,6 +7018,45 @@ document.addEventListener('click', e => {
     const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug) return;
     const l = sug.lines.find(x=>x.ticker===tk);
     if(l) l.weight = Math.max(0, Math.min(100, l.weight + (+d)));
+    return render();
+  }
+  /* R4 6.2: per-asset actions on the suggested portfolio. Invest marks an addition as
+     bought, Sell marks a disposal as sold, Action all applies every outstanding one.
+     Prototype-level execution: state + audit, no real order is placed. */
+  /* R4 1.1: expand one chart to a full-screen takeover, and back. */
+  if(t.dataset.chartfull){
+    state.chartFull = t.dataset.chartfull === '__close' ? null : t.dataset.chartfull;
+    return render();
+  }
+  if(t.dataset.tarainvest){
+    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug) return;
+    const tk = t.dataset.tarainvest, a = assetOf(tk);
+    sug.actioned = sug.actioned || {}; sug.actioned[tk] = true;
+    auditShared('Invested in ' + ((a&&a.name)||tk) + ' (advisor suggestion)', (a&&a.name)||tk, CLIENT_ID);
+    toast('Invested in ' + ((a&&a.name)||tk));
+    return render();
+  }
+  if(t.dataset.tarasell){
+    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug) return;
+    const nm = t.dataset.tarasell;
+    sug.sold = sug.sold || {}; sug.sold[nm] = true;
+    auditShared('Sold ' + nm + ' (advisor suggestion)', nm, CLIENT_ID);
+    toast('Sold ' + nm);
+    return render();
+  }
+  if(t.dataset.taraactionall){
+    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug) return;
+    const c = CUSTOMERS_EST.find(x=>x.id===CLIENT_ID) || {};
+    sug.actioned = sug.actioned || {}; sug.sold = sug.sold || {};
+    let n = 0;
+    (sug.lines||[]).forEach(l => { if(!sug.actioned[l.ticker]){
+      sug.actioned[l.ticker] = true; n++;
+      const a = assetOf(l.ticker);
+      auditShared('Invested in ' + ((a&&a.name)||l.ticker) + ' (advisor suggestion)', (a&&a.name)||l.ticker, CLIENT_ID); } });
+    taraDisposals(c, sug.lines).forEach(h => { if(!sug.sold[h.p]){
+      sug.sold[h.p] = true; n++;
+      auditShared('Sold ' + h.p + ' (advisor suggestion)', h.p, CLIENT_ID); } });
+    toast(n ? 'Actioned ' + n + ' ' + (n===1?'line':'lines') : 'Everything is already actioned');
     return render();
   }
   if(t.dataset.clientinvest){
@@ -7372,7 +7550,6 @@ document.addEventListener('input', e => {
      renders a results dropdown in place, no full re-render (caret stays put). */
   if(e.target.id === 'globalSearch'){ return renderGlobalSearch(e.target.value); }
   /* P1.6: advisor-directory search, rebuilds only the results grid in place. */
-  if(e.target.id === 'dirSearch'){ state.dirQ = e.target.value; return liveRegion('dirResults', vDirectory); }
   /* §14.2 add-portfolio fields are two-way bound so a factsheet pick (which re-opens
      the drawer) does not discard what was already typed. */
   if(e.target.dataset && e.target.dataset.portfield){

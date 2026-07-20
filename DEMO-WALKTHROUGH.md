@@ -49,7 +49,8 @@ Switch scenarios with the gear (bottom-right): **New advisor**, **Established ad
 
 ## 7. Portfolios: submit to approved to available (loop)
 - **Portfolios**: the full SA universe, searchable; **View** any fund for detail + allocation.
-- **Add portfolio** → submit → it shows **Pending approval**. Click **Approve (Vault22 review)**
+- **Add portfolio** → submit → it shows **Pending approval** (read-only for the advisor).
+  Approve it from the settings gear → **Vault22 admin** moderation queue
   (the moderation stand-in) → it flips to **Approved** and appears in the live list, tagged
   **Yours**. A second submission is already Approved to show the before/after.
 

@@ -14,7 +14,13 @@ no dead end) · 🔒 intentionally out of scope for the prototype.
   session and reloads the current scenario clean.
 - ✅ **First-run setup checklist** (new advisor): 0/4 steps tick as you do them, then collapse.
 - ✅ **Global client search** (top bar): name/email/phone → dropdown → jumps to the profile.
-- ✅ **Browse advisors** directory (search + city filter) and a **Firm team** view (roster + totals).
+- ✅ **Search for an advisor** directory now lives on the **user** side (Profile → Your Advisor);
+  searching filters and selecting appoints. The advisor-side "Browse advisors" nav item is gone.
+- ✅ **Firm team** view (roster + totals). Roster is seeded, not derived from the live book.
+- ⚠️ **Portfolio moderation queue** moved to settings gear → **Vault22 admin**. Advisors cannot
+  approve their own portfolios. Where this lives in project x is **open with Uday**.
+- ⚠️ **Full SA portfolio list** still placeholder, **waiting on Uday**.
+- ⚠️ **Membership pricing** tiers provisional, **waiting on Greg** (single constant, one-line change).
 - ✅ **Session persistence** — a refresh keeps uploaded docs, notes, consent, meetings, Tara drafts.
 - 🟡 All customers, registered users, portfolios and money are **illustrative SA seed data**.
 - 🔒 No real email/SMS/calendar/payment service. "Send" opens your own mail client via `mailto:`.

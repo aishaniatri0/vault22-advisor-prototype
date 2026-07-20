@@ -50,7 +50,9 @@ The exact click path for a live demo. Switch scenarios with the bottom-right gea
 ## 7. Analytics + book (1 min)
 - **Analytics**: switch the period (incl. **Custom**), show **acquisition by source**, the
   **by-product / by-portfolio** breakdowns, and **Export CSV / Download report**.
-- **Portfolios**: open a **fact sheet** (PDF), show the **Vault22 moderation queue** (Approve/Reject).
+- **Portfolios**: open a **fact sheet** (PDF). Advisors see their own submissions read-only; the
+  **moderation queue** (Approve/Reject) is a Vault22 admin function, now in the settings gear under
+  **Vault22 admin** (final home to be confirmed with Uday).
 - **Audit Log**: **Export CSV** for compliance.
 
 ## No dead ends
