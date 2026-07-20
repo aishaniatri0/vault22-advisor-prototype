@@ -17,7 +17,7 @@ no dead end) · 🔒 intentionally out of scope for the prototype.
 - ✅ **Search for an advisor** directory now lives on the **user** side (Profile → Your Advisor);
   searching filters and selecting appoints. The advisor-side "Browse advisors" nav item is gone.
 - ✅ **Firm team** view (roster + totals). Roster is seeded, not derived from the live book.
-- ⚠️ **Portfolio moderation queue** moved to settings gear → **Vault22 admin**. Advisors cannot
+- ⚠️ **Portfolio moderation queue** is its own **Vault22 admin** scenario and nav section. Advisors cannot
   approve their own portfolios. Where this lives in project x is **open with Uday**.
 - ⚠️ **Full SA portfolio list** still placeholder, **waiting on Uday**.
 - ⚠️ **Membership pricing** tiers provisional, **waiting on Greg** (single constant, one-line change).

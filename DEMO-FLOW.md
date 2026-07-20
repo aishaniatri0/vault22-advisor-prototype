@@ -53,8 +53,8 @@ The exact click path for a live demo. Switch scenarios with the bottom-right gea
 - **Client side → Profile → Your Advisor → Search for an advisor**: the advisor directory now
   lives here. Search, then **Appoint**; the appointment holds when you switch back to the advisor.
 - **Portfolios**: open a **fact sheet** (PDF). Advisors see their own submissions read-only; the
-  **moderation queue** (Approve/Reject) is a Vault22 admin function, now in the settings gear under
-  **Vault22 admin** (final home to be confirmed with Uday).
+  **moderation queue** (Approve/Reject) is a Vault22 admin function with its own scenario and
+  left-nav section (see Vault22 admin below). Final home in project x to be confirmed with Uday.
 - **Audit Log**: **Export CSV** for compliance.
 
 ## No dead ends

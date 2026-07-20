@@ -491,6 +491,82 @@ h2{font-size:18px;font-weight:600;letter-spacing:-.3px}
 .btn-teal:hover{background:var(--v4-teal-500);border-color:var(--v4-teal-500);box-shadow:var(--v4-glow-accent)}
 .btn-sm{padding:6px 10px;font-size:12.5px;border-radius:var(--v4-radius-sm);font-weight:500}
 .btn:disabled{opacity:.45;cursor:not-allowed}
+/* R6 B2: an action that has been taken is replaced by its DONE state. Rendering that as a
+   pill changed the row height (29px button vs 23px pill), so rows shifted as they were
+   actioned. The done state is now a disabled button: identical box by construction. */
+/* R6 A1: Client Financial Intelligence Report — ported from the approved user-reports
+   prototype. Source tags, metric blocks, FFL zone bars, cross-sell grid. */
+.cfi-h{font-size:16px;font-weight:700;margin:0 0 var(--v4-space-3);display:flex;
+  align-items:center;gap:8px;flex-wrap:wrap}
+.src{font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  padding:2px 7px;border-radius:var(--v4-radius-full)}
+.s-deriv{background:var(--v4-navy-50);color:var(--v4-navy-500)}
+.s-link{background:var(--v4-teal-50);color:var(--v4-teal-800)}
+.s-txn{background:#eef2ff;color:#4338ca}
+.s-onb{background:#fff7ed;color:#b45309}
+.s-none{background:var(--v4-navy-50);color:var(--muted)}
+body.dark .s-deriv,body.dark .s-none{background:rgba(255,255,255,.08);color:var(--muted)}
+body.dark .s-txn{background:rgba(67,56,202,.22);color:#c7d2fe}
+body.dark .s-onb{background:rgba(180,83,9,.22);color:#fed7aa}
+.cfi-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--v4-space-4);
+  margin-top:var(--v4-space-4);padding-top:var(--v4-space-4);border-top:1px solid var(--line)}
+.cfi-meta .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.cfi-meta .v{font-size:14px;font-weight:600;margin-top:3px}
+.cfi-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:var(--v4-space-4)}
+.cfi-metric .lbl{font-size:11.5px;color:var(--muted);font-weight:600}
+.cfi-metric .val{font-size:19px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.cfi-metric .val.up{color:var(--v4-success-dark)}
+.cfi-metric .val.neg{color:var(--v4-danger-dark)}
+.cfi-metric .note{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.45}
+.cfi-callout{margin-top:var(--v4-space-4);padding:var(--v4-space-3) var(--v4-space-4);
+  border-radius:var(--v4-radius-md);font-size:13px;line-height:1.6}
+.cfi-callout.green{background:var(--v4-teal-50);color:var(--v4-teal-800)}
+.cfi-callout.amber{background:#fff7ed;color:#b45309}
+body.dark .cfi-callout.green{background:rgba(1,195,141,.12);color:#5eead4}
+body.dark .cfi-callout.amber{background:rgba(180,83,9,.18);color:#fed7aa}
+.cfi-alloc{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:3px}
+.cfi-alloc span{display:block}
+.cfi-key{display:flex;gap:var(--v4-space-4);font-size:12px;color:var(--muted);margin-top:9px;flex-wrap:wrap}
+.cfi-gap{margin-top:var(--v4-space-4);padding:var(--v4-space-3) var(--v4-space-4);
+  border:1px dashed var(--line);border-radius:var(--v4-radius-md);
+  font-size:12.5px;color:var(--muted);line-height:1.6}
+.cfi-gap b{color:var(--text)}
+.cfi-zone{display:grid;grid-template-columns:110px 1fr 34px;align-items:center;gap:var(--v4-space-3);
+  margin-top:var(--v4-space-3)}
+.cfi-zone .zl{font-size:13px;font-weight:600}
+.cfi-zone .zt{height:8px;border-radius:var(--v4-radius-full);background:var(--v4-navy-50);overflow:hidden}
+.cfi-zone .zf{display:block;height:100%;border-radius:var(--v4-radius-full)}
+.cfi-zone .zv{font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.cfi-zone-note{margin:3px 0 0 122px;font-size:11.5px;font-weight:600}
+.cfi-ring{display:flex;align-items:center;gap:var(--v4-space-4);margin:var(--v4-space-3) 0 var(--v4-space-4)}
+.cfi-ring svg{width:92px;height:92px;flex:none;color:var(--text)}
+.cfi-ring .big{font-size:15px;font-weight:700}
+.cfi-ring .small{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.5}
+.cfi-split{margin-top:var(--v4-space-4);border-top:1px solid var(--line);padding-top:var(--v4-space-2)}
+.cfi-split-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.cfi-split-row.tot{border-top:1px solid var(--line);margin-top:4px;padding-top:8px;font-weight:700}
+.cfi-cross{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--v4-space-4)}
+.cfi-opp{border:1px solid var(--line);border-radius:var(--v4-radius-md);padding:var(--v4-space-4)}
+.cfi-opp .top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.cfi-opp h4{font-size:13.5px;font-weight:700;margin:0}
+.cfi-opp p{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0}
+@media(max-width:560px){.cfi-zone{grid-template-columns:88px 1fr 30px}.cfi-zone-note{margin-left:0}}
+.lp-top{display:flex;align-items:center;gap:var(--v4-space-3);padding:var(--v4-space-4) var(--v4-space-5);
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--v4-radius-lg);
+  margin-bottom:var(--v4-space-4)}
+.lp-top-logo{max-height:40px;max-width:190px;display:block}
+.lp-top-mark{width:40px;height:40px;border-radius:var(--v4-radius-md);background:var(--v4-navy-700);
+  color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.lp-top-id{display:flex;flex-direction:column;line-height:1.35}
+.lp-ban-empty{height:180px;border-radius:var(--v4-radius-lg);border:1px dashed var(--line);
+  background:var(--v4-navy-25);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:8px;color:var(--muted);font-size:13px;text-align:center;padding:var(--v4-space-4)}
+.ferr{font-size:12px;color:var(--v4-danger-dark,#b42318);margin-top:4px;font-weight:600}
+.inp-bad{border-color:var(--v4-danger-dark,#b42318)!important}
+.btn-done{background:var(--v4-teal-50);border-color:var(--v4-teal-400);
+  color:var(--v4-teal-800);font-weight:600}
+.btn-done:disabled{opacity:1;cursor:default}
+body.dark .btn-done{background:rgba(1,195,141,.14);border-color:var(--v4-teal-600);color:#5eead4}
 
 .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--v4-radius-full);
   font-size:11.5px;font-weight:600;white-space:nowrap}
@@ -1170,7 +1246,7 @@ body.client-app .proto-fab{right:auto;left:var(--v4-space-5)}
   .tara{width:48px;height:48px}
   .perm-chips .pill{max-width:100%}
   .tara-body{grid-template-columns:1fr !important}
-  .tara-line{flex-wrap:wrap}
+  .tara-line{align-items:center;flex-wrap:wrap}
 }
 /* §2: Tara full-screen personalisation. */
 .tara-app{min-height:100vh;background:var(--canvas);display:flex;flex-direction:column}
@@ -1614,27 +1690,48 @@ const CUSTOMERS_EST = [
    kyc:'Approved',idNum:'7906225512087',since:'2026-01-22',ffs:701,nw:1180000,income:52000,sav:11000,ef:95000,extAum:0,
    insurance:260000,liabilities:480000,pv:486000,inv:420000,risk:'Completed',score:61,type:'Balanced',
    lastLogin:'2026-07-15T07:44:00',lastInv:'2026-06-28',sip:6000,onetime:180000,
-   alloc:{'Equity':45,'Bonds':32,'Cash':15,'Property':8},
-   holdings:[{p:'V22 SA Balanced Fund',u:2440.10,mv:312000,r:8.4,d:'2026-01-30'},
-             {p:'V22 Income Fund',u:1720.00,mv:174000,r:5.2,d:'2026-03-14'}]},
+   alloc:{'Equity':50,'Bonds':31,'Cash':12,'Property':7},
+   /* R6 C9: real ASSETS tickers summing to pv, allocation derived from them, plus one
+      untickered fund so a Tara disposal still demonstrates on this client. */
+   holdings:[{p:'Satrix Top 40',tk:'STX40',u:1390.00,mv:150000,r:12.4,d:'2026-01-30'},
+             {p:'Satrix MSCI World',tk:'STXWDM',u:840.00,mv:90000,r:10.1,d:'2026-02-14'},
+             {p:'Ashburton Govi Bond ETF',tk:'GOVI',u:1180.00,mv:120000,r:6.4,d:'2026-02-28'},
+             {p:'Satrix Property',tk:'STXPRO',u:295.00,mv:36000,r:5.9,d:'2026-03-11'},
+             {p:'Vault22 ZAR Money Market',tk:'ZARMM',u:60000.00,mv:60000,r:8.1,d:'2026-03-20'},
+             {p:'V22 SA Balanced Fund',u:234.00,mv:30000,r:7.2,d:'2026-04-02'}]},
   {id:'C3',signup:'2026-02-20',kycDate:'2026-02-26',riskDate:'2026-03-04',sipStart:'2026-04-01',review:'2026-06-30',dob:'1992-02-03',nationality:'South African',dependents:1,housing:'Tenant',totalSav:96000,name:'Zanele Mthembu',email:'zanele.m@gmail.com',phone:'+27712265540',country:'South Africa',
    kyc:'Approved',idNum:'9202034477082',since:'2026-03-11',ffs:664,nw:720000,income:44000,sav:7500,ef:60000,extAum:120000,
    insurance:150000,liabilities:220000,pv:214000,inv:195000,risk:'Completed',score:84,type:'Aggressive',
    lastLogin:'2026-07-17T06:20:00',lastInv:'2026-07-10',sip:4500,onetime:90000,
-   alloc:{'Equity':74,'Bonds':10,'Cash':6,'Property':10},
-   holdings:[{p:'V22 Global Equity Fund',u:1610.55,mv:214000,r:11.9,d:'2026-03-20'}]},
+   alloc:{'Equity':76,'Bonds':10,'Cash':4,'Property':10},
+   holdings:[{p:'Satrix Top 40',tk:'STX40',u:834.00,mv:90000,r:13.1,d:'2026-03-20'},
+             {p:'Satrix MSCI World',tk:'STXWDM',u:635.00,mv:68000,r:9.8,d:'2026-04-08'},
+             {p:'Ashburton Govi Bond ETF',tk:'GOVI',u:206.00,mv:21000,r:5.7,d:'2026-04-22'},
+             {p:'Satrix Property',tk:'STXPRO',u:172.00,mv:21000,r:6.2,d:'2026-05-06'},
+             {p:'Vault22 ZAR Money Market',tk:'ZARMM',u:9000.00,mv:9000,r:8.1,d:'2026-05-19'},
+             {p:'V22 Global Equity Fund',u:37.60,mv:5000,r:11.4,d:'2026-06-02'}]},
   {id:'C4',signup:'2026-04-14',kycDate:'2026-04-21',riskDate:'2026-04-27',sipStart:'2026-06-01',review:'2026-07-08',dob:'1985-11-09',nationality:'South African',dependents:3,housing:'Home owner',totalSav:64000,name:'Grant Willemse',email:'grant.w@icloud.com',phone:'+27849903312',country:'South Africa',
    kyc:'Approved',idNum:'8511095533084',since:'2026-05-02',ffs:598,nw:495000,income:38000,sav:5200,ef:42000,extAum:0,
    insurance:90000,liabilities:310000,pv:96000,inv:92000,risk:'Completed',score:38,type:'Conservative',
    lastLogin:'2026-07-08T18:02:00',lastInv:'2026-07-02',sip:3000,sipActive:false,onetime:50000,
-   alloc:{'Equity':22,'Bonds':46,'Cash':28,'Property':4},
-   holdings:[{p:'V22 Income Fund',u:952.00,mv:96000,r:4.8,d:'2026-05-09'}]},
+   alloc:{'Equity':18,'Bonds':50,'Cash':28,'Property':4},
+   holdings:[{p:'Ashburton Govi Bond ETF',tk:'GOVI',u:334.00,mv:34000,r:5.5,d:'2026-05-09'},
+             {p:'Satrix ILBI Bond',tk:'STXILB',u:98.00,mv:10000,r:4.9,d:'2026-05-22'},
+             {p:'Vault22 ZAR Money Market',tk:'ZARMM',u:27000.00,mv:27000,r:8.1,d:'2026-06-01'},
+             {p:'Satrix Top 40',tk:'STX40',u:157.00,mv:17000,r:11.8,d:'2026-06-15'},
+             {p:'Satrix Property',tk:'STXPRO',u:33.00,mv:4000,r:5.1,d:'2026-06-28'},
+             {p:'V22 Income Fund',u:39.60,mv:4000,r:4.8,d:'2026-07-05'}]},
   {id:'C5',signup:'2026-05-28',kycDate:'2026-06-04',riskDate:'2026-06-11',sipStart:'2026-07-15',review:null,dob:'1990-08-11',nationality:'Indian',dependents:1,housing:'Tenant',totalSav:330000,name:'Fatima Ismail',email:'fatima.ismail@gmail.com',phone:'+27761187723',country:'South Africa',
    kyc:'Approved',idNum:'9008115599083',since:'2026-07-02',ffs:723,nw:1640000,income:64000,sav:16000,ef:140000,extAum:640000,
    insurance:380000,liabilities:290000,pv:158000,inv:150000,risk:'Completed',score:55,type:'Balanced',
    lastLogin:'2026-07-17T08:05:00',lastInv:'2026-07-14',sip:8000,onetime:120000,
    alloc:{'Equity':48,'Bonds':30,'Cash':14,'Property':8},
-   holdings:[{p:'V22 SA Balanced Fund',u:1235.00,mv:158000,r:3.2,d:'2026-07-09'}]}
+   holdings:[{p:'Satrix Top 40',tk:'STX40',u:426.00,mv:46000,r:12.9,d:'2026-07-09'},
+             {p:'Satrix MSCI World',tk:'STXWDM',u:280.00,mv:30000,r:9.4,d:'2026-07-11'},
+             {p:'Ashburton Govi Bond ETF',tk:'GOVI',u:373.00,mv:38000,r:6.0,d:'2026-07-12'},
+             {p:'Satrix Property',tk:'STXPRO',u:98.00,mv:12000,r:5.4,d:'2026-07-14'},
+             {p:'Vault22 ZAR Money Market',tk:'ZARMM',u:22000.00,mv:22000,r:8.1,d:'2026-07-15'},
+             {p:'V22 SA Balanced Fund',u:78.00,mv:10000,r:3.2,d:'2026-07-16'}]}
 ];
 
 const NOTIFS_EST = [
@@ -1831,6 +1928,11 @@ function loadScenario(s){
   if(!state.taraDraft) state.taraDraft = {};
   if(!state.taraSuggestion) state.taraSuggestion = {};
   const _c1 = state.customers.find(x=>x.id===CLIENT_ID);
+  /* R6 C1: state.customers is reseeded on every scenario switch, but taraSuggestion survives.
+     Without this the applied portfolio silently reverts while the card still says Invested.
+     Re-apply the plan on load so holdings, allocation and the card always agree. */
+  if(_c1 && state.taraSuggestion[CLIENT_ID] && state.taraSuggestion[CLIENT_ID].invested)
+    applyTaraSuggestion({replay:true});
   if(_c1 && !state.taraSuggestion[CLIENT_ID])
     /* R4QA2 C3: size the suggestion against the client's actual portfolio value, so a row's
        target amount reads sensibly beside its current holding. */
@@ -1899,7 +2001,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-20.8';
+const BUILD_VERSION = '2026-07-20.9';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -3309,7 +3411,7 @@ function lockedTab(p, sec){
               : 'Request access and they will be asked to grant it.'}</p>
         </div>
         ${st==='pending'
-          ? `<span class="pill p-amber">Requested</span>`
+          ? `<button class="btn btn-done" disabled>Requested</button>`
           : `<button class="btn btn-pri" data-req="${p.id}|${sec.k}">Request access</button>`}
       </div>
       <div class="sec-t" style="margin-top:var(--v4-space-5)">What this would show you</div>
@@ -3344,81 +3446,322 @@ function tab8Personal(p){
     ])}
   </div>`;
 }
+/* R6 A1: the Client Financial Intelligence Report — the advisor-facing report from the approved
+   Vault22 user-reports prototype, ported section for section and populated from the client record.
+   Sections this prototype has no data for render an honest "Not yet collected" state (with the
+   collection method from FIELD-FORMATS.md) rather than being dropped, so the true shape of the
+   report is visible. Stays behind FINANCIAL consent. */
+const CFI_SRC = {
+  deriv: '<span class="src s-deriv">Derived</span>',
+  link:  '<span class="src s-link">Linked accounts</span>',
+  txn:   '<span class="src s-txn">Transactions</span>',
+  onb:   '<span class="src s-onb">Onboarding</span>',
+  none:  '<span class="src s-none">Not collected</span>'
+};
+/* How a not-yet-collected field is meant to be captured (FIELD-FORMATS.md). */
+function cfiGap(what, how){
+  return `<div class="cfi-gap"><b>Not yet collected.</b> ${esc(what)}
+    <div class="sub" style="margin-top:4px">Collection: ${esc(how)}</div></div>`;
+}
+function cfiMetrics(rows){
+  return `<div class="cfi-metrics">${rows.map(([l,v,note,tone])=>`
+    <div class="cfi-metric"><div class="lbl">${l}</div>
+      <div class="val ${tone||''}">${v}</div>
+      ${note?`<div class="note">${note}</div>`:''}</div>`).join('')}</div>`;
+}
+function cfiZone(label, score, note, tone){
+  return `<div class="cfi-zone">
+      <div class="zl">${label}</div>
+      <div class="zt"><div class="zf" style="width:${Math.max(2,Math.min(100,score))}%;background:var(--${tone})"></div></div>
+      <div class="zv">${score}</div>
+    </div>
+    <div class="cfi-zone-note" style="color:var(--${tone})">${note}</div>`;
+}
 function tab8Financial(p){
   const sec = CONSENT_SECTIONS[0];
   if(consentOf(p.id,'financial') !== 'granted') return lockedTab(p, sec);
-  /* R4 2.1: the flat label/value list read as raw data, not a report. This is the designed
-     financial report: headline position, net worth composition, cash flow and resilience,
-     each figure derived from the same client record. */
+
   const nw = p.nw||0, liab = p.liabilities||0, assets = nw + liab;
   const inc = p.income||0, sav = p.sav||0, ef = p.ef||0;
-  const savRate = inc ? Math.round(sav/inc*100) : 0;
-  const spend = Math.max(inc - sav, 0);
-  const efMonths = spend ? (ef/spend) : 0;
-  const debtRatio = assets ? Math.round(liab/assets*100) : 0;
-  const ffs = p.ffs||0, ffsPct = Math.round(ffs/1000*100);
-  const ffsBand = ffs>=750 ? 'Excellent' : ffs>=650 ? 'Strong' : ffs>=550 ? 'Building' : 'Needs work';
   const pv = p.pv||0, inv = p.inv||0, growth = pv - inv;
-  const bar = (label, val, pct, tone) => `<div class="arow">
-    <span class="lb">${label}</span>
-    <span class="bar"><i style="width:${Math.max(0,Math.min(100,pct))}%${tone?';background:'+tone:''}"></i></span>
-    <span class="pc num pc-wide">${val}</span></div>`;
-  return `<div class="card card-p">
-    <div class="between" style="margin-bottom:var(--v4-space-2)">
-      <div class="sec-t" style="margin:0">Financial report</div>
-      <span class="sub">${esc(p.name)} · as at ${fmtDate(TODAY_STR)}</span></div>
-    <p class="lede" style="margin-bottom:var(--v4-space-5)">Their position, how it is funded, and how
-      resilient it is. Shared with you by ${esc(p.name.split(' ')[0])}.</p>
+  const ffs = p.ffs||0, ffsPct = Math.round(ffs/10);
+  const stage = ffs>=750 ? 'Optimise' : ffs>=650 ? 'Grow' : ffs>=550 ? 'Stabilise' : 'Survive';
+  /* Debt servicing is estimated at 1.6% of outstanding a month, the blend the approved report
+     uses for a mixed home-loan / vehicle / card book. Flagged as derived, not a bank figure. */
+  const oblig = Math.round(liab * 0.016);
+  const dti = inc ? Math.round(oblig/inc*100) : 0;
+  const essential = Math.round(inc * 0.465);
+  const surplus = Math.max(inc - oblig - essential, 0);
+  const savRate = inc ? Math.round(sav/inc*100) : 0;
+  const liquid = (p.totalSav||0) + ef;
+  const R = n => money(Math.round(n||0));
+  const reportId = 'V22-CFI-' + TODAY_STR.replace(/-/g,'') + '-' + (p.id||'C0');
+  const validTo = (()=>{ const d = new Date(TODAY_STR + 'T00:00:00'); d.setDate(d.getDate()+30);
+    return fmtDate(localISO(d).slice(0,10)); })();
+  /* 50/30/20 against the client's actual income. */
+  const needsPct = inc ? Math.min(100, Math.round(essential/inc*100)) : 0;
+  const wantsPct = Math.max(0, 100 - needsPct - savRate);
+  /* Fee estimate: Vault22 portfolios ~0.45% a year; external assets unknown. */
+  const feeYr = Math.round(pv * 0.0045);
 
-    <div class="kpis">
-      <div class="kpi"><div class="k">Net worth</div><div class="v">${nw?money(nw):dash}</div>
-        <div class="d">${money(assets)} assets less ${money(liab)} debt</div></div>
-      <div class="kpi"><div class="k">Total investments</div><div class="v">${pv?money(pv):dash}</div>
-        <div class="d">${money(inv)} contributed${growth?', '+(growth>=0?'+':'')+money(growth)+' growth':''}</div></div>
-      <div class="kpi"><div class="k">Monthly savings</div><div class="v">${sav?money(sav):dash}</div>
-        <div class="d">${savRate}% of ${money(inc)} income</div></div>
-      <div class="kpi"><div class="k">Financial fitness</div><div class="v">${ffs||dash}<span class="sub" style="font-size:13px"> / 1000</span></div>
-        <div class="d">${ffsBand}</div></div>
+  return `<div class="cfi">
+    <div class="card card-p">
+      <div class="between" style="align-items:flex-start">
+        <div><div class="sec-t" style="margin:0">Client Financial Intelligence Report</div>
+          <p class="lede" style="margin:2px 0 0">Advisory affordability and risk summary for ${esc(p.name)}.</p></div>
+        <button class="btn btn-sm" data-reportdl="${p.id}">Download PDF</button>
+      </div>
+      <div class="cfi-meta">
+        <div><div class="lbl">Account holder</div><div class="v">${esc(p.name)}</div></div>
+        <div><div class="lbl">Report date</div><div class="v">${fmtDate(TODAY_STR)}</div></div>
+        <div><div class="lbl">Report ID</div><div class="v">${esc(reportId)}</div></div>
+        <div><div class="lbl">Valid until</div><div class="v">${validTo}</div></div>
+        <div><div class="lbl">Risk profile</div><div class="v">${esc(p.type||'Not assessed')}</div></div>
+      </div>
     </div>
 
-    <div class="sec-t" style="margin-top:var(--v4-space-6)">Financial fitness</div>
-    <div class="bar" style="height:10px"><i style="width:${ffsPct}%"></i></div>
-    <div class="between sub" style="margin-top:6px"><span>0</span><span><b>${ffs}</b> · ${ffsBand}</span><span>1000</span></div>
-
-    <div class="sec-t" style="margin-top:var(--v4-space-6)">Net worth composition</div>
-    <p class="lede" style="margin-bottom:var(--v4-space-3)">What they own against what they owe.</p>
-    ${bar('Investments', money(pv), assets?pv/assets*100:0)}
-    ${bar('Savings', money(p.totalSav||0), assets?(p.totalSav||0)/assets*100:0)}
-    ${bar('Other assets', money(Math.max(assets-pv-(p.totalSav||0),0)), assets?Math.max(assets-pv-(p.totalSav||0),0)/assets*100:0)}
-    ${bar('Liabilities', money(liab), assets?liab/assets*100:0, 'var(--v4-navy-400)')}
-    <div class="sub" style="margin-top:var(--v4-space-2)">Debt is ${debtRatio}% of total assets.</div>
-
-    <div class="sec-t" style="margin-top:var(--v4-space-6)">Cash flow and resilience</div>
-    <div class="ov-grid">
-      <div class="ov-c"><span class="ov-k">Monthly income</span><span class="ov-v">${inc?money(inc):dash}</span></div>
-      <div class="ov-c"><span class="ov-k">Savings rate</span><span class="ov-v">${savRate}%</span></div>
-      <div class="ov-c"><span class="ov-k">Emergency fund</span><span class="ov-v">${ef?money(ef):dash}</span></div>
-      <div class="ov-c"><span class="ov-k">Cover</span><span class="ov-v">${efMonths?efMonths.toFixed(1)+' months':dash}</span></div>
-      <div class="ov-c"><span class="ov-k">Insurance coverage</span><span class="ov-v">${p.insurance!=null?money(p.insurance):dash}</span></div>
-      <div class="ov-c"><span class="ov-k">Total liabilities</span><span class="ov-v">${liab?money(liab):dash}</span></div>
+    <div class="grid2 mt6">
+      <div class="card card-p">
+        <h3 class="cfi-h">Executive summary ${CFI_SRC.deriv}</h3>
+        ${cfiMetrics([
+          ['Net worth', R(nw), R(assets)+' assets less '+R(liab)+' debt'],
+          ['Monthly income', inc?R(inc):dash, savRate+'% saved'],
+          ['Debt-to-income', dti+'%', 'NCA max 43%', dti>43?'neg':'up'],
+          ['Financial Fitness', ffs||dash, 'of 1000 · '+stage]
+        ])}
+        <div class="cfi-callout ${surplus>0?'green':'amber'}">${surplus>0
+          ? `<b>Affordability confirmed.</b> ${R(surplus)} monthly surplus with debt-to-income ${dti>43?'above':'within'} NCA limits.`
+          : `<b>No disposable surplus.</b> Obligations and essential living absorb the full income.`}</div>
+      </div>
+      <div class="card card-p">
+        <h3 class="cfi-h">Affordability assessment ${CFI_SRC.deriv}</h3>
+        ${cfiMetrics([
+          ['Total obligations', R(oblig), 'Debt servicing, estimated', 'neg'],
+          ['Essential living', R(essential), 'Housing, food, medical, transport'],
+          ['Disposable surplus', R(surplus), 'Available for new obligations', 'up']
+        ])}
+        <div class="sub" style="margin:var(--v4-space-3) 0 6px;font-weight:600">Income allocation</div>
+        <div class="cfi-alloc">
+          <span style="flex:${dti||1};background:#6C5CE7"></span>
+          <span style="flex:${needsPct||1};background:#9AA7B4"></span>
+          <span style="flex:${Math.max(100-dti-needsPct,1)};background:var(--v4-teal-400)"></span>
+        </div>
+        <div class="cfi-key">
+          <span><b style="color:#6C5CE7">●</b> Debt ${dti}%</span>
+          <span><b style="color:#9AA7B4">●</b> Living ${needsPct}%</span>
+          <span><b style="color:var(--v4-teal-600)">●</b> Surplus ${Math.max(100-dti-needsPct,0)}%</span>
+        </div>
+      </div>
     </div>
-    <div class="consent" style="margin-top:var(--v4-space-4)">${
-      efMonths>=6 ? 'Emergency fund covers ' + efMonths.toFixed(1) + ' months of spending, a comfortable buffer.'
-      : efMonths>=3 ? 'Emergency fund covers ' + efMonths.toFixed(1) + ' months. Three to six months is the usual target.'
-      : 'Emergency fund covers under three months of spending. Worth a conversation.'}</div>
 
-    <div class="row" style="margin-top:var(--v4-space-6)">
-      <button class="btn btn-sm" data-reportdl="${p.id}">Download PDF</button></div>
-
-    <div class="sec-t" style="margin-top:var(--v4-space-6)">Total fees earned</div>
-    <p class="lede" style="margin-bottom:var(--v4-space-3)">Your fees from this client. Advisor view only.</p>
-    <div class="row" style="margin-bottom:var(--v4-space-3)">
-      ${['Year to date','This quarter','This month','All time'].map(o=>
-        `<button class="fchip ${(state.feePeriod||'Year to date')===o?'on':''}" data-fee="${esc(o)}">${o}</button>`).join('')}
+    <div class="card card-p mt6">
+      <h3 class="cfi-h">Account &amp; Onboarding Profile ${CFI_SRC.onb}</h3>
+      ${dl([
+        ['Client since', fmtDate(p.since||p.signup) || dash],
+        ['KYC status', p.kyc || (STAGES.indexOf(p.stage)>=4 ? 'Approved' : 'In progress')],
+        ['KYC completed', fmtDate(p.kycDate) || dash],
+        ['Identity number', p.idNum ? maskId(p.idNum) : dash],
+        ['Acquisition source', esc(acqSource(p))],
+        ['Last login', p.lastLogin ? rel(p.lastLogin) : dash]
+      ])}
+      ${cfiGap('Funding source and beneficiary nomination are not captured in this prototype.',
+               'Multi-select chips for funding source; beneficiary name, relationship and allocation percentage totalling 100.')}
     </div>
-    <div class="subtile" style="max-width:260px">
-      <div class="k" style="font-size:13px;color:var(--live-label)">${esc(state.feePeriod||'Year to date')}</div>
-      <div style="font-size:24px;font-weight:600" class="num">${money(feesFor(p, state.feePeriod||'Year to date'))}</div>
+
+    <div class="grid2 mt6">
+      <div class="card card-p">
+        <h3 class="cfi-h">Personal profile ${CFI_SRC.onb}</h3>
+        ${dl([
+          ['Date of birth', fmtDate(p.dob) || dash],
+          ['Age', p.dob ? ageOf(p.dob) + ' years' : dash],
+          ['Nationality', esc(p.nationality||'') || dash],
+          ['Country', esc(p.country||'South Africa')],
+          ['Dependents', p.dependents!=null ? String(p.dependents) : dash],
+          ['Home', esc(p.housing||'') || dash]
+        ])}
+        ${cfiGap('Gender, marital status and citizenship are not captured.',
+                 'Single-select dropdowns; citizenship a searchable country list allowing one to four entries.')}
+      </div>
+      <div class="card card-p">
+        <h3 class="cfi-h">Employment &amp; Income ${CFI_SRC.txn}</h3>
+        ${dl([
+          ['Monthly income', inc?R(inc):dash],
+          ['Monthly savings', sav?R(sav)+'/mo':dash],
+          ['Savings rate', inc?savRate+'%':dash],
+          ['Emergency fund', ef?R(ef):dash]
+        ])}
+        ${cfiGap('Employer, occupation and income verification documents are not captured.',
+                 'Employer free text to 100 characters, occupation to 80, plus a payslip, IRP5, bank statement or employment contract upload, PDF/JPG/PNG to 10 MB.')}
+      </div>
+    </div>
+
+    <div class="card card-p mt6">
+      <h3 class="cfi-h">Income verification &amp; Stability ${CFI_SRC.none}</h3>
+      <div class="ptbl-wrap"><table class="ptbl">
+        <thead><tr><th>Income source</th><th>Type</th><th>Verification</th><th>Frequency</th><th class="r">Amount</th></tr></thead>
+        <tbody><tr><td><b>Declared income</b></td><td>Self declared</td>
+          <td><span class="pill p-amber">Self reported</span></td><td>Monthly</td>
+          <td class="r num">${inc?R(inc):dash}</td></tr></tbody>
+      </table></div>
+      <div class="sub" style="margin-top:var(--v4-space-2)">Bank-verified income requires a linked
+        account feed. Until then income is the client's own declaration.</div>
+    </div>
+
+    <div class="grid2 mt6">
+      <div class="card card-p">
+        <h3 class="cfi-h">Net Worth ${CFI_SRC.deriv}</h3>
+        ${cfiMetrics([
+          ['Total assets', R(assets)],
+          ['Total liabilities', R(liab), '', 'neg'],
+          ['Net worth', R(nw), '', 'up'],
+          ['Liquid assets', R(liquid), 'Savings plus emergency fund']
+        ])}
+        <div class="cfi-split">
+          <div class="cfi-split-row"><span>Investments</span><span class="num">${R(pv)}</span></div>
+          <div class="cfi-split-row"><span>Savings</span><span class="num">${R(p.totalSav)}</span></div>
+          <div class="cfi-split-row"><span>Other assets</span><span class="num">${R(Math.max(assets-pv-(p.totalSav||0),0))}</span></div>
+          <div class="cfi-split-row tot"><span>Liabilities</span><span class="num">${R(liab)}</span></div>
+        </div>
+      </div>
+      <div class="card card-p">
+        <h3 class="cfi-h">Assets &amp; Investment Profile ${CFI_SRC.link}</h3>
+        ${cfiMetrics([
+          ['Portfolio value', R(pv)],
+          ['Invested', R(inv)],
+          ['Profit / Loss', (growth>=0?'+':'')+R(Math.abs(growth)), '', growth>=0?'up':'neg'],
+          ['Risk profile', esc(p.type||'Not assessed')]
+        ])}
+        ${(p.holdings||[]).length ? `<div class="ptbl-wrap mt"><table class="ptbl">
+          <thead><tr><th>Holding</th><th>Type</th><th class="r">Value</th></tr></thead>
+          <tbody>${p.holdings.map(h=>`<tr><td><b>${esc(h.p)}</b></td>
+            <td class="sub">${esc(h.tk||'Fund')}</td>
+            <td class="r num">${R(h.mv)}</td></tr>`).join('')}</tbody>
+        </table></div>` : '<p class="lede mt">No holdings yet.</p>'}
+      </div>
+    </div>
+
+    <div class="card card-p mt6">
+      <h3 class="cfi-h">Debt Exposure &amp; Liability Schedule ${CFI_SRC.deriv}</h3>
+      ${cfiMetrics([
+        ['Total exposure', R(liab), '', 'neg'],
+        ['Monthly servicing', R(oblig), 'Estimated at 1.6% of balance'],
+        ['Debt-to-income', dti+'%', 'NCA max 43%', dti>43?'neg':'up'],
+        ['Debt to assets', assets?Math.round(liab/assets*100)+'%':dash]
+      ])}
+      ${cfiGap('The per-lender schedule (lender, product, rate, monthly instalment, outstanding balance) is not captured.',
+               'Linked-account feed, or a credit-bureau pull with the client consent on file.')}
+    </div>
+
+    <div class="grid2 mt6">
+      <div class="card card-p">
+        <h3 class="cfi-h">Budget Allocation (50/30/20) ${CFI_SRC.deriv}</h3>
+        <p class="lede" style="margin-bottom:var(--v4-space-3)">Against the 50 needs / 30 wants / 20 savings guide.</p>
+        ${cfiZone('Needs', needsPct, needsPct<=50?'Within the 50% guide':'Above the 50% guide', needsPct<=50?'v4-teal-600':'v4-warning-dark')}
+        ${cfiZone('Wants', wantsPct, wantsPct<=30?'Within the 30% guide':'Above the 30% guide', wantsPct<=30?'v4-teal-600':'v4-warning-dark')}
+        ${cfiZone('Savings', savRate, savRate>=20?'Meets the 20% target':'Below the 20% target', savRate>=20?'v4-teal-600':'v4-warning-dark')}
+      </div>
+      <div class="card card-p">
+        <h3 class="cfi-h">Financial Fitness Level (FFL) ${CFI_SRC.deriv}</h3>
+        <div class="cfi-ring">
+          <svg viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M18 2a16 16 0 1 1 0 32 16 16 0 0 1 0-32" fill="none" stroke="var(--v4-navy-50)" stroke-width="3"/>
+            <path d="M18 2a16 16 0 1 1 0 32 16 16 0 0 1 0-32" fill="none" stroke="var(--v4-teal-400)"
+              stroke-width="3" stroke-dasharray="${ffsPct} 100" stroke-linecap="round"/>
+            <text x="18" y="18.5" text-anchor="middle" font-size="8" font-weight="800" fill="currentColor">${ffs||0}</text>
+            <text x="18" y="24" text-anchor="middle" font-size="3.2" fill="var(--muted)">of 1000</text></svg>
+          <div><div class="big">${stage} stage</div>
+            <div class="small">The five zones below drive the overall score.</div></div>
+        </div>
+        ${cfiZone('Savings', Math.min(100, savRate*4), savRate>=20?'On track':'Needs attention · '+savRate+'% vs 20% target', savRate>=20?'v4-teal-600':'v4-warning-dark')}
+        ${cfiZone('Investments', pv?Math.min(100, Math.round(pv/Math.max(nw,1)*100)+20):10, pv?'Invested across '+plural((p.holdings||[]).length,'holding'):'Not yet invested', pv?'v4-teal-600':'v4-warning-dark')}
+        ${cfiZone('Insurance', p.insurance?Math.min(100, Math.round(p.insurance/Math.max(inc*12,1)*100)):20, p.insurance?'Cover in place':'Needs attention · no cover recorded', p.insurance?'v4-teal-600':'v4-danger-dark')}
+        ${cfiZone('Expenses', Math.max(0, 100-needsPct), needsPct<=50?'Living costs within guide':'Living costs above guide', needsPct<=50?'v4-teal-600':'v4-warning-dark')}
+        ${cfiZone('Debt clearance', Math.max(0, 100-dti*2), dti<=43?'DTI '+dti+'% · within NCA':'DTI '+dti+'% · above NCA', dti<=43?'v4-teal-600':'v4-danger-dark')}
+      </div>
+    </div>
+
+    <div class="grid2 mt6">
+      <div class="card card-p">
+        <h3 class="cfi-h">Insurance Coverage ${CFI_SRC.onb}</h3>
+        ${cfiMetrics([
+          ['Total cover', p.insurance?R(p.insurance):dash, 'Declared'],
+          ['Cover vs income', p.insurance&&inc?Math.round(p.insurance/(inc*12)*10)/10+'x annual':dash]
+        ])}
+        <div class="sec-t mt" style="font-size:14px">Cover by type</div>
+        ${['Life','Disability','Income protection','Medical / gap'].map(t=>`
+          <div class="list-row"><span>${t}</span>
+            <span class="pill ${t==='Life'&&p.insurance?'p-green':'p-gray'}">${t==='Life'&&p.insurance?'Declared':'Not recorded'}</span></div>`).join('')}
+        ${cfiGap('Cover is a single declared total; per-type policies are not captured.',
+                 'A yes/no toggle per cover type, revealing provider, coverage amount, monthly premium and a policy upload.')}
+      </div>
+      <div class="card card-p">
+        <h3 class="cfi-h">Investments, Assets &amp; Fees ${CFI_SRC.link}</h3>
+        ${cfiMetrics([
+          ['Portfolio value', R(pv)],
+          ['Estimated cost of investing', R(feeYr)+'/yr', '~0.45% a year'],
+          ['External assets', p.extAum?R(p.extAum):R(0), 'Held away from Vault22'],
+          ['Fees earned by you', R(feesFor(p,'Year to date')), 'Year to date']
+        ])}
+        ${(p.holdings||[]).length ? `<div class="ptbl-wrap mt"><table class="ptbl">
+          <thead><tr><th>Holding</th><th class="r">Fee p.a.</th><th class="r">Value</th></tr></thead>
+          <tbody>${p.holdings.map(h=>`<tr><td>${esc(h.p)}</td>
+            <td class="r num">${h.tk?'0.45%':'—'}</td>
+            <td class="r num">${R(h.mv)}</td></tr>`).join('')}</tbody>
+        </table></div>` : ''}
+        ${cfiGap('Per-account advisory, platform and brokerage fees are not captured.',
+                 'Per-account percentage inputs (0 to 5, two decimals) or a fee-schedule upload.')}
+      </div>
+    </div>
+
+    <div class="card card-p mt6">
+      <h3 class="cfi-h">Flagged Transactions ${CFI_SRC.none}</h3>
+      ${cfiGap('Transaction-level monitoring is not part of this prototype, so no items can be flagged.',
+               'A linked bank feed, with rules for unusual value, gambling, high-rate credit and missed debit orders.')}
+    </div>
+
+    <div class="card card-p mt6">
+      <h3 class="cfi-h">Cross-sell opportunities ${CFI_SRC.deriv}</h3>
+      <p class="lede" style="margin-bottom:var(--v4-space-3)">Suitable products based on this profile. Advisor view only.</p>
+      <div class="cfi-cross">
+        ${[
+          [!p.insurance || p.insurance < inc*12*3, 'Income protection', 'High',
+           'Cover is '+(p.insurance?'below three times annual income':'not recorded')+' with '+plural(p.dependents||0,'dependent')+' and '+R(liab)+' of debt.'],
+          [savRate < 20, 'Raise the savings rate', 'High',
+           'Saving '+savRate+'% against a 20% target. Automating '+R(Math.max(inc*0.2-sav,0))+'/month closes the gap.'],
+          [dti > 30, 'Debt consolidation', dti>43?'High':'Med',
+           'Debt-to-income at '+dti+'%. Consolidating the highest-rate facility would reduce monthly servicing.'],
+          [pv > 0, 'Tax-free allowance', 'Med',
+           'Tax-free savings allowance remains available for this tax year.'],
+          [(p.extAum||0) > 0, 'Consolidate external assets', 'Med',
+           R(p.extAum)+' is held away from Vault22 and could be brought onto one platform.']
+        ].filter(x=>x[0]).map(([,h,pri,body])=>`
+          <div class="cfi-opp"><div class="top"><h4>${h}</h4>
+            <span class="pill ${pri==='High'?'p-red':'p-amber'}">${pri}</span></div>
+            <p>${body}</p></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card card-p mt6">
+      <div class="legalnote"><b>Data consent and methodology.</b> This report was generated with the
+        explicit consent of the data subject under the Protection of Personal Information Act (POPIA),
+        2013. Data is sourced from the client's Vault22 profile and self-reported declarations.
+        Affordability figures are estimates derived from declared income and modelled expenditure, not
+        bank-verified. The Financial Fitness score and affordability assessment are decision-support
+        indicators only and do not constitute a credit decision or a guarantee. The advisor remains
+        responsible for their own suitability assessment. This advice is your advisor's, not Vault22's.</div>
+    </div>
+
+    <div class="card card-p mt6">
+      <div class="sec-t">Total fees earned</div>
+      <p class="lede" style="margin-bottom:var(--v4-space-3)">Your fees from this client. Advisor view only.</p>
+      <div class="row" style="margin-bottom:var(--v4-space-3)">
+        ${['Year to date','This quarter','This month','All time'].map(o=>
+          `<button class="fchip ${(state.feePeriod||'Year to date')===o?'on':''}" data-fee="${esc(o)}">${o}</button>`).join('')}
+      </div>
+      <div class="subtile" style="max-width:260px">
+        <div class="k" style="font-size:13px;color:var(--live-label)">${esc(state.feePeriod||'Year to date')}</div>
+        <div style="font-size:24px;font-weight:600" class="num">${money(feesFor(p, state.feePeriod||'Year to date'))}</div>
+      </div>
     </div>
   </div>`;
 }
@@ -3638,44 +3981,101 @@ function invoicePDF(inv){
 /* BUG 3: the financial-profile report downloads a real one-page PDF, like the invoice,
    so the two identical "Download PDF" buttons behave consistently. */
 function reportPDF(p){
-  /* R4QA 0.3: mirrors the designed on-screen report, section for section, so the download
-     and the screen cannot tell the client two different stories. */
+  /* R6 A1: mirrors the on-screen Client Financial Intelligence Report, section for section,
+     including the honest not-collected states, so the download and the screen cannot tell the
+     client two different stories. */
   const a = state.advisor, R = n => 'R' + Math.round(n||0).toLocaleString('en-US');
   const nw=p.nw||0, liab=p.liabilities||0, assets=nw+liab;
-  const inc=p.income||0, sav=p.sav||0, ef=p.ef||0, pv=p.pv||0, inv=p.inv||0;
-  const savRate = inc ? Math.round(sav/inc*100) : 0;
-  const spend = Math.max(inc-sav,0), efMonths = spend ? ef/spend : 0;
-  const growth = pv-inv, ffs = p.ffs||0;
-  const ffsBand = ffs>=750?'Excellent':ffs>=650?'Strong':ffs>=550?'Building':'Needs work';
-  downloadPdf([
+  const inc=p.income||0, sav=p.sav||0, ef=p.ef||0, pv=p.pv||0, invd=p.inv||0;
+  const growth=pv-invd, ffs=p.ffs||0;
+  const stage = ffs>=750?'Optimise':ffs>=650?'Grow':ffs>=550?'Stabilise':'Survive';
+  const oblig = Math.round(liab*0.016);
+  const dti = inc?Math.round(oblig/inc*100):0;
+  const essential = Math.round(inc*0.465);
+  const surplus = Math.max(inc-oblig-essential,0);
+  const savRate = inc?Math.round(sav/inc*100):0;
+  const feeYr = Math.round(pv*0.0045);
+  const L = [
     'Vault22',
-    'FINANCIAL REPORT',
+    'CLIENT FINANCIAL INTELLIGENCE REPORT',
     '',
-    'Client: ' + p.name,
-    'As at: ' + fmtDate(TODAY_STR),
-    'Prepared by: ' + a.name + '   ' + (a.licence || ''),
+    'Account holder: ' + p.name,
+    'Report date: ' + fmtDate(TODAY_STR),
+    'Report ID: V22-CFI-' + TODAY_STR.replace(/-/g,'') + '-' + (p.id||'C0'),
+    'Prepared by: ' + a.name + (a.licence ? '   ' + a.licence : ''),
     '',
-    'HEADLINE POSITION',
+    'EXECUTIVE SUMMARY',
     'Net worth: ' + R(nw) + '  (' + R(assets) + ' assets less ' + R(liab) + ' debt)',
-    'Total investments: ' + R(pv) + '  (' + R(inv) + ' contributed, ' + (growth>=0?'+':'') + R(growth) + ' growth)',
-    'Monthly savings: ' + R(sav) + '  (' + savRate + '% of ' + R(inc) + ' income)',
-    'Financial fitness: ' + ffs + ' / 1000  (' + ffsBand + ')',
+    'Monthly income: ' + R(inc) + '  (' + savRate + '% saved)',
+    'Debt-to-income: ' + dti + '%  (NCA max 43%)',
+    'Financial Fitness: ' + ffs + ' of 1000 · ' + stage + ' stage',
     '',
-    'NET WORTH COMPOSITION',
-    'Investments: ' + R(pv),
-    'Savings: ' + R(p.totalSav||0),
-    'Other assets: ' + R(Math.max(assets-pv-(p.totalSav||0),0)),
-    'Liabilities: ' + R(liab) + '  (' + (assets?Math.round(liab/assets*100):0) + '% of assets)',
+    'AFFORDABILITY ASSESSMENT',
+    'Total obligations: ' + R(oblig) + '  (debt servicing, estimated)',
+    'Essential living: ' + R(essential),
+    'Disposable surplus: ' + R(surplus),
     '',
-    'CASH FLOW AND RESILIENCE',
-    'Monthly income: ' + R(inc),
-    'Savings rate: ' + savRate + '%',
-    'Emergency fund: ' + R(ef) + (efMonths ? '  (' + efMonths.toFixed(1) + ' months of spending)' : ''),
-    'Insurance coverage: ' + R(p.insurance),
-    'Risk profile: ' + (p.type||'not assessed') + (p.score!=null ? ' (' + p.score + ' / 100)' : ''),
+    'ACCOUNT AND ONBOARDING PROFILE',
+    'Client since: ' + (fmtDate(p.since||p.signup) || 'n/a'),
+    'KYC status: ' + (p.kyc || 'In progress') + '   completed ' + (fmtDate(p.kycDate) || 'n/a'),
+    'Acquisition source: ' + acqSource(p),
+    'Not yet collected: funding source, beneficiary nomination.',
     '',
-    'Illustrative report generated by the Vault22 Advisor prototype.'
-  ], 'vault22-financial-report-' + (p.id||'client') + '.pdf');
+    'PERSONAL PROFILE',
+    'Date of birth: ' + (fmtDate(p.dob) || 'n/a') + (p.dob ? '   age ' + ageOf(p.dob) : ''),
+    'Nationality: ' + (p.nationality || 'n/a') + '   Country: ' + (p.country || 'South Africa'),
+    'Dependents: ' + (p.dependents != null ? p.dependents : 'n/a') + '   Home: ' + (p.housing || 'n/a'),
+    'Not yet collected: gender, marital status, citizenship.',
+    '',
+    'EMPLOYMENT AND INCOME',
+    'Monthly income: ' + R(inc) + '   Monthly savings: ' + R(sav) + '  (' + savRate + '%)',
+    'Emergency fund: ' + R(ef),
+    'Not yet collected: employer, occupation, income verification documents.',
+    '',
+    'INCOME VERIFICATION AND STABILITY',
+    'Declared income: ' + R(inc) + ' a month, self reported, not bank verified.',
+    '',
+    'NET WORTH',
+    'Total assets: ' + R(assets) + '   Total liabilities: ' + R(liab),
+    'Investments: ' + R(pv) + '   Savings: ' + R(p.totalSav) + '   Liquid: ' + R((p.totalSav||0)+ef),
+    '',
+    'ASSETS AND INVESTMENT PROFILE',
+    'Portfolio value: ' + R(pv) + '   Invested: ' + R(invd)
+      + '   Profit/Loss: ' + (growth>=0?'+':'-') + R(Math.abs(growth)),
+    'Risk profile: ' + (p.type || 'Not assessed')
+  ];
+  (p.holdings||[]).forEach(h => L.push('  ' + h.p + ' — ' + R(h.mv)));
+  L.push('',
+    'DEBT EXPOSURE AND LIABILITY SCHEDULE',
+    'Total exposure: ' + R(liab) + '   Monthly servicing: ' + R(oblig) + '  (estimated)',
+    'Debt-to-income: ' + dti + '%   Debt to assets: ' + (assets?Math.round(liab/assets*100):0) + '%',
+    'Not yet collected: per-lender schedule (lender, product, rate, instalment, balance).',
+    '',
+    'BUDGET ALLOCATION (50/30/20)',
+    'Needs: ' + (inc?Math.round(essential/inc*100):0) + '%   Savings: ' + savRate + '% (20% target)',
+    '',
+    'FINANCIAL FITNESS LEVEL',
+    'Overall: ' + ffs + ' of 1000 · ' + stage + ' stage',
+    'Zones: savings, investments, insurance, expenses, debt clearance.',
+    '',
+    'INSURANCE COVERAGE',
+    'Total cover: ' + (p.insurance ? R(p.insurance) : 'not recorded'),
+    'Not yet collected: cover split by type (life, disability, income protection, medical).',
+    '',
+    'INVESTMENTS, ASSETS AND FEES',
+    'Estimated cost of investing: ' + R(feeYr) + ' a year (~0.45%)',
+    'External assets held away: ' + R(p.extAum),
+    'Not yet collected: per-account advisory, platform and brokerage fees.',
+    '',
+    'FLAGGED TRANSACTIONS',
+    'Not yet collected: transaction-level monitoring requires a linked bank feed.',
+    '',
+    'Data consent and methodology. Generated with the explicit consent of the data subject under',
+    'POPIA, 2013. Affordability figures are estimates derived from declared income and modelled',
+    'expenditure, not bank verified. Decision-support only; not a credit decision or a guarantee.',
+    'This advice is your advisor’s, not Vault22’s.'
+  );
+  downloadPdf(L, 'vault22-cfi-report-' + (p.id||'client') + '.pdf', {logo:true});
 }
 /* The right-hand invoice detail drawer. */
 function invoiceDrawer(key){
@@ -4179,7 +4579,7 @@ function vPortfolios(){
               : '<span class="sub">With Vault22 for review</span>'}</td></tr>`).join('')}</tbody>
         </table></div>
         <!-- R4 7.1/7.2: moderation is a Vault22 admin function, not an advisor one. The queue
-             lives behind the admin surface in the settings gear. -->
+             lives in the Vault22 admin scenario, its own left-nav section. -->
         <div class="sub" style="margin-top:var(--v4-space-3)">Vault22 reviews every submission. You
           cannot approve your own portfolio.</div>` : '<p class="lede mt">You have not submitted any portfolios yet.</p>'}
       </div>
@@ -4215,34 +4615,73 @@ function portDrawer(p){
 /* §14.2: the add-portfolio form, same fields as the internal add-portfolio flow. */
 function addPortDrawer(){
   const d = state.portDraft || {ccy:'ZAR', risk:'Balanced'};
+  const err = state.portErr || {};
+  /* R6 B3: inline errors against the field that failed, never a single generic toast and
+     never a silent coercion to 0. Bounds follow the approved FIELD-FORMATS conventions. */
+  const e = k => err[k] ? `<div class="ferr">${esc(err[k])}</div>` : '';
+  const bad = k => err[k] ? ' inp-bad' : '';
   return `
     <div class="between" style="margin-bottom:var(--v4-space-2)">
       <div><h2>Add a portfolio</h2>
         <p class="lede">Submitted for Vault22 approval before it appears on your platform</p></div>
       <button class="x" data-close="1">×</button></div>
     <div class="field" style="margin-top:var(--v4-space-4)"><label>Portfolio name</label>
-      <input class="inp inp-sm" data-portfield="name" value="${esc(d.name||'')}" placeholder="Fund name"></div>
+      <input class="inp inp-sm${bad('name')}" data-portfield="name" maxlength="80"
+        value="${esc(d.name||'')}" placeholder="Fund name">
+      <div class="sub">Required · up to 80 characters</div>${e('name')}</div>
     <div class="field"><label>Ticker</label>
-      <input class="inp inp-sm" data-portfield="ticker" value="${esc(d.ticker||'')}" placeholder="e.g. ABCDEF"></div>
+      <input class="inp inp-sm${bad('ticker')}" data-portfield="ticker" maxlength="10"
+        value="${esc(d.ticker||'')}" placeholder="e.g. STX40" style="text-transform:uppercase">
+      <div class="sub">Required · 3 to 10 characters, letters and digits only</div>${e('ticker')}</div>
     <div class="field"><label>Minimum investment amount</label>
-      <input class="inp inp-sm" type="number" data-portfield="min" value="${esc(d.min||'')}" placeholder="1000"></div>
+      <input class="inp inp-sm${bad('min')}" type="number" min="0" step="1" inputmode="numeric"
+        data-portfield="min" value="${esc(d.min===undefined?'':d.min)}" placeholder="1000">
+      <div class="sub">Required · whole rands, 0 or more</div>${e('min')}</div>
     <div class="field"><label>Currency</label>
       <select class="inp inp-sm" data-portfield="ccy">
         ${['ZAR','USD','GBP','EUR','AED'].map(c=>`<option ${d.ccy===c?'selected':''}>${c}</option>`).join('')}</select></div>
     <div class="field"><label>Exposure</label>
-      <input class="inp inp-sm" data-portfield="exposure" value="${esc(d.exposure||'')}" placeholder="e.g. SA equity, global bonds"></div>
+      <input class="inp inp-sm${bad('exposure')}" data-portfield="exposure" maxlength="80"
+        value="${esc(d.exposure||'')}" placeholder="e.g. SA equity, global bonds">
+      <div class="sub">Required · up to 80 characters</div>${e('exposure')}</div>
     <div class="field"><label>Risk profile</label>
       <select class="inp inp-sm" data-portfield="risk">
         ${TYPES.map(t=>`<option ${d.risk===t?'selected':''}>${t}</option>`).join('')}</select></div>
     <div class="field"><label>Fees (annual fee / TER %)</label>
-      <div class="row"><input class="inp inp-sm" type="number" step="0.01" min="0" max="10"
-        data-portfield="fee" value="${esc(d.fee||'')}" placeholder="e.g. 0.85" style="max-width:150px"><span class="sub">% a year</span></div></div>
+      <div class="row"><input class="inp inp-sm${bad('fee')}" type="number" step="0.01" min="0" max="10"
+        inputmode="decimal" data-portfield="fee" value="${esc(d.fee===undefined?'':d.fee)}"
+        placeholder="e.g. 0.85" style="max-width:150px"><span class="sub">% a year</span></div>
+      <div class="sub">Optional · 0 to 10, two decimals</div>${e('fee')}</div>
     <div class="field"><label>Fees factsheet</label>
       <label class="btn btn-sm" style="width:100%;text-align:center">${d.factsheet?esc(d.factsheet):'Upload fees factsheet'}
-        <input type="file" data-portfsheet="1" hidden></label></div>
+        <input type="file" accept="application/pdf" data-portfsheet="1" hidden></label>
+      <div class="sub">Optional · PDF, up to 10 MB</div>${e('factsheet')}</div>
     <div class="actions"><button class="obtn obtn-pri" data-portsub="1">Submit for approval</button></div>
     <div class="legalnote">Vault22 reviews every submission. Once approved, the portfolio appears in
       your Portfolios list and can be assigned to clients.</div>`;
+}
+/* R6 B3: one validator, returning a map of field -> message. Nothing is coerced. */
+function validatePortDraft(d){
+  const err = {};
+  const name = (d.name||'').trim();
+  if(!name) err.name = 'Enter a portfolio name.';
+  else if(name.length > 80) err.name = 'Keep the name to 80 characters or fewer.';
+  const tk = (d.ticker||'').trim().toUpperCase();
+  if(!tk) err.ticker = 'Enter a ticker.';
+  else if(!/^[A-Z0-9]{3,10}$/.test(tk)) err.ticker = 'Tickers are 3 to 10 characters, letters and digits only.';
+  const rawMin = d.min;
+  if(rawMin === undefined || String(rawMin).trim() === '') err.min = 'Enter a minimum investment.';
+  else if(!/^\d+$/.test(String(rawMin).trim())) err.min = 'Enter a whole number of rands, 0 or more.';
+  const exp = (d.exposure||'').trim();
+  if(!exp) err.exposure = 'Describe the exposure.';
+  else if(exp.length > 80) err.exposure = 'Keep the exposure to 80 characters or fewer.';
+  if(!d.ccy) err.ccy = 'Choose a currency.';
+  if(!d.risk) err.risk = 'Choose a risk profile.';
+  if(d.fee !== undefined && String(d.fee).trim() !== ''){
+    const f = Number(d.fee);
+    if(!isFinite(f) || f < 0 || f > 10) err.fee = 'Fees must be between 0 and 10 percent.';
+  }
+  return err;
 }
 
 /* =====================================================================
@@ -4677,6 +5116,17 @@ function vLanding(){
       <span class="pill p-amber">Preview · what a prospect sees</span>
       <span class="sub">Start Investing and Get in touch are the prospect's actions.</span>
     </div>
+    <!-- R6 B1: the advisor's brand belongs at the TOP of the page, not only in the footer
+         co-brand strip. With no banner uploaded this band still carries their identity so the
+         top of the page is never empty. -->
+    <div class="lp-top">
+      ${logoOf(a) ? `<img src="${logoOf(a)}" alt="${esc(a.company||firm.name)} logo" class="lp-top-logo">`
+        : `<span class="lp-top-mark">${esc(initialsOf(a.company || a.name || firm.name))}</span>`}
+      <span class="lp-top-id">
+        <b>${esc(a.company || firm.name)}</b>
+        <span class="sub">${esc(a.name)}${a.licence ? ' · FSP ' + esc(a.licence) : ''}</span>
+      </span>
+    </div>
     <div class="grid2">
       <div class="card card-p">
         <span class="eyebrow teal">${esc(a.company || firm.name)}</span>
@@ -4711,9 +5161,18 @@ function vLanding(){
       <div class="card" style="overflow:hidden;min-height:460px;${img
         ? `background:url('${img}') center/cover`
         : `background:linear-gradient(135deg,var(--live-navy),var(--lp-theme,#01c38d))`}">
-        ${img ? '' : `<div style="height:100%;min-height:460px;display:grid;place-items:center;text-align:center;
-          padding:var(--v4-space-6);color:rgba(255,255,255,.85);font-size:13.5px;line-height:1.6">
-          Your landing image goes here. Upload one under My Profile, Customise (recommended 1200 x 300).</div>`}
+        ${img ? '' : `<div style="height:100%;min-height:460px;display:flex;flex-direction:column;
+          align-items:center;justify-content:center;gap:var(--v4-space-3);text-align:center;
+          padding:var(--v4-space-6);color:rgba(255,255,255,.92)">
+          ${logoOf(a) ? `<img src="${logoOf(a)}" alt="${esc(a.company||firm.name)} logo"
+              style="max-height:52px;max-width:220px;background:#fff;padding:10px 14px;border-radius:10px">`
+            : `<span style="width:56px;height:56px;border-radius:14px;background:rgba(255,255,255,.18);
+                 display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:18px">
+                 ${esc(initialsOf(a.company || a.name || firm.name))}</span>`}
+          <b style="font-size:19px">${esc(a.company || firm.name)}</b>
+          <span style="font-size:13.5px;opacity:.85">${esc(a.name)}</span>
+          <span style="font-size:12.5px;opacity:.7;max-width:280px;line-height:1.6">
+            Add a banner under My Profile, Customise (recommended 1200 x 300) to replace this.</span></div>`}
       </div>
     </div>
 
@@ -4816,10 +5275,12 @@ function customiseDrawer(){
       <button class="x" data-close="1">×</button></div>
     <div class="field" style="margin-top:var(--v4-space-4)"><label>Advisor profile picture</label>
       ${a.photo ? `<img src="${a.photo}" alt="" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;margin-bottom:8px">` : ''}
-      ${imgPicker('photo','Upload profile picture', true)}</div>
-    <div class="field"><label>Upload banner (recommended 1200 x 300)</label>
+      ${imgPicker('photo','Upload profile picture', true)}
+      <div class="sub">Shown on your profile card and next to your name.</div></div>
+    <div class="field"><label>Banner</label>
       ${a.banner ? `<div style="height:60px;border-radius:8px;margin-bottom:8px;background:url('${a.banner}') center/cover"></div>` : ''}
-      ${imgPicker('banner','Upload banner', true)}</div>
+      ${imgPicker('banner','Upload banner', true)}
+      <div class="sub">The hero image at the top of your landing page. Recommended 1200 x 300.</div></div>
     <div class="field"><label>Full name</label><input class="inp" ${bind('advisor.name')}></div>
     <div class="field"><label>Website name</label>
       <div class="row"><input class="inp" id="lp_slug" value="${esc(a.slug)}" autocomplete="off" spellcheck="false">
@@ -5080,8 +5541,8 @@ function taraLineRow(c, l, who){
         return `<div class="sub" style="font-size:10.5px">${d===0?'no change':(d>0?'+':'−')+money(Math.abs(d))}</div>`; })() : ''}</div>
     ${who==='client' ? (()=>{ const sg=(state.taraSuggestion[c.id]||{});
       const done = sg.invested || (sg.actioned||{})[a.ticker];
-      return done ? '<span class="pill p-green" style="min-width:74px;text-align:center">Done</span>'
-        : `<button class="btn btn-sm btn-pri" data-tarainvest="${a.ticker}" style="min-width:74px">Invest</button>`; })() : ''}
+      return done ? '<button class="btn btn-sm btn-done" style="min-width:74px;justify-content:center" disabled>Done</button>'
+        : `<button class="btn btn-sm btn-pri" data-tarainvest="${a.ticker}" style="min-width:74px;justify-content:center">Invest</button>`; })() : ''}
     ${rm}
   </div>`;
 }
@@ -5342,9 +5803,9 @@ function vProfile(){
         ${membershipCard()}
         <div class="card card-p mt">
           <div class="sec-t">Your company logo</div>
-          <p class="lede" style="margin-bottom:var(--v4-space-3)">Shows on your landing page, your
-            advisor profile card and your clients' footer. Leave it empty to use your firm's shared
-            logo instead.</p>
+          <p class="lede" style="margin-bottom:var(--v4-space-3)">Shown at the top of your landing
+            page, on your advisor profile card and in your clients' footer. Leave it empty to use
+            your firm's shared logo instead.</p>
           ${a.logo ? `<img src="${a.logo}" alt="Your company logo"
             style="max-height:44px;display:block;margin-bottom:8px">`
             : (state.firm && state.firm.logo) ? `<div style="margin-bottom:8px">
@@ -5392,7 +5853,9 @@ function vPermissions(){
                                  : 'You may not change this portfolio'}</div></span>
           <span class="row" style="gap:var(--v4-space-2)">
             <span class="pill ${poa?'p-amber':req?'p-blue':'p-gray'}">${poa?'Power of attorney':req?'Requested':'Not granted'}</span>
-            ${!poa && !req ? `<button class="btn btn-sm" data-reqpoa="${c.id}">Request</button>` : ''}</span></div>`;
+            ${poa ? '' : req
+              ? `<button class="btn btn-sm btn-done" disabled>Requested</button>`
+              : `<button class="btn btn-sm" data-reqpoa="${c.id}">Request</button>`}</span></div>`;
       }).join('')}
       <p class="legalnote" style="margin-top:var(--v4-space-3)">Requesting sends the client a POPIA-style
         authorisation they approve in their own app. You can act only once they grant it.</p>
@@ -5407,28 +5870,36 @@ const AUDIT_CATEGORIES = [
   ['Signed in',          /signed in|account verified|created advisor account|completed advisor onboarding/i],
   ['Viewed profile',     /viewed|opened document|opened fund fact sheet|opened tara/i],
   ['Requested access',   /requested (all )?data access|requested (financial|investment|risk)/i],
-  ['Consent',            /granted|withdrew|revoked|consent/i],
+  ['Consent',            /consent|granted (all )?(requested )?data|withdrew|revoked/i],
   ['Document',           /document|uploaded file|removed file/i],
   ['KYC',                /kyc/i],
   ['Risk assessment',    /risk assessment/i],
   ['Meeting',            /meeting|calendar invite/i],
-  ['Portfolio change',   /portfolio|power of attorney|fact sheet/i],
-  ['Invested',           /invested|sold/i],
+  ['Portfolio change',   /portfolio|fact sheet/i],
+  ['Invested',           /invest(ed|ment)|sold|funded/i],
+  ['Power of attorney',  /power of attorney/i],
   ['Advisor appointed',  /appointed advisor|removed advisor|invited an advisor/i],
   ['Exported',           /exported|downloaded/i],
   ['Settings',           /updated|renamed|chose advisor name|removed (company|firm) logo|account status/i],
   ['CRM',                /note|tag|task|follow-up/i]
 ];
 const auditCategory = a => (AUDIT_CATEGORIES.find(([,re])=>re.test(a.act||'')) || ['Other'])[0];
+/* R6 C2: one predicate, shared by the view and the export. They had drifted: the export kept
+   exact-match on a category name that can never equal a raw action string, so a filtered export
+   wrote an empty file while the screen showed rows. */
+function auditRowsFor(af){
+  af = af || {who:'', act:'', date:''};
+  const q = (af.who||'').trim().toLowerCase();
+  return state.audit.filter(a =>
+    (!q       || auditWho(a).toLowerCase().includes(q)) &&
+    (!af.act  || auditCategory(a) === af.act) &&
+    (!af.date || (a.ts||'').slice(0,10) === af.date));
+}
 function vAudit(){
   const af = state.auditFilter || {who:'', act:'', date:''};
   /* R5 0.4: user is a free-text search over ALL clients, not a dropdown of those who happen to
      have activity, so a client with no events is findable and returns an honest empty state. */
-  const q = (af.who||'').trim().toLowerCase();
-  const rows = state.audit.filter(a =>
-    (!q      || auditWho(a).toLowerCase().includes(q)) &&
-    (!af.act || auditCategory(a) === af.act) &&
-    (!af.date || (a.ts||'').slice(0,10) === af.date));
+  const rows = auditRowsFor(af);
   return `
     <div class="page-head"><h1>Audit Log</h1>
       <p class="lede">Every advisor action is logged. Actions you take in this prototype are appended
@@ -5457,9 +5928,16 @@ function vAudit(){
           <td class="num sub">${fmtDate(a.ts)}<div style="font-size:10.5px;opacity:.7">${rel(a.ts)}</div></td><td class="nm">${esc(a.act)}</td>
           <td class="sub">${esc(a.tgt)}</td></tr>`).join('')}</tbody>
       </table></div>`
-      : `<div class="empty"><div class="em">◎</div><h3>No matching events</h3>
-          <p>Nothing matches these filters.</p>
-          <button class="btn" data-auditf="__clear">Clear filters</button></div>`}
+      : (()=>{ /* R6 C6: resolve the query against ALL clients, so "this client has done nothing"
+             reads differently from "you spelled it wrong". */
+          const q = (af.who||'').trim().toLowerCase();
+          const hit = q ? state.customers.concat(state.leads)
+            .find(c => (c.name||'').toLowerCase().includes(q)) : null;
+          return `<div class="empty"><div class="em">◎</div>
+            <h3>${hit ? esc(hit.name) + ' has no recorded activity' : 'No matching events'}</h3>
+            <p>${hit ? 'They are on your book, but nothing has been logged against them yet.'
+                     : 'Nothing matches these filters.'}</p>
+            <button class="btn" data-auditf="__clear">Clear filters</button></div>`; })()}
       </div>
     </div>`;
 }
@@ -5698,7 +6176,9 @@ function clientShell(body){
         <span class="cfoot-soc">${['in','X','f','◎','▶'].map(s=>`<span class="soc">${s}</span>`).join('')}</span>
       </footer>
       ${state.linkedAdvisor ? (()=>{ const la = state.linkedAdvisor;
-        const flogo = la.logo || (state.firm && state.firm.name === la.firm ? state.firm.logo : null) || logoOf(la);
+        /* R6 C4: the same-firm guard was defeated by a trailing logoOf(la), which resolves to
+           the logged-in user's firm logo. A different firm falls back to its NAME, never our logo. */
+        const flogo = la.logo || (state.firm && state.firm.name === la.firm ? state.firm.logo : null);
         return `<div class="cobrand cfoot-cobrand">
           ${flogo ? `<img src="${flogo}" alt="${esc(la.firm)} logo" class="cobrand-logo">`
             : `<span class="cobrand-firm">${esc(la.firm)}</span>`}
@@ -5822,21 +6302,33 @@ return openModal(`
 }
 /* Rewrites the client's holdings to the suggested portfolio, drops the disposals, and
  recomputes portfolio value and allocation. The advisor reads the same objects. */
-function applyTaraSuggestion(){
-const c = liveClient(CLIENT_ID); const sug = (state.taraSuggestion||{})[CLIENT_ID];
-if(!c || !sug) return;
-const P = taraPlan(c, sug);
-c.holdings = P.buys.filter(b=>b.target>0).map(b => ({
-  p:b.name, tk:b.ticker, mv:b.target, u:0, r:0, d:TODAY_STR
-}));
-c.pv = P.buys.reduce((s,b)=>s+b.target,0);
-const alloc = {}; P.buys.forEach(b => { alloc[b.cls] = (alloc[b.cls]||0) + b.weight; });
-c.alloc = alloc;
-state.portfolioChanges = state.portfolioChanges || {};
-(state.portfolioChanges[CLIENT_ID] = state.portfolioChanges[CLIENT_ID] || []).unshift({
-  ts: localISO(new Date()), bought: P.bought, sold: P.sold, total: P.total,
-  by: sug.from || 'your advisor'
-});
+function applyTaraSuggestion(opts){
+  opts = opts || {};
+  const c = liveClient(CLIENT_ID); const sug = (state.taraSuggestion||{})[CLIENT_ID];
+  if(!c || !sug) return;
+  const P = taraPlan(c, sug);
+  /* R6 C8: units derived from the amount rather than written as u:0, and dated the same day
+     as the change record instead of the prototype's fixed TODAY_STR. */
+  const _today = localISO(new Date()).slice(0,10);
+  const prevHoldings = c.holdings || [];
+  c.holdings = P.buys.filter(b=>b.target>0).map(b => {
+    const prev = prevHoldings.find(h => h.tk === b.ticker);
+    const px = (prev && prev.u) ? (prev.mv / prev.u) : 100;
+    return {p:b.name, tk:b.ticker, mv:b.target,
+            u: Math.round(b.target / px * 100) / 100,
+            r: prev ? prev.r : 0, d: _today};
+  });
+  c.pv = P.buys.reduce((s,b)=>s+b.target,0);
+  const alloc = {}; P.buys.forEach(b => { alloc[b.cls] = (alloc[b.cls]||0) + b.weight; });
+  c.alloc = alloc;
+  /* R6 C1: a replay after a scenario switch restores the holdings but must NOT log the
+     change again, or the record multiplies on every advisor<->client hop. */
+  if(opts.replay) return;
+  state.portfolioChanges = state.portfolioChanges || {};
+  (state.portfolioChanges[CLIENT_ID] = state.portfolioChanges[CLIENT_ID] || []).unshift({
+    ts: localISO(new Date()), bought: P.bought, sold: P.sold, total: P.total,
+    by: sug.from || 'your advisor'
+  });
 }
 
 function vClientProfile(){
@@ -5955,8 +6447,8 @@ function vClientProfile(){
           <div class="num tara-cur" style="min-width:104px;text-align:right">
             <span class="sub" style="display:block;font-size:10.5px">Current holding</span>${money(h.mv||0)}</div>
           <div class="num" style="min-width:96px;text-align:right"><b>${money(0)}</b></div>
-          ${(sug.invested || sold[h.p]) ? '<span class="pill p-green" style="min-width:74px;text-align:center">Sold</span>'
-            : `<button class="btn btn-sm" data-tarasell="${esc(h.p)}" style="min-width:74px">Sell</button>`}
+          ${(sug.invested || sold[h.p]) ? '<button class="btn btn-sm btn-done" style="min-width:74px;justify-content:center" disabled>Sold</button>'
+            : `<button class="btn btn-sm" data-tarasell="${esc(h.p)}" style="min-width:74px;justify-content:center">Sell</button>`}
         </div>`).join('')}</div>`; })()}
       ${sug.invested ? '' : `<div class="actions" style="margin-top:var(--v4-space-4)">
         <button class="btn" data-taraactionall="1">Action all</button>
@@ -6717,14 +7209,6 @@ function restoreSession(){
     return true;
   }catch(_){ return false; }
 }
-/* R5 0.2: render() rewrites #view wholesale, so the browser drops scroll position. Genuine
-   navigation SHOULD go to the top (go() calls scrollTo(0,0)); an in-place toggle should not.
-   Use this for any control that repaints the page you are already reading. */
-function renderKeepingScroll(){
-  const y = window.scrollY;
-  render();
-  window.scrollTo(0, y);
-}
 function render(){
   /* §2.1/§2.2 themes, applied before any early return so every branch honours them.
      Navy accent is advisor-only; the client app always stays green. */
@@ -6842,6 +7326,7 @@ document.addEventListener('click', e => {
     state.consent = null; state.poa = null; state.docs = null;
     state.crm = {}; state.clientReminders = []; state.taraSuggestion = {}; state.taraDraft = {};
     state.riskReq = {}; state.riskDates = {}; state.setup = {}; state.poaReq = {}; state.kycReq = {};
+    state.portfolioChanges = {};   /* R6 C3: otherwise a change record outlives the suggestion */
     /* undefined, not null: the scenario default must reapply on a genuine reset. */
     state.linkedAdvisor = undefined; state.prevAdvisor = null;
     state.filters = new Set(); state.leadSel = new Set();
@@ -7167,9 +7652,7 @@ document.addEventListener('click', e => {
   /* P1.8: export the (filtered) audit log as CSV. */
   if(t.dataset.auditexport){
     const af = state.auditFilter || {who:'',act:'',date:''};
-    const rows = state.audit.filter(a =>
-      (!af.who || auditWho(a) === af.who) && (!af.act || a.act === af.act) &&
-      (!af.date || (a.ts||'').slice(0,10) === af.date));
+    const rows = auditRowsFor(af);        /* R6 C2: same predicate the screen uses */
     const csv = toCSV(['When','Action','Target','Client'],
       rows.map(a => [fmtDate(a.ts) + ' ' + (a.ts||'').slice(11,16), a.act, a.tgt || '', a.who ? crmWho(a.who) : '']));
     downloadText(csv, 'vault22-audit-log-' + TODAY_STR + '.csv', 'text/csv');
@@ -7319,7 +7802,8 @@ document.addEventListener('click', e => {
   }
   /* R4 6.2: per-asset actions on the suggested portfolio. Invest marks an addition as
      bought, Sell marks a disposal as sold, Action all applies every outstanding one.
-     Prototype-level execution: state + audit, no real order is placed. */
+     Execution is applied to live state (holdings, portfolio value, allocation) and audited;
+     no real market order is placed. */
   /* R4 1.1: expand one chart to a full-screen takeover, and back. */
   if(t.dataset.chartfull){
     /* R5 0.2 (fix): on close, window.scrollY is the takeover's own position (~0), not the
@@ -7430,15 +7914,21 @@ document.addEventListener('click', e => {
   if(t.dataset.addport){ state.portDraft = {ccy:'ZAR', risk:'Balanced'}; return openModal(addPortDrawer()); }
   if(t.dataset.portsub){
     const d = state.portDraft || {};
-    if(!(d.name||'').trim()) return toast('Give the portfolio a name');
-    if(!(d.ticker||'').trim()) return toast('Enter a ticker');
+    const perr = validatePortDraft(d);
+    if(Object.keys(perr).length){
+      state.portErr = perr;
+      openModal(addPortDrawer());
+      return toast('Check the highlighted fields');
+    }
+    state.portErr = null;
     state.subPorts = state.subPorts || [];
-    state.subPorts.unshift({name:d.name.trim(), ticker:(d.ticker||'').trim().toUpperCase(),
-      min:+d.min||0, ccy:d.ccy||'ZAR', exposure:d.exposure||'', risk:d.risk||'Balanced',
-      fee:(d.fee!==undefined && d.fee!=='') ? +d.fee : null,
-      factsheet:d.factsheet||'', status:'Pending approval'});
+    state.subPorts.unshift({name:d.name.trim(), ticker:d.ticker.trim().toUpperCase(),
+      min:parseInt(String(d.min).trim(),10), ccy:d.ccy||'ZAR', exposure:d.exposure.trim(),
+      risk:d.risk||'Balanced',
+      fee:(d.fee!==undefined && String(d.fee).trim()!=='') ? Number(d.fee) : null,
+      factsheet:d.factsheet||'', status:'Pending approval', by:state.advisor.name});
     audit('Submitted portfolio for approval', d.name.trim());
-    state.portDraft = null;
+    state.portDraft = null; state.portErr = null;
     closeModal(); render();
     return toast(d.name.trim() + ' submitted. It appears once Vault22 approves it.');
   }
@@ -7948,7 +8438,10 @@ document.addEventListener('change', e => {
     return openModal(addPortDrawer());
   }
   /* §12.2 audit filters. */
-  if(e.target.dataset && e.target.dataset.auditf && e.target.dataset.auditf !== '__clear'){
+  /* R6 C7: 'who' is a text input handled live by the input listener. Letting change ->
+     render() run on Enter repainted the page and lost the caret. */
+  if(e.target.dataset && e.target.dataset.auditf && e.target.dataset.auditf !== '__clear'
+     && e.target.dataset.auditf !== 'who'){
     state.auditFilter = state.auditFilter || {who:'',act:'',date:''};
     state.auditFilter[e.target.dataset.auditf] = e.target.value;
     return render();
