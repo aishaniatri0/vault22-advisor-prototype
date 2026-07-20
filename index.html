@@ -2001,7 +2001,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-20.9';
+const BUILD_VERSION = '2026-07-21.1';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -2169,7 +2169,7 @@ document.addEventListener('input', e => {
   if(e.target.id === 'auditWho'){
     state.auditFilter = state.auditFilter || {who:'',act:'',date:''};
     state.auditFilter.who = e.target.value;
-    return liveRegion('auditRows', vAudit);
+    return liveRegion(['auditRows','auditCount'], vAudit);
   }
   const el = e.target.closest('[data-bind]');
   if(!el) return;
@@ -3989,6 +3989,9 @@ function reportPDF(p){
   const inc=p.income||0, sav=p.sav||0, ef=p.ef||0, pv=p.pv||0, invd=p.inv||0;
   const growth=pv-invd, ffs=p.ffs||0;
   const stage = ffs>=750?'Optimise':ffs>=650?'Grow':ffs>=550?'Stabilise':'Survive';
+  /* R6 QA: the screen carries a Valid until date; the PDF omitted it, so the two told
+     different stories in the one place the comment says they must not. */
+  const validTo = fmtDate(localISO(new Date(NOW.getFullYear(), NOW.getMonth()+1, NOW.getDate())).slice(0,10));
   const oblig = Math.round(liab*0.016);
   const dti = inc?Math.round(oblig/inc*100):0;
   const essential = Math.round(inc*0.465);
@@ -4002,6 +4005,7 @@ function reportPDF(p){
     'Account holder: ' + p.name,
     'Report date: ' + fmtDate(TODAY_STR),
     'Report ID: V22-CFI-' + TODAY_STR.replace(/-/g,'') + '-' + (p.id||'C0'),
+    'Valid until: ' + validTo,
     'Prepared by: ' + a.name + (a.licence ? '   ' + a.licence : ''),
     '',
     'EXECUTIVE SUMMARY',
@@ -4069,6 +4073,20 @@ function reportPDF(p){
     '',
     'FLAGGED TRANSACTIONS',
     'Not yet collected: transaction-level monitoring requires a linked bank feed.',
+    '',
+    'COVER BY TYPE',
+    'Life: ' + (p.insurance ? 'declared' : 'not recorded'),
+    'Disability: not recorded    Income protection: not recorded    Medical gap: not recorded',
+    'Not yet collected: cover is a single declared total, per-type policies are not captured.',
+    '',
+    'CROSS-SELL OPPORTUNITIES',
+    ...[
+      [!p.insurance || p.insurance < inc*12*3, 'Income protection (High)'],
+      [savRate < 20,        'Raise the savings rate (High)'],
+      [dti > 30,            'Debt consolidation (' + (dti>43?'High':'Med') + ')'],
+      [pv > 0,              'Tax-free allowance (Med)'],
+      [(p.extAum||0) > 0,   'Consolidate external assets (Med)']
+    ].filter(x=>x[0]).map(([,t])=>'  ' + t),
     '',
     'Data consent and methodology. Generated with the explicit consent of the data subject under',
     'POPIA, 2013. Affordability figures are estimates derived from declared income and modelled',
@@ -4626,11 +4644,11 @@ function addPortDrawer(){
         <p class="lede">Submitted for Vault22 approval before it appears on your platform</p></div>
       <button class="x" data-close="1">×</button></div>
     <div class="field" style="margin-top:var(--v4-space-4)"><label>Portfolio name</label>
-      <input class="inp inp-sm${bad('name')}" data-portfield="name" maxlength="80"
+      <input class="inp inp-sm${bad('name')}" data-portfield="name"
         value="${esc(d.name||'')}" placeholder="Fund name">
       <div class="sub">Required · up to 80 characters</div>${e('name')}</div>
     <div class="field"><label>Ticker</label>
-      <input class="inp inp-sm${bad('ticker')}" data-portfield="ticker" maxlength="10"
+      <input class="inp inp-sm${bad('ticker')}" data-portfield="ticker"
         value="${esc(d.ticker||'')}" placeholder="e.g. STX40" style="text-transform:uppercase">
       <div class="sub">Required · 3 to 10 characters, letters and digits only</div>${e('ticker')}</div>
     <div class="field"><label>Minimum investment amount</label>
@@ -4639,9 +4657,9 @@ function addPortDrawer(){
       <div class="sub">Required · whole rands, 0 or more</div>${e('min')}</div>
     <div class="field"><label>Currency</label>
       <select class="inp inp-sm" data-portfield="ccy">
-        ${['ZAR','USD','GBP','EUR','AED'].map(c=>`<option ${d.ccy===c?'selected':''}>${c}</option>`).join('')}</select></div>
+        ${['ZAR','USD'].map(c=>`<option ${d.ccy===c?'selected':''}>${c}</option>`).join('')}</select></div>
     <div class="field"><label>Exposure</label>
-      <input class="inp inp-sm${bad('exposure')}" data-portfield="exposure" maxlength="80"
+      <input class="inp inp-sm${bad('exposure')}" data-portfield="exposure"
         value="${esc(d.exposure||'')}" placeholder="e.g. SA equity, global bonds">
       <div class="sub">Required · up to 80 characters</div>${e('exposure')}</div>
     <div class="field"><label>Risk profile</label>
@@ -4681,6 +4699,9 @@ function validatePortDraft(d){
     const f = Number(d.fee);
     if(!isFinite(f) || f < 0 || f > 10) err.fee = 'Fees must be between 0 and 10 percent.';
   }
+  /* R6 QA: the file input's accept= is only a picker hint. Drag-and-drop or switching the
+     picker to "All files" walked a 12 MB .exe straight through, so the rule lives here too. */
+  if(d.factsheetErr) err.factsheet = d.factsheetErr;
   return err;
 }
 
@@ -5124,7 +5145,7 @@ function vLanding(){
         : `<span class="lp-top-mark">${esc(initialsOf(a.company || a.name || firm.name))}</span>`}
       <span class="lp-top-id">
         <b>${esc(a.company || firm.name)}</b>
-        <span class="sub">${esc(a.name)}${a.licence ? ' · FSP ' + esc(a.licence) : ''}</span>
+        <span class="sub">${esc(a.name)}${a.licence ? ' · ' + esc(a.licence) : ''}</span>
       </span>
     </div>
     <div class="grid2">
@@ -5280,7 +5301,8 @@ function customiseDrawer(){
     <div class="field"><label>Banner</label>
       ${a.banner ? `<div style="height:60px;border-radius:8px;margin-bottom:8px;background:url('${a.banner}') center/cover"></div>` : ''}
       ${imgPicker('banner','Upload banner', true)}
-      <div class="sub">The hero image at the top of your landing page. Recommended 1200 x 300.</div></div>
+      <div class="sub">The tall image panel on the right of your landing page. Recommended 900 x 1200 (portrait) -
+        a wide banner will be cropped.</div></div>
     <div class="field"><label>Full name</label><input class="inp" ${bind('advisor.name')}></div>
     <div class="field"><label>Website name</label>
       <div class="row"><input class="inp" id="lp_slug" value="${esc(a.slug)}" autocomplete="off" spellcheck="false">
@@ -5812,6 +5834,8 @@ function vProfile(){
                 <img src="${state.firm.logo}" alt="Firm logo" style="max-height:44px;display:block;opacity:.75">
                 <span class="sub">Using your firm's shared logo</span></div>` : ''}
           ${imgPicker('logo', a.logo ? 'Replace logo' : 'Upload logo', true)}
+          <div class="sub" style="margin-top:6px">Shown at the top of your landing page and on your
+            profile card. Recommended 400 x 100 (landscape), PNG with a transparent background.</div>
           ${a.logo ? `<button class="btn btn-sm mt" data-rmlogo="1" style="width:100%">Remove logo</button>` : ''}
         </div>
       </div>
@@ -5866,22 +5890,27 @@ const auditWho = a => a.who ? crmWho(a.who) : (a.tgt || '');
 /* R5 0.4: a FIXED action taxonomy, independent of what happens to be in the log. The old
    filter built its options from log contents, so its vocabulary changed as the demo was used.
    Each category owns a matcher over the raw action text, which stays free-form for display. */
+/* R6 QA: first match wins, so order runs most specific to most general. Getting this wrong
+   splits one workflow across two categories, which is what happened before: "Client revoked
+   power of attorney" was caught by Consent's /revoked/ while "Client granted power of attorney"
+   reached Power of attorney. Anything added here goes ABOVE the general catchers, not below. */
 const AUDIT_CATEGORIES = [
-  ['Signed in',          /signed in|account verified|created advisor account|completed advisor onboarding/i],
-  ['Viewed profile',     /viewed|opened document|opened fund fact sheet|opened tara/i],
-  ['Requested access',   /requested (all )?data access|requested (financial|investment|risk)/i],
-  ['Consent',            /consent|granted (all )?(requested )?data|withdrew|revoked/i],
-  ['Document',           /document|uploaded file|removed file/i],
+  ['Power of attorney',  /power of attorney/i],
   ['KYC',                /kyc/i],
   ['Risk assessment',    /risk assessment/i],
+  ['Invested',           /invest(ed|ment|ing)|sold|funded/i],
+  ['Consent',            /consent|granted|withdrew|revoked/i],
+  ['Requested access',   /requested (all )?data access|requested (financial|investment|risk) access/i],
   ['Meeting',            /meeting|calendar invite/i],
+  ['Document',           /document|uploaded file|removed file/i],
   ['Portfolio change',   /portfolio|fact sheet/i],
-  ['Invested',           /invest(ed|ment)|sold|funded/i],
-  ['Power of attorney',  /power of attorney/i],
   ['Advisor appointed',  /appointed advisor|removed advisor|invited an advisor/i],
+  ['Landing page',       /landing[- ]page|registered user via|enquiry|copied .*link|emailed selected/i],
   ['Exported',           /exported|downloaded/i],
+  ['CRM',                /note|tag|task|follow-up/i],
   ['Settings',           /updated|renamed|chose advisor name|removed (company|firm) logo|account status/i],
-  ['CRM',                /note|tag|task|follow-up/i]
+  ['Signed in',          /signed in|account verified|created advisor account|completed advisor onboarding/i],
+  ['Viewed profile',     /viewed|opened/i]
 ];
 const auditCategory = a => (AUDIT_CATEGORIES.find(([,re])=>re.test(a.act||'')) || ['Other'])[0];
 /* R6 C2: one predicate, shared by the view and the export. They had drifted: the export kept
@@ -5906,7 +5935,7 @@ function vAudit(){
         here live. Permissions in force and power of attorney are under Permissions.</p></div>
     <div class="card">
       <div class="card-head"><div class="row"><h2>Recent activity</h2>
-        <span class="pill p-gray">${plural(rows.length,'event')}</span></div>
+        <span class="pill p-gray" id="auditCount">${plural(rows.length,'event')}</span></div>
         <button class="btn btn-sm" data-auditexport="1">Export CSV</button></div>
       <div class="card-p" style="padding-top:0;padding-bottom:var(--v4-space-4)">
         <div class="row" style="flex-wrap:wrap;gap:var(--v4-space-3)">
@@ -7177,8 +7206,9 @@ function vModeration(){
           <td>${x.status==='Pending approval' ? `<span class="row" style="gap:var(--v4-space-2);justify-content:flex-end">
               <button class="btn btn-sm btn-pri" data-approveport="${i}">Approve</button>
               <button class="btn btn-sm" data-modq="${i}">Reject</button></span>`
-            : x.status==='Approved' ? '<span class="sub">Live on the advisor platform</span>'
-            : '<span class="sub">Not approved</span>'}</td></tr>`).join('')}</tbody>
+            : `<span class="row" style="gap:var(--v4-space-2);justify-content:flex-end">
+                 <button class="btn btn-sm btn-done" disabled>${x.status==='Approved'?'Approved':'Rejected'}</button></span>`
+          }</td></tr>`).join('')}</tbody>
       </table></div>` : `<div class="empty"><div class="em">◎</div><h3>Nothing to review</h3>
         <p>Advisor submissions appear here for approval.</p></div>`}
       </div>
@@ -7290,11 +7320,16 @@ let _lastScreen = '';
    destroys the focused input and races the caret restore, corrupting the value, e.g.
    "750000" becoming "5795000"). Instead re-run the current view/screen builder and swap
    only the named results region in place, leaving the focused input untouched. */
-function liveRegion(regionId, build){
-  const live = document.getElementById(regionId); if(!live) return;
+/* R6 QA: takes one id or several. The audit count pill sits outside the rows region, so
+   refreshing only the rows left the header claiming "19 events" over 7 displayed rows. */
+function liveRegion(regionIds, build){
+  const ids = [].concat(regionIds);
   const tmp = document.createElement('div'); tmp.innerHTML = build();
-  const fresh = tmp.querySelector('#'+regionId);
-  if(fresh) live.innerHTML = fresh.innerHTML;
+  ids.forEach(id => {
+    const live = document.getElementById(id); if(!live) return;
+    const fresh = tmp.querySelector('#' + id);
+    if(fresh) live.innerHTML = fresh.innerHTML;
+  });
 }
 
 document.addEventListener('click', e => {
@@ -7327,6 +7362,12 @@ document.addEventListener('click', e => {
     state.crm = {}; state.clientReminders = []; state.taraSuggestion = {}; state.taraDraft = {};
     state.riskReq = {}; state.riskDates = {}; state.setup = {}; state.poaReq = {}; state.kycReq = {};
     state.portfolioChanges = {};   /* R6 C3: otherwise a change record outlives the suggestion */
+    /* R6 QA: the confirm text promises to clear everything changed this session, so these go
+       too. All of them are seeded behind `if(!x)` in loadScenario, so nulling reseeds them. */
+    state.clientPhoto = null;      /* uploaded client picture survived and still read 100% complete */
+    state.firm = null;             /* firm logo and name edits showed on the landing page after reset */
+    state.subPorts = null;         /* submitted portfolios and admin approve/reject decisions */
+    state.qual = null; state.nprefs = null;
     /* undefined, not null: the scenario default must reapply on a genuine reset. */
     state.linkedAdvisor = undefined; state.prevAdvisor = null;
     state.filters = new Set(); state.leadSel = new Set();
@@ -8432,9 +8473,19 @@ document.addEventListener('change', e => {
     return;
   }
   if(e.target.dataset && e.target.dataset.portfsheet && e.target.files && e.target.files[0]){
+    const f = e.target.files[0];
     state.portDraft = state.portDraft || {};
-    state.portDraft.factsheet = e.target.files[0].name;
-    toast(e.target.files[0].name + ' attached');
+    /* R6 QA: PDF only, 10 MB ceiling. accept= is advisory; this is the actual gate. */
+    const isPdf = f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+    if(!isPdf){
+      state.portDraft.factsheet = ''; state.portDraft.factsheetErr = 'The factsheet must be a PDF.';
+    } else if(f.size > 10 * 1024 * 1024){
+      state.portDraft.factsheet = ''; state.portDraft.factsheetErr = 'Keep the factsheet under 10 MB.';
+    } else {
+      state.portDraft.factsheet = f.name; state.portDraft.factsheetErr = null;
+      toast(f.name + ' attached');
+    }
+    e.target.value = '';
     return openModal(addPortDrawer());
   }
   /* §12.2 audit filters. */
