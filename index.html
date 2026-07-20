@@ -1772,6 +1772,10 @@ const consentOf = (id, k) => (state.consent[id] && state.consent[id][k]) || 'non
 const CONSENT_LABEL = {granted:'Granted', pending:'Requested', none:'Not shared'};
 const CONSENT_PILL  = {granted:'p-green', pending:'p-amber', none:'p-gray'};
 
+/* Do NOT declare linkedAdvisor here. Its absence is load-bearing: "never appointed" is
+   undefined (property absent, so JSON.stringify drops it and a restored session still reads
+   undefined), while null means "deliberately un-appointed" and must survive a scenario
+   switch. Seeding it here would collapse the two and silently re-appoint a removed advisor. */
 const state = {
   scen:'est', route:'dashboard', arg:null,
   mode:'light', viewTheme:'green',   /* §2.1/§2.2 — persist within the session */
@@ -1882,7 +1886,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-20.3';
+const BUILD_VERSION = '2026-07-20.4';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -3173,7 +3177,7 @@ function vCustomers(){
     <td class="num" style="color:${ch>=0?'var(--v4-success-dark)':'var(--v4-danger-dark)'}">
       ${ch>=0?'+':''}${ch.toFixed(1)}%</td>
     <td class="num">${money(feesFor(c,'Year to date'))}</td>
-    <td class="num sub">${lastContacted(c.id) || rel(c.lastLogin)}</td>
+    <td class="num sub">${fmtDate(lastContacted(c.id)) || rel(c.lastLogin)}</td>
     <td>${riskCell(c)}</td>
     <td><button class="btn btn-sm" data-cust="${c.id}">Profile ›</button></td>
   </tr>`;}).join('');
@@ -3253,7 +3257,7 @@ function tab8Overview(p){
     ['Net worth', p.nw!=null ? money(p.nw) : dash],
     ['Portfolio value', isCust ? money(p.pv) : dash],
     ['Fees earned (YTD)', isCust ? money(fees) : dash],
-    ['Last contact', lc ? lc : (p.lastLogin ? rel(p.lastLogin) : dash)],
+    ['Last contact', lc ? fmtDate(lc) : (p.lastLogin ? rel(p.lastLogin) : dash)],
     ['Last risk assessment', fmtDate(lastRiskDate(p)) || 'Not completed'],
     ['Acquisition source', esc(acqSource(p))]
   ];
@@ -4307,7 +4311,7 @@ function vAnalytics(){
 
   const period = state.anPeriod || 'This month';
   const M = analyticsFor(period);
-  const {win, inWin, asOf, Lend, custByEnd, signedByEnd, custEnd, invTotalEnd, aua, conv, srcCount} = M;
+  const {win, inWin, asOf, Lend, custByEnd, signedByEnd, custEnd, invTotalEnd, aua, conv, srcCount, newCust} = M;
   const notYetCust = signedByEnd - custEnd;
 
   /* §14 User Registration > Customer Funnel — cumulative across the 10 stages, as-of end. */
@@ -4331,7 +4335,9 @@ function vAnalytics(){
   const winMonths = Math.max(1, Math.round((win.e - win.s)/(30*86400000)));
   const aumGrowth = (aua - bookStart) + Math.round(bookStart * 0.009 * winMonths);
   const newUsers = Lend.filter(l=>inWin(l.signup)).length + C.filter(c=>inWin(c.signup)).length;
-  const newCust = C.filter(c=>inWin(c.since)).length;
+  /* R4QA3: newCust now comes from analyticsFor() with every other advertised figure.
+     Recomputing it here was a second definition of the same number, which is how the
+     export drifted from the screen in the first place. */
   const investedWin = C.reduce((s,c)=>s+(c.holdings||[]).filter(h=>inWin(h.d)).reduce((t,h)=>t+h.mv,0),0);
   const prod={}; custByEnd.forEach(c=>c.holdings.forEach(x=>prod[x.p]=(prod[x.p]||0)+x.mv));
   const prodTop=Object.entries(prod).sort((a,b)=>b[1]-a[1]); const prodMax=prodTop[0]?prodTop[0][1]:1;
@@ -6808,7 +6814,7 @@ document.addEventListener('click', e => {
         ['Metric','Value'],
         ['Period', win.label],
         ['Registered on website', M.signedByEnd], ['Customers', M.custEnd], ['Conversion %', conv],
-        ['Assets under advice (R)', aua], ['Total invested (R)', inv],
+        ['Assets under advice (R)', aua], ['Total invested as at period end (R)', inv],
         ['', ''], ['Source','Signups'],
         ...Object.entries(bySource).map(([s,n])=>[s,n])
       ];
@@ -6818,7 +6824,7 @@ document.addEventListener('click', e => {
         'VAULT22 ADVISOR', 'Analytics report', state.advisor.name + (state.advisor.licence?'   '+state.advisor.licence:''),
         'Generated ' + fmtDate(TODAY_STR), 'Period: ' + win.label, '',
         'Registered on website: ' + M.signedByEnd, 'Customers: ' + M.custEnd, 'Conversion: ' + conv + '%',
-        'Assets under advice: R' + aua.toLocaleString('en-US'), 'Total invested: R' + inv.toLocaleString('en-US'), '',
+        'Assets under advice: R' + aua.toLocaleString('en-US'), 'Total invested as at period end: R' + inv.toLocaleString('en-US'), '',
         'Acquisition by source:', ...Object.entries(bySource).map(([s,n])=>'  ' + s + ': ' + n)
       ], 'vault22-analytics-' + slug + '.pdf');
     }
