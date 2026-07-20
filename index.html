@@ -2001,7 +2001,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-21.1';
+const BUILD_VERSION = '2026-07-21.2';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -2070,7 +2070,7 @@ const NAV = [
    nav rather than borrowing the advisor's. */
 const ADMIN_NAV = [
   {sep:'Vault22 admin'},
-  {id:'moderation',label:'Portfolio moderation',ic:'portfolios'}
+  {id:'moderation',label:'Model portfolios',ic:'portfolios'}
 ];
 function renderNav(){
   const NAVSET = state.scen === 'admin' ? ADMIN_NAV : NAV;
@@ -2108,7 +2108,7 @@ function closeGlobalSearch(){
    state.backTo is set only by controls that drill in (Preview my Client
    Platform, opening a customer) and cleared by any sidebar nav click, so
    top-level destinations never show a Back they don't need. */
-const ROUTE_LABEL = {moderation:'Portfolio moderation', dashboard:'Dashboard', leads:'Registered Users', customers:'Customers',
+const ROUTE_LABEL = {moderation:'Model portfolios', dashboard:'Dashboard', leads:'Registered Users', customers:'Customers',
   risk:'Risk Profiles', portfolios:'Portfolios', analytics:'Analytics',
   landing:'Landing Page', profile:'My Profile', team:'Firm team',
   invites:'Invite advisors', permissions:'Permissions', audit:'Audit Log',
@@ -2372,7 +2372,7 @@ function protoDrawer(){
            lives in its own Vault22 admin scenario with its own left-nav section. -->
       <div class="pd-sec" style="margin-top:var(--v4-space-5)">Vault22 admin</div>
       <p class="pd-note" style="margin:0 0 6px">Switch to the <b>Vault22 admin</b> scenario above to
-        reach the portfolio moderation queue.</p>
+        reach <b>Model portfolios</b>.</p>
 
       <div class="pd-sec" style="margin-top:var(--v4-space-5)">Demo</div>
       <button class="btn" style="width:100%;justify-content:center" data-resetdemo="1">↺ Reset demo</button>
@@ -7181,8 +7181,8 @@ function vModeration(){
   const subs = state.subPorts || [];
   const pending = subs.filter(x=>x.status==='Pending approval');
   return `
-    <div class="page-head"><h1>Portfolio moderation</h1>
-      <p class="lede">Portfolios submitted by advisors. Vault22 reviews every submission; a portfolio
+    <div class="page-head"><h1>Model portfolios</h1>
+      <p class="lede">Model portfolios submitted by advisors. Vault22 reviews every submission; a portfolio
         only appears on an advisor's platform once approved.</p></div>
     <div class="kpis">
       <div class="kpi"><div class="k">Awaiting review</div><div class="v">${pending.length}</div>
