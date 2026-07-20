@@ -49,6 +49,8 @@ Switch scenarios with the gear (bottom-right): **New advisor**, **Established ad
 
 ## 7. Portfolios: submit to approved to available (loop)
 - **Portfolios**: the full SA universe, searchable; **View** any fund for detail + allocation.
+- **Client side → Profile → Your Advisor → Search for an advisor**: search the directory and
+  **Appoint** an advisor. The choice persists across a scenario switch.
 - **Add portfolio** → submit → it shows **Pending approval** (read-only for the advisor).
   Approve it from the settings gear → **Vault22 admin** moderation queue
   (the moderation stand-in) → it flips to **Approved** and appears in the live list, tagged
@@ -81,3 +83,7 @@ No dead ends; no `undefined`/`NaN`; no jargon; works in Navy and Dark and at pho
 - Uday's real SA securities universe (Tara assets) and portfolio list.
 - Final subscription pricing and the 25 bps non-Vault22 AUM fee (to be confirmed with Greg).
 - Historic AUM curve on older invoices.
+- **Open with Uday:** where the portfolio **moderation queue** finally lives in project x. It sits
+  behind the settings gear → **Vault22 admin** for now.
+- **Invoice PDF** carries a typed Vault22 wordmark, not the logo image: the hand-rolled PDF writer
+  has no image support.

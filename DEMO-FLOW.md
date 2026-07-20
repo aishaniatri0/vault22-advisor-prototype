@@ -50,6 +50,8 @@ The exact click path for a live demo. Switch scenarios with the bottom-right gea
 ## 7. Analytics + book (1 min)
 - **Analytics**: switch the period (incl. **Custom**), show **acquisition by source**, the
   **by-product / by-portfolio** breakdowns, and **Export CSV / Download report**.
+- **Client side → Profile → Your Advisor → Search for an advisor**: the advisor directory now
+  lives here. Search, then **Appoint**; the appointment holds when you switch back to the advisor.
 - **Portfolios**: open a **fact sheet** (PDF). Advisors see their own submissions read-only; the
   **moderation queue** (Approve/Reject) is a Vault22 admin function, now in the settings gear under
   **Vault22 admin** (final home to be confirmed with Uday).
