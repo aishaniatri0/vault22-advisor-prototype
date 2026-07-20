@@ -1249,7 +1249,7 @@ body.dark .feetier-r.on{background:rgba(1,195,141,.14);color:#5eead4}
 body.dark .ov-c{background:var(--v4-navy-50)}
 .ov-k{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
 .ov-v{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
-/* P1.6: advisor directory grid */
+/* Tara suggested-portfolio row: current holding column */
 .tara-cur{color:var(--muted);font-weight:600}
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--v4-space-6)}
 @media(max-width:1023px){.chart-grid{grid-template-columns:1fr}}
@@ -1589,15 +1589,17 @@ const CUSTOMERS_EST = [
    kyc:'Approved',idNum:'8807145566081',since:'2025-09-04',ffs:812,nw:2450000,income:78000,sav:22000,ef:180000,extAum:850000,
    insurance:420000,liabilities:610000,pv:1240000,inv:980000,risk:'Completed',score:78,type:'Growth',
    lastLogin:'2026-07-16T20:11:00',lastInv:'2026-07-01',sip:12000,onetime:350000,
-   alloc:{'Equity':62,'Bonds':18,'Cash':8,'Property':12},
+   alloc:{'Equity':63,'Bonds':23,'Cash':6,'Property':8},
    /* R4QA 1.1/1.2: C1 is the only client reachable in the client scenario, so their holdings
       carry real ASSETS tickers. That makes Tara's "Current holding" column meaningful and keeps
       disposals a subset (only the untickered fund drops out) rather than "sell everything".
       Values still sum to pv, 1,240,000. */
-   holdings:[{p:'Satrix Top 40',tk:'STX40',u:4820.44,mv:520000,r:14.2,d:'2025-09-12'},
+   holdings:[{p:'Satrix Top 40',tk:'STX40',u:4820.44,mv:460000,r:14.2,d:'2025-09-12'},
              {p:'Satrix MSCI World',tk:'STXWDM',u:3110.20,mv:320000,r:9.6,d:'2025-11-03'},
              {p:'Ashburton Govi Bond ETF',tk:'GOVI',u:1980.00,mv:200000,r:6.1,d:'2026-02-18'},
-             {p:'V22 Income Fund',u:1650.00,mv:200000,r:5.4,d:'2026-03-05'}]},
+             {p:'Satrix Property',tk:'STXPRO',u:820.00,mv:100000,r:7.3,d:'2026-01-14'},
+             {p:'Vault22 ZAR Money Market',tk:'ZARMM',u:80000.00,mv:80000,r:8.1,d:'2026-02-02'},
+             {p:'V22 Income Fund',u:660.00,mv:80000,r:5.4,d:'2026-03-05'}]},
   {id:'C2',signup:'2026-01-03',kycDate:'2026-01-09',riskDate:'2026-01-15',sipStart:'2026-02-01',review:'2026-06-11',dob:'1979-06-22',nationality:'South African',dependents:0,housing:'Home owner',totalSav:210000,name:'Marius Steyn',email:'marius.steyn@outlook.com',phone:'+27837742219',country:'South Africa',
    kyc:'Approved',idNum:'7906225512087',since:'2026-01-22',ffs:701,nw:1180000,income:52000,sav:11000,ef:95000,extAum:0,
    insurance:260000,liabilities:480000,pv:486000,inv:420000,risk:'Completed',score:61,type:'Balanced',
@@ -1696,7 +1698,7 @@ const AUDIT_EST = [
   {ts:'2026-07-15T11:33:00',act:'Shared landing page via WhatsApp',tgt:'aishani.advisor.vault22.com'},
   /* §15: a real client-level history, so each customer's Audit tab shows their lifecycle,
      not just "viewed profile". Scoped by `who` = customer id. */
-  {ts:'2026-06-02T15:00:00',act:'Meeting held, annual review',tgt:'2026-06-02 at 15:00',who:'C1'},
+  {ts:'2026-06-02T15:00:00',act:'Meeting held, annual review',tgt:'02-06-2026 at 15:00',who:'C1'},
   {ts:'2026-05-20T11:00:00',act:'Portfolio review completed',tgt:'Growth model, on track',who:'C1'},
   {ts:'2025-10-01T08:00:00',act:'Recurring investment started',tgt:'R12,000 / month',who:'C1'},
   {ts:'2025-09-04T09:15:00',act:'First investment made',tgt:'R350,000 lump sum',who:'C1'},
@@ -1717,13 +1719,17 @@ const AUDIT_EST = [
    States: 'granted' | 'pending' | 'none'. */
 const CONSENT_SECTIONS = [
   {k:'financial', t:'Financial',
-   /* R4 §2.2: "Total fees earned" is an advisor-side figure. It is deliberately NOT in the
-      client's sharing list or the client-facing report. The advisor keeps their own block. */
+   /* R4 2.2 + R4QA2 E: fee figures are advisor-side. BOTH 'Total fees earned' (here) and
+      'Fees earned' (Investment) are out of the client's sharing list and the client-facing
+      report; the advisor keeps their own block. R4QA2 C1: the financial profile report is
+      gated on FINANCIAL consent, so it is listed under Financial, not Investment. The toggle
+      the client sees is the toggle that controls access. */
    fields:['Net Worth','Total Savings','Monthly Savings','Financial Fitness Score','Amount Invested',
-           'Monthly Income','Emergency Fund','Total Investments','Insurance Coverage','Total Liabilities']},
+           'Monthly Income','Emergency Fund','Total Investments','Insurance Coverage','Total Liabilities',
+           'Financial profile report']},
   {k:'investment', t:'Investment',
-   fields:['Financial profile report','Current Portfolio Value','Asset Allocation','Products Owned',
-           'Invested Amount','Profit/Loss','Recurring Investment','One-time Investments','Fees earned']},
+   fields:['Current Portfolio Value','Asset Allocation','Products Owned',
+           'Invested Amount','Profit/Loss','Recurring Investment','One-time Investments']},
   {k:'risk', t:'Risk',
    fields:['Risk Assessment Completed','Risk Score','Risk profile']}
 ];
@@ -1810,7 +1816,9 @@ function loadScenario(s){
   if(!state.taraSuggestion) state.taraSuggestion = {};
   const _c1 = state.customers.find(x=>x.id===CLIENT_ID);
   if(_c1 && !state.taraSuggestion[CLIENT_ID])
-    state.taraSuggestion[CLIENT_ID] = {total:_c1.inv, ccy:'ZAR', lines:taraBuild(_c1,'ZAR'),
+    /* R4QA2 C3: size the suggestion against the client's actual portfolio value, so a row's
+       target amount reads sensibly beside its current holding. */
+    state.taraSuggestion[CLIENT_ID] = {total:_c1.pv, ccy:'ZAR', lines:taraBuild(_c1,'ZAR'),
       from:ADVISOR_EST.name, fromLicence:ADVISOR_EST.licence, ts:'2026-07-16T10:00:00', invested:false};
   /* §9.1 qualification thresholds are the advisor's setting; don't reset mid-demo. */
   if(!state.qual) state.qual = {...QUAL};
@@ -1855,7 +1863,10 @@ function loadScenario(s){
   /* R4QA 1.5: only default the advisor when none has ever been appointed. Switching
      scenarios is the only way to see the advisor side, so resetting here wiped every
      appointment on the round trip. */
-  if(s === 'client'){ state.advQ=''; state.linkedAdvisor = state.linkedAdvisor || ADVISOR_DIR[0]; }
+  /* R4QA2 B3: `null` means the client deliberately removed their advisor and must survive the
+     round trip. Only `undefined` (never set) takes the scenario default. */
+  if(s === 'client'){ state.advQ='';
+    if(state.linkedAdvisor === undefined) state.linkedAdvisor = ADVISOR_DIR[0]; }
   state.regErr = null;
   /* An established advisor is already verified; a new one starts unverified. */
   state.verify = est
@@ -1871,7 +1882,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-20.2';
+const BUILD_VERSION = '2026-07-20.3';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -3303,8 +3314,8 @@ function tab8Personal(p){
       ['Phone', p.phone],
       ['Contact', 'Mobile and email'],
       ['Home owner / tenant', p.housing || dash],
-      ['Signup date', p.signup || p.since],
-      ['Registration date', p.signup || p.since],
+      ['Signup date', fmtDate(p.signup || p.since)],
+      ['Registration date', fmtDate(p.signup || p.since)],
       ['Acquisition source', esc(acqSource(p))],
       /* P2.11: onboarding-stage pill lives on the header + Activity tab; not duplicated here. */
       ['KYC status', p.kyc ? `<span class="pill p-green">${p.kyc}</span>`
@@ -3502,9 +3513,9 @@ function invoicePDF(inv){
     'Invoice date: ' + fmtDate(inv.date),
     'Billing month: ' + inv.label,
     '',
-    'BILL TO',
-    a.name + (a.licence ? '   ' + a.licence : '')
-  ].concat(a.company ? [a.company] : [])
+    'BILL TO'
+  ].concat(a.name ? [a.name + (a.licence ? '   ' + a.licence : '')] : [])
+   .concat(a.company ? [a.company] : [])
    .concat(a.address ? [a.address] : [])
    .concat([
     '',
@@ -4262,6 +4273,30 @@ function periodWindow(period){
     return {s:new Date(f+'T00:00:00'), e:new Date(t+'T23:59:59'), label:fmtDate(f)+' to '+fmtDate(t)}; }
   return {s:new Date(y,m,1), e:NOW, label:MONTH_LABEL};   /* This month */
 }
+/* R4QA2 A1: ONE definition of every advertised analytics figure. The screen and the export
+   both call this, so the two cannot drift apart again. Each metric keeps its correct basis:
+   headline population / AUA / invested / conversion are cumulative as-of the window end,
+   while acquisition-by-source and new-customers-this-period are signed-up-within-window. */
+function analyticsFor(period){
+  const C = state.customers, L = state.leads;
+  const win = periodWindow(period);
+  const inWin = d => d && new Date(d) >= win.s && new Date(d) <= win.e;
+  const asOf  = (d,end) => d && new Date(d) <= end;
+  const Lend = L.filter(l=>asOf(l.signup, win.e));
+  const custByEnd = C.filter(c=>asOf(c.since, win.e));
+  const signedByEnd = Lend.length + C.filter(c=>asOf(c.signup||c.since, win.e)).length;
+  const custEnd = custByEnd.length;
+  const invTotalEnd = custByEnd.reduce((s,c)=>s+(c.inv||0),0);
+  const aua = custByEnd.reduce((s,c)=>s+(c.pv||0),0);
+  const conv = signedByEnd ? (custEnd/signedByEnd*100).toFixed(1) : '0.0';
+  const newCust = C.filter(c=>inWin(c.since)).length;
+  /* Acquisition by source counts signups inside the window, matching the on-screen card. */
+  const winPeople = [...L.filter(l=>inWin(l.signup)), ...C.filter(c=>inWin(c.signup||c.since))];
+  const srcCount = {};
+  winPeople.forEach(x => { const k = acqSource(x); srcCount[k] = (srcCount[k]||0)+1; });
+  return {win, inWin, asOf, C, L, Lend, custByEnd, signedByEnd, custEnd,
+          invTotalEnd, aua, conv, newCust, winPeople, srcCount};
+}
 function vAnalytics(){
   const L=state.leads, C=state.customers, a=state.advisor;
   if(!L.length && !C.length) return `
@@ -4271,14 +4306,8 @@ function vAnalytics(){
       <button class="btn" data-share="1">Share my link</button></div></div>`;
 
   const period = state.anPeriod || 'This month';
-  const win = periodWindow(period);
-  const inWin = d => d && new Date(d) >= win.s && new Date(d) <= win.e;
-  const asOf  = (d,end) => d && new Date(d) <= end;
-  /* Populations as-of the window end, so the whole page moves with the selector. */
-  const Lend = L.filter(l=>asOf(l.signup, win.e));
-  const custByEnd = C.filter(c=>asOf(c.since, win.e));
-  const signedByEnd = Lend.length + C.filter(c=>asOf(c.signup||c.since, win.e)).length;
-  const custEnd = custByEnd.length;
+  const M = analyticsFor(period);
+  const {win, inWin, asOf, Lend, custByEnd, signedByEnd, custEnd, invTotalEnd, aua, conv, srcCount} = M;
   const notYetCust = signedByEnd - custEnd;
 
   /* §14 User Registration > Customer Funnel — cumulative across the 10 stages, as-of end. */
@@ -4295,10 +4324,7 @@ function vAnalytics(){
 
   /* Period-scoped headline metrics: all computed against the window, so the selector
      visibly changes them. */
-  const invTotalEnd = custByEnd.reduce((s,c)=>s+c.inv,0);
-  const aua = custByEnd.reduce((s,c)=>s+c.pv,0);
   const avg = custEnd ? invTotalEnd/custEnd : 0;
-  const conv = signedByEnd ? (custEnd/signedByEnd*100).toFixed(1) : '0.0';
   const bookStart = C.filter(c=>asOf(c.since, win.s)).reduce((s,c)=>s+c.pv,0);
   /* AUM growth = new assets (new customers in the window) plus market appreciation on the
      existing book, ~0.9% a month, so a quiet month still reads as growth rather than R0. */
@@ -4354,11 +4380,7 @@ function vAnalytics(){
   const usersSeries = SERIES.users, custSeries = SERIES.custs;
   const aumSeries = SERIES.aum, invSeries = SERIES.inv;
 
-  /* P2.9: acquisition by source, for everyone who signed up within the window. Reuses the
-     inWin() window test already defined above for the KPI tiles. */
-  const winPeople = [...L.filter(l=>inWin(l.signup)), ...C.filter(c=>inWin(c.signup||c.since))];
-  const srcCount = {};
-  winPeople.forEach(x => { const s = acqSource(x); srcCount[s] = (srcCount[s]||0)+1; });
+  /* P2.9: acquisition by source comes from analyticsFor(), the same object the export uses. */
   const srcTot = Object.values(srcCount).reduce((s,n)=>s+n,0) || 1;
   const anSourceRows = Object.entries(srcCount).map(([src,n])=>({src, n, pct: Math.round(n/srcTot*100)}))
     .sort((a,b)=>b.n-a.n);
@@ -4941,7 +4963,9 @@ function taraLineRow(c, l, who){
     ${who==='client' ? `<div class="num tara-cur" style="min-width:104px;text-align:right">
       <span class="sub" style="display:block;font-size:10.5px">Current holding</span>
       ${money(currentHoldingOf(c, a.ticker))}</div>` : ''}
-    <div class="num" style="min-width:96px;text-align:right"><b>${money(amt)}</b></div>
+    <div class="num" style="min-width:110px;text-align:right"><b>${money(amt)}</b>
+      ${who==='client' ? (()=>{ const d = amt - currentHoldingOf(c, a.ticker);
+        return `<div class="sub" style="font-size:10.5px">${d===0?'no change':(d>0?'+':'−')+money(Math.abs(d))}</div>`; })() : ''}</div>
     ${who==='client' ? (()=>{ const sg=(state.taraSuggestion[c.id]||{});
       const done = sg.invested || (sg.actioned||{})[a.ticker];
       return done ? '<span class="pill p-green" style="min-width:74px;text-align:center">Done</span>'
@@ -5563,21 +5587,20 @@ function clientPreview(sec, c, st){
       ['Monthly Savings', money(c.sav)+'/mo'], ['Financial Fitness Score', c.ffs+' / 1000'],
       ['Amount Invested', money(c.inv)], ['Monthly Income', money(c.income)],
       ['Emergency Fund', money(c.ef)], ['Total Investments', money(c.pv)],
-      ['Insurance Coverage', money(c.insurance)], ['Total Liabilities', money(c.liabilities)]
+      ['Insurance Coverage', money(c.insurance)], ['Total Liabilities', money(c.liabilities)],
+      ['Financial profile report', 'Your full report']
     ],
     investment: [
-      ['Financial profile report', 'Your full report'],
       ['Current Portfolio Value', money(c.pv)],
       ['Asset Allocation', Object.entries(c.alloc).map(([k,v])=>k+' '+v+'%').join(' · ')],
       ['Products Owned', plural((c.holdings||[]).length,'product')],
       ['Invested Amount', money(c.inv)],
       ['Profit/Loss', (gl>=0?'+':'')+money(gl)],
       ['Recurring Investment', money(c.sip)+'/mo'],
-      ['One-time Investments', money(c.onetime)],
-      ['Fees earned', money(feesFor(c,'Year to date'))]
+      ['One-time Investments', money(c.onetime)]
     ],
     risk: [
-      ['Risk Assessment Completed', lastRiskDate(c) || 'Completed'],
+      ['Risk Assessment Completed', fmtDate(lastRiskDate(c)) || 'Completed'],
       ['Risk Score', c.score + ' / 100'],
       ['Risk profile', c.type]
     ]
@@ -5692,8 +5715,8 @@ function vClientProfile(){
     <div class="card card-p" style="border:1px solid var(--v4-teal-400)">
       <span class="eyebrow teal">From your advisor</span>
       <div class="between"><div class="sec-t" style="margin:0">Your advisor suggested a portfolio</div>
-        <!-- R4 6.1: a suggested portfolio has not been invested in. Status reflects the
-             suggestion, never "Invested". -->
+        <!-- R4 6.1 + R4QA 0.1: amber "Suggested" until the client actually invests, then green
+             "Invested". Stephen's ask was that a MERE suggestion never claims to be invested. -->
         <span class="pill ${sug.invested?'p-green':'p-amber'}">${sug.invested ? 'Invested' : 'Suggested · total '+sugWeight+'%'}</span></div>
       <p class="lede" style="margin:var(--v4-space-2) 0 var(--v4-space-3)">${sug.invested
         ? 'You invested in this portfolio. Your advisor can see it in their portal.'
@@ -6557,6 +6580,8 @@ document.addEventListener('click', e => {
     state.consent = null; state.poa = null; state.docs = null;
     state.crm = {}; state.clientReminders = []; state.taraSuggestion = {}; state.taraDraft = {};
     state.riskReq = {}; state.riskDates = {}; state.setup = {}; state.poaReq = {}; state.kycReq = {};
+    /* undefined, not null: the scenario default must reapply on a genuine reset. */
+    state.linkedAdvisor = undefined; state.prevAdvisor = null;
     state.filters = new Set(); state.leadSel = new Set();
     loadScenario(scen);
     closeProto(); closeModal();
@@ -6729,17 +6754,17 @@ document.addEventListener('click', e => {
       if(existing){
         existing.day = day; existing.slot = slot; existing.dur = dur; existing.loc = loc;
         existing.status = 'confirmed'; existing.by = 'advisor'; existing.t = mtitle;
-        audit('Confirmed meeting', (who ? who.name : id) + ' · ' + day + ' at ' + slot, id);
+        audit('Confirmed meeting', (who ? who.name : id) + ' · ' + fmtDate(day) + ' at ' + slot, id);
       } else {
         state.crm[id].meets.unshift({mid:newMid(), day, slot, dur, loc, status:'invited', by:'advisor', t:mtitle});
-        audit('Sent meeting invite', (who ? who.name : id) + ' · ' + day + ' at ' + slot, id);
+        audit('Sent meeting invite', (who ? who.name : id) + ' · ' + fmtDate(day) + ' at ' + slot, id);
       }
       /* The client is notified in their own app when they are the recipient. */
       if(id === CLIENT_ID){
         state.clientReminders = state.clientReminders || [];
         state.clientReminders.unshift({em:'📅',
           t: (state.advisor.name.split(' ')[0]) + (existing ? ' confirmed your meeting' : ' invited you to a meeting'),
-          m: day + ' at ' + slot + (existing ? '.' : '. Accept or decline it under Your Advisor.'), unread:true});
+          m: fmtDate(day) + ' at ' + slot + (existing ? '.' : '. Accept or decline it under Your Advisor.'), unread:true});
       }
       state.compose = null; state.bookConfirmMid = null;
       /* P0.2: hand off to the real mail client with the edited copy, and put the genuine
@@ -6770,22 +6795,19 @@ document.addEventListener('click', e => {
   if(t.dataset.period){ state.anPeriod = t.dataset.period; return render(); }
   /* P2.15: export the analytics book snapshot as CSV or a one-page PDF report. */
   if(t.dataset.anexport){
-    /* R4QA 1.6: the export sits in the same header as the period chips, so it must honour
-       the selected window. Previously it recomputed all-time figures wholesale. */
+    /* R4QA2 A1: the export calls the SAME analyticsFor() the screen renders from, so every
+       figure in the file matches the figure on screen for every period. */
     const period = state.anPeriod || AN_PERIODS[0];
-    const win = periodWindow(period);
-    const inWin = d => d && new Date(d) >= win.s && new Date(d) <= win.e;
-    const C = state.customers.filter(c=>inWin(c.signup||c.since));
-    const L = state.leads.filter(l=>inWin(l.signup));
-    const aua = C.reduce((s,c)=>s+(c.pv||0),0), inv = C.reduce((s,c)=>s+(c.inv||0),0);
-    const conv = (L.length+C.length) ? (C.length/(L.length+C.length)*100).toFixed(1) : '0.0';
-    const bySource = {}; [...L,...C].forEach(x=>{ const s=acqSource(x); bySource[s]=(bySource[s]||0)+1; });
-    const slug = win.label.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const M = analyticsFor(period);
+    const win = M.win, aua = M.aua, inv = M.invTotalEnd, conv = M.conv;
+    const bySource = M.srcCount;
+    const slug = win.label.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
+      + '-' + TODAY_STR;   /* period AND date, so same-period exports on different days differ */
     if(t.dataset.anexport === 'csv'){
       const rows = [
         ['Metric','Value'],
         ['Period', win.label],
-        ['Registered users', L.length], ['Customers', C.length], ['Conversion %', conv],
+        ['Registered on website', M.signedByEnd], ['Customers', M.custEnd], ['Conversion %', conv],
         ['Assets under advice (R)', aua], ['Total invested (R)', inv],
         ['', ''], ['Source','Signups'],
         ...Object.entries(bySource).map(([s,n])=>[s,n])
@@ -6795,7 +6817,7 @@ document.addEventListener('click', e => {
       downloadPdf([
         'VAULT22 ADVISOR', 'Analytics report', state.advisor.name + (state.advisor.licence?'   '+state.advisor.licence:''),
         'Generated ' + fmtDate(TODAY_STR), 'Period: ' + win.label, '',
-        'Registered users: ' + L.length, 'Customers: ' + C.length, 'Conversion: ' + conv + '%',
+        'Registered on website: ' + M.signedByEnd, 'Customers: ' + M.custEnd, 'Conversion: ' + conv + '%',
         'Assets under advice: R' + aua.toLocaleString('en-US'), 'Total invested: R' + inv.toLocaleString('en-US'), '',
         'Acquisition by source:', ...Object.entries(bySource).map(([s,n])=>'  ' + s + ': ' + n)
       ], 'vault22-analytics-' + slug + '.pdf');
@@ -7038,24 +7060,41 @@ document.addEventListener('click', e => {
     state.chartFull = t.dataset.chartfull === '__close' ? null : t.dataset.chartfull;
     return render();
   }
+  /* R4QA2 B2: "everything is actioned" is DERIVED, never stored in three places. Any path that
+     completes the last line flips the card and writes the portfolio-level audit entry once. */
+  const taraSettle = (sug, c) => {
+    if(sug.invested) return false;
+    const linesDone = (sug.lines||[]).every(l => (sug.actioned||{})[l.ticker]);
+    const disposalsDone = taraDisposals(c, sug.lines).every(h => (sug.sold||{})[h.p]);
+    if(!(linesDone && disposalsDone)) return false;
+    sug.invested = true;
+    auditShared('Client invested in the suggested portfolio', 'Lerato Khumalo (' + CLIENT_ID + ')', CLIENT_ID);
+    return true;
+  };
   if(t.dataset.tarainvest){
-    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug) return;
+    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug || sug.invested) return;
+    const c = CUSTOMERS_EST.find(x=>x.id===CLIENT_ID) || {};
     const tk = t.dataset.tarainvest, a = assetOf(tk);
+    if((sug.actioned||{})[tk]) return;
     sug.actioned = sug.actioned || {}; sug.actioned[tk] = true;
     auditShared('Invested in ' + ((a&&a.name)||tk) + ' (advisor suggestion)', (a&&a.name)||tk, CLIENT_ID);
-    toast('Invested in ' + ((a&&a.name)||tk));
+    const done = taraSettle(sug, c);
+    toast(done ? 'Portfolio complete. Your advisor can see it.' : 'Invested in ' + ((a&&a.name)||tk));
     return render();
   }
   if(t.dataset.tarasell){
-    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug) return;
+    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug || sug.invested) return;
+    const c = CUSTOMERS_EST.find(x=>x.id===CLIENT_ID) || {};
     const nm = t.dataset.tarasell;
+    if((sug.sold||{})[nm]) return;
     sug.sold = sug.sold || {}; sug.sold[nm] = true;
     auditShared('Sold ' + nm + ' (advisor suggestion)', nm, CLIENT_ID);
-    toast('Sold ' + nm);
+    const done = taraSettle(sug, c);
+    toast(done ? 'Portfolio complete. Your advisor can see it.' : 'Sold ' + nm);
     return render();
   }
   if(t.dataset.taraactionall){
-    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug) return;
+    const sug = (state.taraSuggestion||{})[CLIENT_ID]; if(!sug || sug.invested) return;
     const c = CUSTOMERS_EST.find(x=>x.id===CLIENT_ID) || {};
     sug.actioned = sug.actioned || {}; sug.sold = sug.sold || {};
     let n = 0;
@@ -7066,10 +7105,10 @@ document.addEventListener('click', e => {
     taraDisposals(c, sug.lines).forEach(h => { if(!sug.sold[h.p]){
       sug.sold[h.p] = true; n++;
       auditShared('Sold ' + h.p + ' (advisor suggestion)', h.p, CLIENT_ID); } });
-    /* R4QA 1.3: actioning every line IS investing the portfolio. Mark the card complete so it
-       cannot say "done" in one place and still offer the action in another. */
-    sug.invested = true;
-    toast(n ? 'Actioned ' + n + ' ' + (n===1?'line':'lines') : 'Everything is already actioned');
+    /* Nothing outstanding: change no state and write no audit entry. */
+    if(!n) return toast('Everything is already actioned');
+    taraSettle(sug, c);
+    toast('Actioned ' + n + ' ' + (n===1?'line':'lines'));
     return render();
   }
   if(t.dataset.clientinvest){
@@ -7128,7 +7167,7 @@ document.addEventListener('click', e => {
     const [id, day, slot] = t.dataset.ics.split('|');
     const who = state.customers.concat(state.leads).find(x=>x.id===id);
     downloadICS(who, day, slot);
-    audit('Downloaded calendar invite', (who ? who.name : id) + ' · ' + day + ' at ' + slot, id);
+    audit('Downloaded calendar invite', (who ? who.name : id) + ' · ' + fmtDate(day) + ' at ' + slot, id);
     return toast('Invite downloaded. Open it to add it to your calendar.');
   }
   if(t.dataset.firm){ state.invForm = state.invForm || {}; state.invForm.sameFirm = t.dataset.firm==='yes';
