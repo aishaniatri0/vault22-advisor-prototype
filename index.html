@@ -209,17 +209,21 @@ a{color:var(--v4-info-dark)}
 .topbar{position:fixed;top:0;left:0;right:0;height:80px;background:var(--live-header);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 28px;z-index:20;gap:var(--v4-space-4)}
-.logo{display:flex;align-items:center;gap:10px;flex:none;min-width:0}
+/* R5 1.1 (fix): the search must start at the CONTENT column, which is
+   sidebar-w + space-10 + .main's space-8 padding = 336px, less the topbar's 28px padding.
+   margin-left on the search failed because it is additive after the logo, so instead the
+   logo occupies exactly that offset and the search follows at the right edge. */
+.logo{display:flex;align-items:center;gap:10px;flex:none;min-width:0;
+  width:calc(var(--sidebar-w) + var(--v4-space-10) + var(--v4-space-8) - 28px)}
+@media(max-width:1023px){.logo{width:auto}}
 .logo img{height:34px;display:block;flex:none}
 /* Defect 2: the badge must never squeeze to a vertical stack of letters. */
 .logo .tag{font-size:11px;font-weight:600;color:var(--green-hover);background:var(--green-10);
   padding:3px 8px;border-radius:9999px;letter-spacing:.02em;white-space:nowrap;flex:none}
 .tb-right{display:flex;align-items:center;gap:12px}
 /* P1.3: global client search */
-/* R5 1.1: the search field's left edge lines up with the content column, not the middle of
-   the topbar. Content starts at var(--sidebar-w) + space-10; the topbar has 28px padding. */
 .gsearch{position:relative;width:420px;max-width:420px;flex:none;
-  margin-left:calc(var(--sidebar-w) + var(--v4-space-10) - 28px);margin-right:var(--v4-space-4)}
+  margin-left:0;margin-right:var(--v4-space-4)}
 @media(max-width:1023px){.gsearch{margin-left:var(--v4-space-4);flex:1;width:auto}}
 .gsearch .gs-ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted);pointer-events:none}
 #globalSearch{width:100%;height:42px;border:1px solid var(--line);border-radius:9999px;background:var(--surface);
@@ -1893,7 +1897,7 @@ const advisorUrl = a => a.slug + '.advisor.vault22.com';
 /* The advisor dashboard itself lives at vault22.com/advisor. */
 const DASH_URL = 'vault22.com/advisor';
 /* Bump on each deploy so a stale tab is identifiable in the settings drawer. */
-const BUILD_VERSION = '2026-07-20.6';
+const BUILD_VERSION = '2026-07-20.7';
 /* toISOString() is UTC: in SAST (UTC+2) an early-morning entry rolls back a day.
    Build the stamp from local parts instead. */
 const localISO = (d) => {
@@ -7316,8 +7320,20 @@ document.addEventListener('click', e => {
      Prototype-level execution: state + audit, no real order is placed. */
   /* R4 1.1: expand one chart to a full-screen takeover, and back. */
   if(t.dataset.chartfull){
-    state.chartFull = t.dataset.chartfull === '__close' ? null : t.dataset.chartfull;
-    return renderKeepingScroll();
+    /* R5 0.2 (fix): on close, window.scrollY is the takeover's own position (~0), not the
+       page you came from. Stash the real position when opening and restore that. */
+    if(t.dataset.chartfull === '__close'){
+      const y = state.chartScrollY || 0;
+      state.chartFull = null; state.chartScrollY = 0;
+      render();
+      requestAnimationFrame(()=>window.scrollTo(0, y));
+    } else {
+      state.chartScrollY = window.scrollY;
+      state.chartFull = t.dataset.chartfull;
+      render();
+      window.scrollTo(0, 0);
+    }
+    return;
   }
 /* R4QA2 B2: "everything is actioned" is DERIVED, never stored in three places. Any path that
      completes the last line flips the card and writes the portfolio-level audit entry once. */
